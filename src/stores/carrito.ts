@@ -1,28 +1,19 @@
 import { persistentAtom } from '@nanostores/persistent';
 import { computed } from 'nanostores';
-import type { MaterialId, Orientacion } from '../config/negocio';
-import type { AreaPorcentaje, Calidad, Dimensiones } from '../lib/resolucion';
+import { negocio } from '../config/negocio';
+import { sanearCarrito, type ItemCarrito } from '../lib/carrito';
+
+export type { ItemCarrito };
 
 // El carrito sobrevive a la navegación entre páginas (localStorage). La imagen NO se guarda aquí
 // porque no cabe: solo el nombre del archivo, sus dimensiones y el recorte en porcentaje.
 
-export interface ItemCarrito {
-  id: string;
-  medidaId: string;
-  orientacion: Orientacion;
-  material: MaterialId;
-  cantidad: number;
-  recorte: AreaPorcentaje;
-  archivo: string;
-  dimensiones: Dimensiones;
-  dpi: number;
-  calidad: Calidad;
-}
-
 function leerCarrito(texto: string): ItemCarrito[] {
   try {
-    const datos: unknown = JSON.parse(texto);
-    return Array.isArray(datos) ? (datos as ItemCarrito[]) : [];
+    return sanearCarrito(
+      JSON.parse(texto),
+      negocio.medidas.map((m) => m.id),
+    );
   } catch {
     return [];
   }

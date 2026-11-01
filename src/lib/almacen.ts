@@ -1,5 +1,5 @@
 import { crearPedidosDemo } from './datos-demo';
-import type { Pedido } from './pedidos';
+import { normalizarPedido, type Pedido } from './pedidos';
 
 /**
  * Dónde viven los pedidos. En la fase 1 es localStorage; en la fase 2 se cambia por Supabase sin
@@ -37,7 +37,9 @@ export function crearAlmacenLocal(
     if (crudo !== null) {
       try {
         const datos: unknown = JSON.parse(crudo);
-        if (Array.isArray(datos)) return datos as Pedido[];
+        if (Array.isArray(datos)) {
+          return datos.map(normalizarPedido).filter((p): p is Pedido => p !== null);
+        }
       } catch {
         // Datos dañados: se vuelve a la demo.
       }

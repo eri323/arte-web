@@ -50,7 +50,11 @@ export default function Pedido() {
     celular: '',
     nota: '',
   });
-  const [confirmado, setConfirmado] = useState<{ numero: string; mensaje: string } | null>(null);
+  const [confirmado, setConfirmado] = useState<{
+    numero: string;
+    mensaje: string;
+    url: string | null;
+  } | null>(null);
   const [miniaturasPerdidas, setMiniaturasPerdidas] = useState(false);
 
   useEffect(() => {
@@ -90,6 +94,10 @@ export default function Pedido() {
   async function pedir(evento: FormEvent<HTMLFormElement>) {
     evento.preventDefault();
     if (!numero || carrito.length === 0) return;
+    // WhatsApp se abre dentro del mismo toque: si se abre después de un await, Safari iOS y el
+    // navegador de Instagram pueden bloquear la ventana.
+    const url = urlWhatsApp(negocio.whatsapp.numero, mensaje);
+    if (url) window.open(url, '_blank', 'noopener');
     const pedido = crearPedido({
       numero,
       cliente: {
@@ -114,12 +122,9 @@ export default function Pedido() {
     });
     await obtenerAlmacen().guardar(pedido);
 
-    const url = urlWhatsApp(negocio.whatsapp.numero, mensaje);
-    if (url) window.open(url, '_blank', 'noopener');
-
     for (const item of carrito) borrarMiniatura(item.id);
     vaciarCarrito();
-    setConfirmado({ numero, mensaje });
+    setConfirmado({ numero, mensaje, url });
   }
 
   if (confirmado) {
@@ -134,6 +139,16 @@ export default function Pedido() {
               ? `${AVISO_DEMO} Aquí puedes ver el mensaje que le llegaría.`
               : 'Abrimos WhatsApp con tu pedido. Envía el mensaje y adjunta tus fotos en el chat.'}
           </p>
+          {confirmado.url && (
+            <a
+              href={confirmado.url}
+              target="_blank"
+              rel="noopener"
+              className="mt-2 inline-flex min-h-11 items-center text-dorado underline underline-offset-4"
+            >
+              ¿No se abrió? Abrir WhatsApp
+            </a>
+          )}
           <a
             href={`/seguimiento?numero=${encodeURIComponent(confirmado.numero)}`}
             className="mt-4 inline-flex min-h-11 items-center rounded-full bg-dorado px-6 font-medium text-fondo hover:bg-dorado-oscuro"

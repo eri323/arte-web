@@ -21,22 +21,42 @@ function lienzoABlob(lienzo: HTMLCanvasElement): Promise<Blob> {
   );
 }
 
+async function vistaPreviaDesde(fuente: CanvasImageSource, original: Dimensiones): Promise<string> {
+  const destino = escalarDimensiones(original.ancho, original.alto, LADO_VISTA_PREVIA);
+  const lienzo = document.createElement('canvas');
+  lienzo.width = destino.ancho;
+  lienzo.height = destino.alto;
+  const ctx = lienzo.getContext('2d');
+  if (!ctx) throw new Error('Canvas no disponible');
+  ctx.drawImage(fuente, 0, 0, destino.ancho, destino.alto);
+  const blob = await lienzoABlob(lienzo);
+  lienzo.width = 0;
+  lienzo.height = 0;
+  return URL.createObjectURL(blob);
+}
+
 /** Decodifica la foto, lee sus dimensiones reales y genera la vista previa reducida. */
 export async function abrirFoto(archivo: File): Promise<FotoAbierta> {
-  const bitmap = await createImageBitmap(archivo, { imageOrientation: 'from-image' });
+  let bitmap: ImageBitmap;
+  try {
+    bitmap = await createImageBitmap(archivo, { imageOrientation: 'from-image' });
+  } catch {
+    // Plan B para navegadores (WebKit viejo) que no aceptan la opción imageOrientation: un <img>
+    // moderno ya aplica la orientación EXIF.
+    const url = URL.createObjectURL(archivo);
+    try {
+      const img = new Image();
+      img.src = url;
+      await img.decode();
+      const original = { ancho: img.naturalWidth, alto: img.naturalHeight };
+      return { original, vistaPrevia: await vistaPreviaDesde(img, original) };
+    } finally {
+      URL.revokeObjectURL(url);
+    }
+  }
   try {
     const original = { ancho: bitmap.width, alto: bitmap.height };
-    const destino = escalarDimensiones(original.ancho, original.alto, LADO_VISTA_PREVIA);
-    const lienzo = document.createElement('canvas');
-    lienzo.width = destino.ancho;
-    lienzo.height = destino.alto;
-    const ctx = lienzo.getContext('2d');
-    if (!ctx) throw new Error('Canvas no disponible');
-    ctx.drawImage(bitmap, 0, 0, destino.ancho, destino.alto);
-    const blob = await lienzoABlob(lienzo);
-    lienzo.width = 0;
-    lienzo.height = 0;
-    return { original, vistaPrevia: URL.createObjectURL(blob) };
+    return { original, vistaPrevia: await vistaPreviaDesde(bitmap, original) };
   } finally {
     bitmap.close();
   }

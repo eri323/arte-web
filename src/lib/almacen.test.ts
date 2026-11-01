@@ -73,3 +73,27 @@ describe('crearAlmacenLocal', () => {
     expect(await almacen().listar()).toHaveLength(3);
   });
 });
+
+describe('pedidos dañados en localStorage', () => {
+  it('normaliza pedidos sin pagos, notas o historial y descarta los inválidos', async () => {
+    const memoria = new MemoriaFalsa();
+    memoria.setItem(
+      'arte-web:pedidos',
+      JSON.stringify([
+        {
+          numero: 'AE-1050',
+          cliente: { nombre: 'Ana', ciudad: 'Cali' },
+          items: [],
+          total: 60000,
+          estado: 'listo',
+        },
+        { numero: 'AE-1051', estado: 'inventado', total: 1 },
+        { total: 5 },
+        'basura',
+      ]),
+    );
+    const lista = await crearAlmacenLocal(memoria, { ahora: () => AHORA }).listar();
+    expect(lista.map((p) => p.numero)).toEqual(['AE-1050']);
+    expect(lista[0]).toMatchObject({ pagos: [], notas: [], historial: [] });
+  });
+});

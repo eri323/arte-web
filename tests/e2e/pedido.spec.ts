@@ -99,3 +99,30 @@ test.describe('pedido', () => {
     await expect(page.getByText('Tu pedido está vacío.')).toBeVisible();
   });
 });
+
+test('un carrito de una versión vieja no tumba /pedido', async ({ page }) => {
+  await page.addInitScript(() => {
+    localStorage.setItem(
+      'arte-web:carrito',
+      JSON.stringify([{ id: 'viejo', medidaId: '999x999', cantidad: 1 }, 'basura']),
+    );
+  });
+  await irA(page, '/pedido');
+  await expect(page.getByText('Tu pedido está vacío.')).toBeVisible();
+});
+
+test('un pedido dañado no tumba el panel ni el seguimiento', async ({ page }) => {
+  await page.addInitScript(() => {
+    localStorage.setItem(
+      'arte-web:pedidos',
+      JSON.stringify([
+        { numero: 'AE-1050', total: 60000, estado: 'listo', cliente: { nombre: 'Ana' } },
+        { numero: 'AE-1051' },
+      ]),
+    );
+  });
+  await irA(page, '/taller');
+  await expect(page.getByRole('button', { name: /AE-1050/ })).toBeVisible();
+  await irA(page, '/seguimiento?numero=AE-1050');
+  await expect(page.getByRole('heading', { name: 'Pedido AE-1050' })).toBeVisible();
+});

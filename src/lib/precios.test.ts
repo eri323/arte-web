@@ -201,3 +201,32 @@ describe('aplicarEdiciones', () => {
     expect(medida('30x40').precio).toBe(60000);
   });
 });
+
+describe('aplicarEdiciones rechaza promociones que encarecen', () => {
+  it.each([
+    ['desde más caro que el precio', { tipo: 'desde', cantidadMinima: 3, precioUnitario: 90000 }],
+    ['desde igual al precio', { tipo: 'desde', cantidadMinima: 3, precioUnitario: 60000 }],
+    [
+      'paquete más caro que comprar suelto',
+      { tipo: 'paquete', cantidad: 2, precioPaquete: 200000 },
+    ],
+  ] as const)('%s', (_, promocion) => {
+    const r = aplicarEdiciones(negocio.medidas, { '30x40': { promocion } });
+    expect(r.find((m) => m.id === '30x40')?.promocion).toEqual(medida('30x40').promocion);
+  });
+
+  it('valida la promoción contra el precio editado', () => {
+    const r = aplicarEdiciones(negocio.medidas, {
+      '30x40': {
+        precio: 30000,
+        promocion: { tipo: 'desde', cantidadMinima: 3, precioUnitario: 40000 },
+      },
+    });
+    expect(r.find((m) => m.id === '30x40')?.promocion).toBeUndefined();
+  });
+
+  it('rechaza precios absurdos', () => {
+    const r = aplicarEdiciones(negocio.medidas, { '30x40': { precio: 1e300 } });
+    expect(r.find((m) => m.id === '30x40')?.precio).toBe(60000);
+  });
+});

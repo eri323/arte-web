@@ -37,6 +37,14 @@ function FilaPrecio({ medida }: { medida: Medida }) {
           ? { tipo, cantidadMinima: nCantidad, precioUnitario: nValor }
           : { tipo, cantidad: nCantidad, precioPaquete: nValor };
     }
+    if (
+      promocion &&
+      (promocion.tipo === 'desde'
+        ? promocion.precioUnitario >= nPrecio
+        : promocion.precioPaquete >= promocion.cantidad * nPrecio)
+    ) {
+      return setAviso('La promoción tiene que salir más barata que comprar los cuadros sueltos.');
+    }
     editarMedida(medida.id, { precio: nPrecio, promocion });
     setAviso('Guardado.');
   }

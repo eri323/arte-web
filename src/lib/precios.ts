@@ -122,7 +122,16 @@ export function describirPromocion(promocion: Promocion | undefined): string {
 /** Cambios hechos en el panel del taller. `promocion: null` quita la promoción. */
 export type EdicionesPrecios = Record<string, { precio?: number; promocion?: Promocion | null }>;
 
-const enteroPositivo = (n: unknown): n is number => Number.isInteger(n) && (n as number) > 0;
+// SUPUESTO: ningún precio editado pasa de $100.000.000; protege de datos manipulados en localStorage.
+const PRECIO_MAXIMO = 100_000_000;
+
+const enteroPositivo = (n: unknown): n is number =>
+  Number.isInteger(n) && (n as number) > 0 && (n as number) <= PRECIO_MAXIMO;
+
+/** Una promoción tiene que salir más barata que comprar las mismas unidades sueltas. */
+function promocionAbarata(p: Promocion, precio: number): boolean {
+  return p.tipo === 'desde' ? p.precioUnitario < precio : p.precioPaquete < p.cantidad * precio;
+}
 
 function promocionValida(p: Promocion): boolean {
   return p.tipo === 'desde'
@@ -141,8 +150,15 @@ export function aplicarEdiciones(medidas: Medida[], ediciones: EdicionesPrecios)
     const resultado: Medida = { ...medida };
     if (enteroPositivo(edicion.precio)) resultado.precio = edicion.precio;
     if (edicion.promocion === null) delete resultado.promocion;
-    else if (edicion.promocion && promocionValida(edicion.promocion)) {
+    else if (
+      edicion.promocion &&
+      promocionValida(edicion.promocion) &&
+      promocionAbarata(edicion.promocion, resultado.precio)
+    ) {
       resultado.promocion = edicion.promocion;
+    }
+    if (resultado.promocion && !promocionAbarata(resultado.promocion, resultado.precio)) {
+      delete resultado.promocion;
     }
     return resultado;
   });

@@ -197,3 +197,34 @@ export function siguienteNumero(pedidos: Pick<Pedido, 'numero'>[], prefijo: stri
     .reduce((max, n) => Math.max(max, n?.consecutivo ?? 0), CONSECUTIVO_INICIAL - 1);
   return formatearNumeroPedido(prefijo, mayor + 1);
 }
+
+const lista = <T>(x: unknown): T[] => (Array.isArray(x) ? (x as T[]) : []);
+
+/**
+ * Pedido leído de localStorage, que puede venir de una versión vieja o editado a mano. Completa
+ * las listas que falten y descarta lo que no tenga número, total entero o un estado conocido.
+ */
+export function normalizarPedido(x: unknown): Pedido | null {
+  if (typeof x !== 'object' || x === null) return null;
+  const p = x as Partial<Pedido>;
+  if (typeof p.numero !== 'string' || !Number.isInteger(p.total) || (p.total as number) < 0) {
+    return null;
+  }
+  if (!p.estado || !ESTADOS.includes(p.estado)) return null;
+  const cliente = typeof p.cliente === 'object' && p.cliente !== null ? p.cliente : null;
+  return {
+    ...p,
+    numero: p.numero,
+    total: p.total as number,
+    estado: p.estado,
+    cliente: {
+      nombre: String(cliente?.nombre ?? ''),
+      ciudad: String(cliente?.ciudad ?? ''),
+      ...cliente,
+    },
+    items: lista(p.items),
+    pagos: lista<Pago>(p.pagos).filter((pago) => Number.isInteger(pago?.monto)),
+    historial: lista(p.historial),
+    notas: lista(p.notas),
+  };
+}
