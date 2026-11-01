@@ -10,7 +10,7 @@ export default function ContadorCarrito({ className }: { className?: string }) {
       {cantidad > 0 && (
         <span
           data-testid="contador-carrito"
-          className="ml-1 min-w-5 rounded-sm bg-acento px-1 text-center text-xs font-bold text-fondo"
+          className="ml-1 min-w-5 rounded-sm bg-acento px-1 text-center text-xs font-bold text-sobre-acento"
         >
           {cantidad}
         </span>

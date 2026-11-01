@@ -78,7 +78,10 @@ const materialAcrilico = negocio.materiales.find((m) => m.id === 'acrilico');
   description={`${negocio.marca.eslogan}. Cuadros en MDF o acrílico a partir de tu foto, con envío a todo Colombia.`}
 >
   {/* 1 · Portada: una pantalla, una frase, un cuadro, un botón. */}
-  <section class="relative overflow-hidden bg-acento text-fondo" aria-labelledby="portada-titulo">
+  <section
+    class="relative overflow-hidden bg-acento text-sobre-acento"
+    aria-labelledby="portada-titulo"
+  >
     <div class="mx-auto grid min-h-[calc(100svh-5.75rem)] max-w-6xl content-between gap-8 px-4 pt-8 pb-10 sm:min-h-[calc(100svh-3.5rem)] md:grid-cols-[1.5fr_1fr] md:content-center md:items-center md:gap-12 md:py-16">
       <h1 id="portada-titulo" class="texto-cartel entra-subiendo md:order-1">
         {vitrina.titular}
@@ -98,8 +101,8 @@ const materialAcrilico = negocio.materiales.find((m) => m.id === 'acrilico');
             cinta
           />
         </div>
-        <p class="lapiz mt-4 flex items-center gap-2 text-fondo">
-          <span aria-hidden="true" class="h-px w-6 bg-fondo"></span>
+        <p class="lapiz mt-4 flex items-center gap-2 text-sobre-acento">
+          <span aria-hidden="true" class="h-px w-6 bg-sobre-acento"></span>
           {etiquetaMedida(medidaPortada)} · MDF
         </p>
       </div>
@@ -107,10 +110,13 @@ const materialAcrilico = negocio.materiales.find((m) => m.id === 'acrilico');
       <div class="entra-subiendo md:order-3" style="--retraso: 250ms">
         <p class="max-w-[28ch] text-lg leading-snug sm:text-xl">{vitrina.bajada}</p>
         <div class="mt-6 flex flex-wrap items-center gap-x-6 gap-y-2">
-          <a href="/crear" class="boton bg-texto text-fondo hover:bg-texto/85">
+          <a
+            href="/crear"
+            class="boton bg-sobre-acento text-acento hover:outline-2 hover:outline-offset-2 hover:outline-sobre-acento"
+          >
             Crear mi cuadro
           </a>
-          <a href="/formatos" class="enlace-fuerte text-fondo">
+          <a href="/formatos" class="enlace-fuerte text-sobre-acento">
             Ver medidas y precios
           </a>
         </div>
@@ -226,7 +232,7 @@ const materialAcrilico = negocio.materiales.find((m) => m.id === 'acrilico');
       <div class="aparece mt-10 flex min-h-28 text-base sm:mt-14 sm:text-lg" role="list">
         <div
           role="listitem"
-          class="flex flex-col justify-between bg-acento p-4 text-fondo sm:p-6"
+          class="flex flex-col justify-between bg-acento p-4 text-sobre-acento sm:p-6"
           style={{ width: `${abono}%` }}
         >
           <span class="font-display text-3xl sm:text-5xl">{abono}%</span>
@@ -283,12 +289,15 @@ const materialAcrilico = negocio.materiales.find((m) => m.id === 'acrilico');
   </section>
 
   {/* 7 · Cierre: vuelve la pared de color. */}
-  <section class="bg-acento text-fondo" aria-labelledby="cierre">
+  <section class="bg-acento text-sobre-acento" aria-labelledby="cierre">
     <div class="mx-auto max-w-6xl px-4 py-[clamp(4rem,14vw,9rem)]">
       <h2 id="cierre" class="texto-cartel max-w-[10ch]">
         ¿Tienes la foto?
       </h2>
-      <a href="/crear" class="boton mt-10 bg-texto text-fondo hover:bg-texto/85">
+      <a
+        href="/crear"
+        class="boton mt-10 bg-sobre-acento text-acento hover:outline-2 hover:outline-offset-2 hover:outline-sobre-acento"
+      >
         Crear mi cuadro
       </a>
     </div>

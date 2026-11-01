@@ -3,6 +3,8 @@ import { obtenerAlmacen } from '../../lib/almacen';
 import { formatearPesos } from '../../lib/formato';
 import { ETIQUETAS_ESTADO, saldoPendiente, type Pedido } from '../../lib/pedidos';
 import { restaurarPrecios } from '../../stores/precios';
+import { restaurarColores } from '../../stores/marca';
+import EditorColores from './EditorColores';
 import EditorPedido from './EditorPedido';
 import EditorPrecios from './EditorPrecios';
 
@@ -32,6 +34,7 @@ export default function Taller() {
     }
     await obtenerAlmacen().restaurarDemo();
     restaurarPrecios();
+    restaurarColores();
     setPreciosVersion((v) => v + 1);
     setSeleccionado(null);
     setConfirmarRestaurar(false);
@@ -89,7 +92,7 @@ export default function Taller() {
             {confirmarRestaurar ? 'Toca otra vez para confirmar' : 'Restaurar datos de ejemplo'}
           </button>
           <p className="mt-1 text-xs text-texto-suave">
-            Vuelve a los 3 pedidos de ejemplo y a los precios de negocio.ts.
+            Vuelve a los 3 pedidos de ejemplo y a los precios y colores de negocio.ts.
           </p>
         </div>
         <div>
@@ -115,6 +118,19 @@ export default function Taller() {
           Los cambios se ven al instante en /formatos, el configurador y el pedido.
         </p>
         <EditorPrecios key={preciosVersion} />
+      </section>
+
+      <section aria-labelledby="colores-titulo" id="colores" className="scroll-mt-6">
+        <h2
+          id="colores-titulo"
+          className="mb-1 font-display text-3xl font-semibold text-acento-fuerte"
+        >
+          Colores de la marca
+        </h2>
+        <p className="mb-4 text-texto-suave">
+          Elige una paleta o tus propios colores: todo el sitio cambia al instante.
+        </p>
+        <EditorColores key={preciosVersion} />
       </section>
     </div>
   );

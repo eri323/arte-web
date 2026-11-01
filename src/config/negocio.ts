@@ -35,6 +35,10 @@ export interface ColoresMarca {
   acento: string;
   /** Hover del botón y texto de acento en tamaño normal (contraste AA sobre el fondo). */
   acentoFuerte: string;
+  /** Texto encima del color de firma (botones, portada). Se elige el que más contraste dé. */
+  sobreAcento: string;
+  /** Botón con el cursor encima: se aleja del texto del botón, así el contraste sube. */
+  acentoHover: string;
   /** Bordes y divisores. */
   linea: string;
   lineaFuerte: string;
@@ -91,6 +95,8 @@ export const negocio: Negocio = {
       textoSuave: '#5c4c45',
       acento: '#ca3517',
       acentoFuerte: '#a52110',
+      sobreAcento: '#f4efe7',
+      acentoHover: '#a52110',
       linea: '#23181426',
       lineaFuerte: '#23181440',
       cinta: '#e7d2a0',

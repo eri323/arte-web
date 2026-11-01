@@ -106,6 +106,8 @@ Si cambias el nombre o los colores, actualiza también la constante `marca` de `
 
 Si cambias los colores, corre `npm run test:e2e`: axe avisa si algún texto queda sin contraste suficiente.
 
+En la demo los colores también se pueden probar sin tocar código: `/taller` → «Colores de la marca» (paletas de ejemplo o colores propios, con revisión de contraste). Se guardan en el navegador; para dejarlos fijos, cópialos a `negocio.marca.colores`.
+
 El sistema visual (paleta, tipografía, componentes y reglas) está en [`DESIGN.md`](DESIGN.md), y la marca y su público en [`PRODUCT.md`](PRODUCT.md). Sirve también como base para otro tipo de tienda (por ejemplo ropa): se cambian textos, fotos y colores en `negocio.ts`.
 
 ## Supuestos

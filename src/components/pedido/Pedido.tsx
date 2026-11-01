@@ -151,7 +151,7 @@ export default function Pedido() {
           )}
           <a
             href={`/seguimiento?numero=${encodeURIComponent(confirmado.numero)}`}
-            className="mt-4 inline-flex min-h-11 items-center rounded-sm bg-acento px-6 font-medium text-fondo hover:bg-acento-fuerte"
+            className="mt-4 inline-flex min-h-11 items-center rounded-sm bg-acento px-6 font-medium text-sobre-acento hover:bg-acento-hover"
           >
             Ver el seguimiento
           </a>
@@ -170,7 +170,7 @@ export default function Pedido() {
         <p>Tu pedido está vacío.</p>
         <a
           href="/crear"
-          className="mt-4 inline-flex min-h-11 items-center rounded-sm bg-acento px-6 font-medium text-fondo hover:bg-acento-fuerte"
+          className="mt-4 inline-flex min-h-11 items-center rounded-sm bg-acento px-6 font-medium text-sobre-acento hover:bg-acento-hover"
         >
           Crear mi cuadro
         </a>
@@ -352,7 +352,7 @@ export default function Pedido() {
           <button
             type="submit"
             disabled={!numero}
-            className="inline-flex min-h-11 items-center justify-center rounded-sm bg-acento px-6 font-medium text-fondo hover:bg-acento-fuerte disabled:opacity-50"
+            className="inline-flex min-h-11 items-center justify-center rounded-sm bg-acento px-6 font-medium text-sobre-acento hover:bg-acento-hover disabled:opacity-50"
           >
             Pedir por WhatsApp
           </button>

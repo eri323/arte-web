@@ -10,6 +10,8 @@
   --color-texto-suave: var(--marca-texto-suave);
   --color-acento: var(--marca-acento);
   --color-acento-fuerte: var(--marca-acento-fuerte);
+  --color-sobre-acento: var(--marca-sobre-acento);
+  --color-acento-hover: var(--marca-acento-hover);
   --color-linea: var(--marca-linea);
   --color-linea-fuerte: var(--marca-linea-fuerte);
   --color-cinta: var(--marca-cinta);

@@ -115,6 +115,8 @@ Cal, tinta y un bermellón de afiche. Estrategia **Committed**: el bermellón cu
 
 **La regla del texto quemado.** El texto de acento en tamaño normal va en bermellón quemado; el bermellón claro solo en texto de 24 px o más, o como fondo.
 
+**La regla de la paleta editable.** El taller solo elige tres colores (firma, pared y texto) en `/taller`. El resto (`superficie`, `textoSuave`, `acentoFuerte`, `sobreAcento`, `acentoHover`, líneas) lo deriva `src/lib/paleta.ts` para que todo pase AA, y una combinación ilegible no se guarda. Por eso ningún componente debe asumir que el texto es oscuro o que el acento es rojo: texto sobre el color de firma va en `sobre-acento`, y el hover de los botones en `acento-hover`.
+
 ## 3. Typography
 
 **Familia única:** Archivo Variable (Omnibus-Type), con ejes de peso 100–900 y ancho 62–125%.
@@ -150,7 +152,7 @@ La interfaz es plana: paneles, campos y botones no tienen sombra; se separan por
 
 - **Shape:** esquinas casi rectas (2px), alto mínimo 48px.
 - **Primary:** bermellón con texto cal, peso 700, ancho 110%. Hover: bermellón quemado. Al presionar baja 1px.
-- **Sobre color:** en la portada y el cierre (fondo bermellón) el botón es tinta con texto cal.
+- **Sobre color:** en la portada y el cierre (fondo bermellón) el botón invierte el par: fondo `sobreAcento` (cal) y texto bermellón. Así funciona con cualquier paleta que elija el taller. Hover: contorno de 2px.
 - **Secundario:** enlace subrayado grueso (2px, separado 4px), sin caja.
 - **Focus:** contorno de 3px en tinta (o cal sobre bermellón) con separación de 3px.
 

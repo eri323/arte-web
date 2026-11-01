@@ -144,7 +144,7 @@ export default function EditorPedido({ pedido, onGuardar }: Props) {
             type="button"
             onClick={avanzar}
             disabled={bloqueoEnvio || (motivo !== null && !motivo.ok)}
-            className="inline-flex min-h-11 items-center justify-center rounded-sm bg-acento px-6 font-medium text-fondo hover:bg-acento-fuerte disabled:opacity-50"
+            className="inline-flex min-h-11 items-center justify-center rounded-sm bg-acento px-6 font-medium text-sobre-acento hover:bg-acento-hover disabled:opacity-50"
           >
             {textoAvance}
           </button>

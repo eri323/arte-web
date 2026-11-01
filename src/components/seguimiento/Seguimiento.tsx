@@ -187,7 +187,7 @@ export default function Seguimiento() {
         </label>
         <button
           type="submit"
-          className="inline-flex min-h-11 items-center justify-center rounded-sm bg-acento px-6 font-medium text-fondo hover:bg-acento-fuerte"
+          className="inline-flex min-h-11 items-center justify-center rounded-sm bg-acento px-6 font-medium text-sobre-acento hover:bg-acento-hover"
         >
           Buscar
         </button>

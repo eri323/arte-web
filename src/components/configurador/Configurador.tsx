@@ -345,7 +345,7 @@ export default function Configurador() {
             type="button"
             onClick={agregar}
             disabled={!foto || !recorte}
-            className="mt-4 inline-flex min-h-11 w-full items-center justify-center rounded-sm bg-acento px-6 font-medium text-fondo hover:bg-acento-fuerte disabled:cursor-not-allowed disabled:opacity-50"
+            className="mt-4 inline-flex min-h-11 w-full items-center justify-center rounded-sm bg-acento px-6 font-medium text-sobre-acento hover:bg-acento-hover disabled:cursor-not-allowed disabled:opacity-50"
           >
             Agregar al pedido
           </button>
