@@ -1,0 +1,154 @@
+import { describe, expect, it } from 'vitest';
+import { negocio } from '../config/negocio';
+import { formatearPesos } from './formato';
+import { calcularDesglose, calcularLineaMedida, sugerenciaPromocion } from './precios';
+
+const medida = (id: string) => {
+  const m = negocio.medidas.find((x) => x.id === id);
+  if (!m) throw new Error(id);
+  return m;
+};
+
+describe('calcularLineaMedida', () => {
+  it.each([
+    ['20x27', 4, 120000],
+    ['20x27', 5, 75000],
+    ['20x27', 6, 90000],
+    ['30x40', 2, 120000],
+    ['30x40', 3, 120000],
+    ['45x60', 1, 80000],
+    ['45x60', 2, 130000],
+    ['45x60', 3, 210000],
+    ['45x60', 4, 260000],
+    ['60x80', 2, 260000],
+    ['120x160', 1, 330000],
+  ])('%s × %i = %i', (id, cantidad, total) => {
+    expect(calcularLineaMedida(medida(id), cantidad).total).toBe(total);
+  });
+
+  it('el descuento es subtotal − total', () => {
+    expect(calcularLineaMedida(medida('30x40'), 3)).toEqual({
+      medidaId: '30x40',
+      cantidad: 3,
+      subtotal: 180000,
+      descuento: 60000,
+      total: 120000,
+    });
+  });
+
+  it.each([0, -1, 1.5, Number.NaN])('rechaza cantidad %s', (cantidad) => {
+    expect(() => calcularLineaMedida(medida('30x40'), cantidad)).toThrow();
+  });
+});
+
+describe('calcularDesglose', () => {
+  it('suma ítems de la misma medida con fotos distintas para la promoción', () => {
+    const d = calcularDesglose(
+      [
+        { medidaId: '20x27', cantidad: 2 },
+        { medidaId: '20x27', cantidad: 3 },
+      ],
+      negocio.medidas,
+      50,
+    );
+    expect(d.lineas).toHaveLength(1);
+    expect(d.subtotal).toBe(150000);
+    expect(d.descuento).toBe(75000);
+    expect(d.total).toBe(75000);
+  });
+
+  it('no combina medidas distintas', () => {
+    const d = calcularDesglose(
+      [
+        { medidaId: '30x40', cantidad: 2 },
+        { medidaId: '45x60', cantidad: 1 },
+      ],
+      negocio.medidas,
+      50,
+    );
+    expect(d.lineas.map((l) => [l.medidaId, l.total])).toEqual([
+      ['30x40', 120000],
+      ['45x60', 80000],
+    ]);
+    expect(d.descuento).toBe(0);
+    expect(d.total).toBe(200000);
+  });
+
+  it('calcula abono redondeado hacia arriba y saldo', () => {
+    const d = calcularDesglose([{ medidaId: '45x60', cantidad: 3 }], negocio.medidas, 50);
+    expect(d.total).toBe(210000);
+    expect(d.abono).toBe(105000);
+    expect(d.saldo).toBe(105000);
+    const impar = calcularDesglose(
+      [{ medidaId: '20x27', cantidad: 1 }],
+      [{ ...medida('20x27'), precio: 30001 }],
+      50,
+    );
+    expect(impar.abono).toBe(15001);
+    expect(impar.saldo).toBe(15000);
+  });
+
+  it('carrito vacío da todo en cero', () => {
+    expect(calcularDesglose([], negocio.medidas, 50)).toEqual({
+      lineas: [],
+      subtotal: 0,
+      descuento: 0,
+      total: 0,
+      abono: 0,
+      saldo: 0,
+    });
+  });
+
+  it('rechaza una medida desconocida', () => {
+    expect(() =>
+      calcularDesglose([{ medidaId: '1x1', cantidad: 1 }], negocio.medidas, 50),
+    ).toThrow();
+  });
+
+  it('ordena las líneas como la lista de medidas', () => {
+    const d = calcularDesglose(
+      [
+        { medidaId: '60x80', cantidad: 1 },
+        { medidaId: '20x27', cantidad: 1 },
+      ],
+      negocio.medidas,
+      50,
+    );
+    expect(d.lineas.map((l) => l.medidaId)).toEqual(['20x27', '60x80']);
+  });
+});
+
+describe('sugerenciaPromocion', () => {
+  it('2 de 30×40 → agrega 1', () => {
+    expect(sugerenciaPromocion(medida('30x40'), 2)).toEqual({
+      faltan: 1,
+      mensaje: `Agrega 1 más de 30×40 y pagas ${formatearPesos(40000)} c/u`,
+    });
+  });
+
+  it('1 de 45×60 → paquete', () => {
+    expect(sugerenciaPromocion(medida('45x60'), 1)).toEqual({
+      faltan: 1,
+      mensaje: `Agrega 1 más de 45×60 y llevas 2 por ${formatearPesos(130000)}`,
+    });
+  });
+
+  it('3 de 45×60 → agrega 1 para otro paquete', () => {
+    expect(sugerenciaPromocion(medida('45x60'), 3)?.faltan).toBe(1);
+  });
+
+  it('3 de 20×27 → agrega 2', () => {
+    expect(sugerenciaPromocion(medida('20x27'), 3)?.faltan).toBe(2);
+  });
+
+  it.each([
+    ['30x40', 3],
+    ['30x40', 7],
+    ['45x60', 2],
+    ['45x60', 4],
+    ['60x80', 1],
+    ['30x40', 0],
+  ])('%s con %i → sin sugerencia', (id, cantidad) => {
+    expect(sugerenciaPromocion(medida(id), cantidad)).toBeNull();
+  });
+});

@@ -423,7 +423,7 @@ Completan huecos de las secciones anteriores. Mandan sobre ellas si hay duda.
 ## 19. Registro de avance (actualízalo al cerrar cada hito)
 
 - [x] H0: base del proyecto
-- [ ] H1: lógica pura
+- [x] H1: lógica pura
 - [ ] H2: páginas de contenido
 - [ ] H3: configurador
 - [ ] H4: pedido
