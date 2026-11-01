@@ -32,7 +32,7 @@ Todo corre en el navegador. **La foto del cliente nunca sale de su equipo.**
 | H1 · Lógica pura (precios, resolución, WhatsApp, pedidos) | ✅        |
 | H2 · Páginas de contenido                                 | ✅        |
 | H3 · Configurador                                         | ✅        |
-| H4 · Pedido                                               | Pendiente |
+| H4 · Pedido                                               | ✅        |
 | H5 · Seguimiento y panel                                  | Pendiente |
 | H6 · Pulido                                               | Pendiente |
 

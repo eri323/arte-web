@@ -426,6 +426,6 @@ Completan huecos de las secciones anteriores. Mandan sobre ellas si hay duda.
 - [x] H1: lógica pura
 - [x] H2: páginas de contenido
 - [x] H3: configurador
-- [ ] H4: pedido
+- [x] H4: pedido
 - [ ] H5: seguimiento y panel
 - [ ] H6: pulido

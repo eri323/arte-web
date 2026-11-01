@@ -1,11 +1,12 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
+import { irA } from './utilidades';
 
 const fixture = (nombre: string) => `tests/fixtures/${nombre}`;
 
 test.describe('configurador', () => {
   test('sube, recorta, elige medida, ve el aviso y agrega al pedido', async ({ page }) => {
-    await page.goto('/crear');
+    await irA(page, '/crear');
     await page.locator('input[type=file]').setInputFiles(fixture('retrato-12mp.jpg'));
     await expect(page.getByText('3024×4032 px')).toBeVisible();
 
@@ -49,7 +50,7 @@ test.describe('configurador', () => {
   });
 
   test('pequena.jpg en 60×80 da calidad baja', async ({ page }) => {
-    await page.goto('/crear');
+    await irA(page, '/crear');
     await page.locator('input[type=file]').setInputFiles(fixture('pequena.jpg'));
     await page.locator('input[name=medida][value="60x80"]').check({ force: true });
     await expect(page.getByText(/Calidad baja/)).toBeVisible();
@@ -59,13 +60,13 @@ test.describe('configurador', () => {
   });
 
   test('un HEIC que el navegador no abre muestra cómo cambiar el formato', async ({ page }) => {
-    await page.goto('/crear');
+    await irA(page, '/crear');
     await page.locator('input[type=file]').setInputFiles(fixture('falso.heic'));
     await expect(page.getByRole('alert')).toContainText('Tu foto está en formato HEIC');
   });
 
   test('rechaza un PDF', async ({ page }) => {
-    await page.goto('/crear');
+    await irA(page, '/crear');
     await page.locator('input[type=file]').setInputFiles(fixture('documento.pdf'));
     await expect(page.getByRole('alert')).toContainText('Sube una foto JPG, PNG o WebP');
   });
