@@ -15,7 +15,7 @@
     "lint": "eslint .",
     "format": "prettier --write .",
     "fixtures": "node scripts/generar-fixtures.mjs",
-    "test:e2e": "node scripts/generar-fixtures.mjs && playwright test"
+    "test:e2e": "playwright install chromium && node scripts/generar-fixtures.mjs && playwright test"
   },
   "dependencies": {
     "@astrojs/react": "7.1.2",
