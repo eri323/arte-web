@@ -7,7 +7,8 @@ const baseURL = `http://localhost:${puerto}`;
 export default defineConfig({
   testDir: 'tests/e2e',
   reporter: 'list',
-  use: { baseURL },
+  // Sin animaciones: axe revisa el estado final y no una sección a medio aparecer.
+  use: { baseURL, contextOptions: { reducedMotion: 'reduce' } },
   // Los dos proyectos usan Chromium para instalar un solo navegador.
   projects: [
     {
