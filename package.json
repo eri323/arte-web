@@ -15,7 +15,8 @@
     "lint": "eslint .",
     "format": "prettier --write .",
     "fixtures": "node scripts/generar-fixtures.mjs",
-    "test:e2e": "playwright install chromium && node scripts/generar-fixtures.mjs && playwright test"
+    "test:e2e": "playwright install chromium && node scripts/generar-fixtures.mjs && playwright test",
+    "og": "node scripts/generar-og.mjs"
   },
   "dependencies": {
     "@astrojs/react": "7.1.2",
@@ -24,8 +25,6 @@
     "@nanostores/persistent": "1.3.5",
     "@nanostores/react": "2.0.1",
     "@tailwindcss/vite": "4.3.3",
-    "@types/react": "19.3.0",
-    "@types/react-dom": "19.3.0",
     "astro": "7.4.4",
     "nanostores": "1.5.5",
     "react": "19.3.1",
@@ -38,6 +37,8 @@
     "@axe-core/playwright": "4.14.0",
     "@eslint/js": "10.0.1",
     "@playwright/test": "1.64.1",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
     "eslint": "10.14.0",
     "eslint-plugin-astro": "1.7.0",
     "prettier": "3.9.10",

@@ -2,7 +2,7 @@
 
 Contexto y reglas para Claude Code. **Léelo completo antes de escribir código.**
 
-- **Estado:** el repo `eri323/arte-web` está vacío. Empieza por el hito **H0** (sección 13).
+- **Estado:** H0 a H6 terminados (1-nov-2026). Ver el registro de avance (sección 19) y el README.
 - **Fecha de referencia:** noviembre de 2026.
 
 ---
@@ -428,4 +428,4 @@ Completan huecos de las secciones anteriores. Mandan sobre ellas si hay duda.
 - [x] H3: configurador
 - [x] H4: pedido
 - [x] H5: seguimiento y panel
-- [ ] H6: pulido
+- [x] H6: pulido

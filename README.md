@@ -26,17 +26,26 @@ Todo corre en el navegador. **La foto del cliente nunca sale de su equipo.**
 
 ## Estado
 
-| Hito                                                      | Estado    |
-| --------------------------------------------------------- | --------- |
-| H0 · Base del proyecto                                    | ✅        |
-| H1 · Lógica pura (precios, resolución, WhatsApp, pedidos) | ✅        |
-| H2 · Páginas de contenido                                 | ✅        |
-| H3 · Configurador                                         | ✅        |
-| H4 · Pedido                                               | ✅        |
-| H5 · Seguimiento y panel                                  | ✅        |
-| H6 · Pulido                                               | Pendiente |
+| Hito                                                      | Estado |
+| --------------------------------------------------------- | ------ |
+| H0 · Base del proyecto                                    | ✅     |
+| H1 · Lógica pura (precios, resolución, WhatsApp, pedidos) | ✅     |
+| H2 · Páginas de contenido                                 | ✅     |
+| H3 · Configurador                                         | ✅     |
+| H4 · Pedido                                               | ✅     |
+| H5 · Seguimiento y panel                                  | ✅     |
+| H6 · Pulido                                               | ✅     |
 
-Por ahora solo existe la portada provisional. Los enlaces del menú dan 404 hasta su hito.
+Lighthouse móvil (build local): `/` y `/formatos` en 100 en rendimiento, accesibilidad, buenas prácticas y SEO; `/crear`, 94 en rendimiento.
+
+## Probar la demo
+
+1. En `/crear`, sube una foto, elige 30×40 y cantidad 2: verás «Agrega 1 más de 30×40 y pagas $ 40.000 c/u».
+2. Agrega al pedido y en `/pedido` llena tus datos. Con `whatsapp.numero` vacío (modo demo) no se abre ningún chat: verás el mensaje que le llegaría al taller y tu número de pedido (`AE-1043`, `AE-1044`…).
+3. En `/seguimiento` busca ese número, o los de ejemplo `AE-1040`, `AE-1041` y `AE-1042`.
+4. En `/taller` cambia el estado, registra pagos o deja una nota, y vuelve al seguimiento para verlo. «Restaurar datos de ejemplo» deja todo como al principio.
+
+Los pedidos y los precios editados viven en el `localStorage` de tu navegador: otra persona, u otro navegador, no los ve.
 
 ## Stack
 
@@ -55,17 +64,18 @@ Abre `http://localhost:4321`.
 
 ### Comandos
 
-| Comando            | Qué hace                                                                             |
-| ------------------ | ------------------------------------------------------------------------------------ |
-| `npm run dev`      | Servidor local                                                                       |
-| `npm run build`    | Build estático en `dist/`                                                            |
-| `npm run preview`  | Sirve el build                                                                       |
-| `npm run check`    | Revisión de tipos (`astro check`)                                                    |
-| `npm run lint`     | ESLint                                                                               |
-| `npm run format`   | Prettier                                                                             |
-| `npm test`         | Pruebas unitarias (Vitest)                                                           |
-| `npm run test:e2e` | Pruebas e2e (Playwright). Instala Chromium y genera las imágenes de prueba si faltan |
-| `npm run fixtures` | Solo genera las imágenes de prueba en `tests/fixtures/`                              |
+| Comando            | Qué hace                                                                                                                |
+| ------------------ | ----------------------------------------------------------------------------------------------------------------------- |
+| `npm run dev`      | Servidor local                                                                                                          |
+| `npm run build`    | Build estático en `dist/`                                                                                               |
+| `npm run preview`  | Sirve el build                                                                                                          |
+| `npm run check`    | Revisión de tipos (`astro check`)                                                                                       |
+| `npm run lint`     | ESLint                                                                                                                  |
+| `npm run format`   | Prettier                                                                                                                |
+| `npm test`         | Pruebas unitarias (Vitest)                                                                                              |
+| `npm run test:e2e` | Pruebas e2e (Playwright). Instala Chromium y genera las imágenes de prueba si faltan (la primera vez descarga Chromium) |
+| `npm run og`       | Regenera las imágenes Open Graph de `public/og/` (cámbialas si cambias la marca)                                        |
+| `npm run fixtures` | Solo genera las imágenes de prueba en `tests/fixtures/`                                                                 |
 
 La e2e levanta su propio servidor en el puerto **4322**, así que puede correr con `npm run dev` abierto.
 
@@ -91,6 +101,8 @@ Promociones disponibles:
 { tipo: 'paquete', cantidad: 2, precioPaquete: 130000 }     // "2 por $130.000"
 ```
 
+Si cambias el nombre o los colores, actualiza también la constante `marca` de `scripts/generar-og.mjs` y corre `npm run og` para regenerar las imágenes que se ven al compartir el link.
+
 Si cambias los colores, corre `npm run test:e2e`: axe avisa si algún texto queda sin contraste suficiente.
 
 ## Supuestos
@@ -105,6 +117,10 @@ Están marcados en el código con `// SUPUESTO:`. Los principales:
 - Abono = `Math.ceil(total × 50 / 100)`; saldo = total − abono.
 - El envío no tiene precio: se cotiza por WhatsApp según la ciudad.
 - Los pedidos se guardan en `localStorage`, así que solo se ven **en el mismo navegador** donde se hicieron.
+- El pedido solo avanza al estado siguiente. Confirmar el abono exige el 50 % pagado, marcar el saldo exige el total pagado y enviar exige transportadora y guía. En el panel, un toque registra el pago que falta y avanza.
+- «Agrega N más…» se muestra siempre que falte al menos una unidad para la promoción.
+- Los pedidos del cliente se numeran desde `AE-1043`, después de los tres de ejemplo.
+- Se puede agregar un cuadro con calidad baja: el aviso se muestra y la calidad viaja en el mensaje para que el taller decida.
 - El dominio en `astro.config.mjs` (`site`) es provisional.
 
 ## Despliegue
