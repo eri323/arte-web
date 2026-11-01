@@ -1,6 +1,6 @@
 // Genera las imágenes de prueba de tests/fixtures si no existen.
 // Son degradados planos para que pesen poco pero tengan las dimensiones exactas.
-import { existsSync, mkdirSync } from 'node:fs';
+import { existsSync, mkdirSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import sharp from 'sharp';
@@ -27,4 +27,13 @@ for (const { nombre, ancho, alto } of fixtures) {
 
   await sharp(Buffer.from(svg)).jpeg({ quality: 70 }).toFile(ruta);
   console.log(`Creado ${nombre} (${ancho}×${alto})`);
+}
+
+// Archivos que el configurador debe rechazar: un HEIC que el navegador no puede abrir y un PDF.
+for (const [nombre, contenido] of [
+  ['falso.heic', 'no es una imagen'],
+  ['documento.pdf', '%PDF-1.4'],
+]) {
+  const ruta = join(carpeta, nombre);
+  if (!existsSync(ruta)) writeFileSync(ruta, contenido);
 }

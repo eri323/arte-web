@@ -1,0 +1,18 @@
+---
+import Base from '../layouts/Base.astro';
+import Configurador from '../components/configurador/Configurador';
+---
+
+<Base
+  title="Crea tu cuadro"
+  description="Sube tu foto, recórtala, elige medida y material, mira cómo queda en tu pared y conoce el precio al instante."
+  ogImage="/og/crear.png"
+>
+  <section class="mx-auto max-w-6xl px-4 pt-10 pb-16">
+    <h1 class="font-serif text-4xl font-semibold text-dorado sm:text-5xl">Crea tu cuadro</h1>
+    <p class="mt-2 mb-8 max-w-prose text-texto-suave">
+      Tu foto se procesa en tu equipo: no se sube a ningún servidor.
+    </p>
+    <Configurador client:load />
+  </section>
+</Base>
