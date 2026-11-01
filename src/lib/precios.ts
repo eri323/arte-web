@@ -1,4 +1,4 @@
-import type { Medida } from '../config/negocio';
+import type { Medida, Promocion } from '../config/negocio';
 import { etiquetaMedida, formatearPesos } from './formato';
 import { calcularAbono } from './pedidos';
 
@@ -109,4 +109,41 @@ export function sugerenciaPromocion(medida: Medida, cantidad: number): Sugerenci
     faltan,
     mensaje: `Agrega ${faltan} más de ${etiqueta} y llevas ${promo.cantidad} por ${formatearPesos(promo.precioPaquete)}`,
   };
+}
+
+/** "3 o más a $ 40.000 c/u" o "2 por $ 130.000"; vacío si no hay promoción. */
+export function describirPromocion(promocion: Promocion | undefined): string {
+  if (!promocion) return '';
+  return promocion.tipo === 'desde'
+    ? `${promocion.cantidadMinima} o más a ${formatearPesos(promocion.precioUnitario)} c/u`
+    : `${promocion.cantidad} por ${formatearPesos(promocion.precioPaquete)}`;
+}
+
+/** Cambios hechos en el panel del taller. `promocion: null` quita la promoción. */
+export type EdicionesPrecios = Record<string, { precio?: number; promocion?: Promocion | null }>;
+
+const enteroPositivo = (n: unknown): n is number => Number.isInteger(n) && (n as number) > 0;
+
+function promocionValida(p: Promocion): boolean {
+  return p.tipo === 'desde'
+    ? enteroPositivo(p.cantidadMinima) && enteroPositivo(p.precioUnitario)
+    : p.tipo === 'paquete' &&
+        p.cantidad >= 2 &&
+        enteroPositivo(p.cantidad) &&
+        enteroPositivo(p.precioPaquete);
+}
+
+/** Aplica sobre las medidas de negocio.ts lo editado en el panel, ignorando valores inválidos. */
+export function aplicarEdiciones(medidas: Medida[], ediciones: EdicionesPrecios): Medida[] {
+  return medidas.map((medida) => {
+    const edicion = ediciones[medida.id];
+    if (!edicion) return medida;
+    const resultado: Medida = { ...medida };
+    if (enteroPositivo(edicion.precio)) resultado.precio = edicion.precio;
+    if (edicion.promocion === null) delete resultado.promocion;
+    else if (edicion.promocion && promocionValida(edicion.promocion)) {
+      resultado.promocion = edicion.promocion;
+    }
+    return resultado;
+  });
 }

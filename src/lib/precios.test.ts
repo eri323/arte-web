@@ -1,7 +1,13 @@
 import { describe, expect, it } from 'vitest';
 import { negocio } from '../config/negocio';
 import { formatearPesos } from './formato';
-import { calcularDesglose, calcularLineaMedida, sugerenciaPromocion } from './precios';
+import {
+  aplicarEdiciones,
+  calcularDesglose,
+  calcularLineaMedida,
+  describirPromocion,
+  sugerenciaPromocion,
+} from './precios';
 
 const medida = (id: string) => {
   const m = negocio.medidas.find((x) => x.id === id);
@@ -150,5 +156,48 @@ describe('sugerenciaPromocion', () => {
     ['30x40', 0],
   ])('%s con %i → sin sugerencia', (id, cantidad) => {
     expect(sugerenciaPromocion(medida(id), cantidad)).toBeNull();
+  });
+});
+
+describe('describirPromocion', () => {
+  it('describe las dos clases de promoción', () => {
+    expect(describirPromocion(medida('30x40').promocion)).toBe(
+      `3 o más a ${formatearPesos(40000)} c/u`,
+    );
+    expect(describirPromocion(medida('45x60').promocion)).toBe(`2 por ${formatearPesos(130000)}`);
+    expect(describirPromocion(undefined)).toBe('');
+  });
+});
+
+describe('aplicarEdiciones', () => {
+  it('sin ediciones deja las medidas iguales', () => {
+    expect(aplicarEdiciones(negocio.medidas, {})).toEqual(negocio.medidas);
+  });
+
+  it('cambia precio y promoción, y null quita la promoción', () => {
+    const r = aplicarEdiciones(negocio.medidas, {
+      '30x40': { precio: 65000 },
+      '45x60': { promocion: null },
+      '60x80': { promocion: { tipo: 'desde', cantidadMinima: 2, precioUnitario: 110000 } },
+    });
+    const porId = Object.fromEntries(r.map((m) => [m.id, m]));
+    expect(porId['30x40'].precio).toBe(65000);
+    expect(porId['30x40'].promocion).toEqual(medida('30x40').promocion);
+    expect(porId['45x60'].promocion).toBeUndefined();
+    expect(porId['60x80'].promocion?.tipo).toBe('desde');
+  });
+
+  it('ignora valores inválidos y medidas que no existen', () => {
+    const r = aplicarEdiciones(negocio.medidas, {
+      '30x40': { precio: 10.5 },
+      '20x27': { precio: -1, promocion: { tipo: 'paquete', cantidad: 0, precioPaquete: 1 } },
+      '1x1': { precio: 1 },
+    });
+    expect(r).toEqual(negocio.medidas);
+  });
+
+  it('no muta las medidas originales', () => {
+    aplicarEdiciones(negocio.medidas, { '30x40': { precio: 1000 } });
+    expect(medida('30x40').precio).toBe(60000);
   });
 });

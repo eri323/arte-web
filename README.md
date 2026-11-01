@@ -30,7 +30,7 @@ Todo corre en el navegador. **La foto del cliente nunca sale de su equipo.**
 | --------------------------------------------------------- | --------- |
 | H0 · Base del proyecto                                    | ✅        |
 | H1 · Lógica pura (precios, resolución, WhatsApp, pedidos) | ✅        |
-| H2 · Páginas de contenido                                 | Pendiente |
+| H2 · Páginas de contenido                                 | ✅        |
 | H3 · Configurador                                         | Pendiente |
 | H4 · Pedido                                               | Pendiente |
 | H5 · Seguimiento y panel                                  | Pendiente |

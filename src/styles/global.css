@@ -22,3 +22,9 @@
     font-family: var(--font-sans);
   }
 }
+
+/* Cormorant usa números de estilo antiguo; en medidas y precios se leen mejor alineados. */
+@utility font-serif {
+  font-family: var(--font-serif);
+  font-variant-numeric: lining-nums;
+}

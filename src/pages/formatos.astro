@@ -1,0 +1,54 @@
+---
+import Base from '../layouts/Base.astro';
+import EscenaPared from '../components/escena/EscenaPared';
+import TablaPrecios from '../components/formatos/TablaPrecios';
+import { negocio } from '../config/negocio';
+import { etiquetaMedida } from '../lib/formato';
+
+const contornos = negocio.medidas.map((m) => ({
+  anchoCm: m.anchoCm,
+  altoCm: m.altoCm,
+  etiqueta: etiquetaMedida(m),
+}));
+---
+
+<Base
+  title="Medidas y precios"
+  description="Medidas, precios y promociones de los cuadros en MDF y acrílico, con comparación de tamaños a escala."
+  ogImage="/og/formatos.png"
+>
+  <section class="mx-auto max-w-6xl px-4 pt-12 pb-10">
+    <h1 class="font-serif text-4xl font-semibold text-dorado sm:text-5xl">Medidas y precios</h1>
+    <p class="mt-3 max-w-prose text-texto-suave">
+      Precio por cuadro, igual en MDF y en acrílico, en vertical u horizontal. Las promociones se
+      aplican por medida, aunque cada cuadro tenga una foto distinta.
+    </p>
+    <div class="mt-8">
+      <TablaPrecios client:idle />
+    </div>
+    <p class="mt-4 text-sm text-texto-suave">Envío: {negocio.envio.texto}.</p>
+  </section>
+
+  <section aria-labelledby="escala" class="border-t border-white/10 bg-superficie">
+    <div class="mx-auto max-w-6xl px-4 py-12">
+      <h2 id="escala" class="font-serif text-3xl font-semibold text-dorado">
+        Los tamaños, a escala
+      </h2>
+      <p class="mt-2 max-w-prose text-texto-suave">
+        Cada contorno es una medida en vertical, sobre un sofá de 200 cm de ancho.
+      </p>
+      <div class="mt-6 max-w-3xl">
+        <EscenaPared
+          contornos={contornos}
+          titulo="Comparación a escala de las medidas sobre un sofá de 200 cm"
+        />
+      </div>
+      <a
+        href="/crear"
+        class="mt-8 inline-flex min-h-11 items-center rounded-full bg-dorado px-6 font-medium text-fondo hover:bg-dorado-oscuro"
+      >
+        Crear mi cuadro
+      </a>
+    </div>
+  </section>
+</Base>

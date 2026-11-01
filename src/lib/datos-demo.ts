@@ -55,7 +55,7 @@ export function crearPedidosDemo(ahora: Date): Pedido[] {
         },
       ],
       total: 130000,
-      pagos: [{ monto: 65000, fecha: haceDias(ahora, 8), nota: 'Abono por Nequi' }],
+      pagos: [{ monto: 65000, fecha: haceDias(ahora, 8), nota: 'Abono por transferencia' }],
       estado: 'listo',
       historial: [
         { estado: 'recibido', fecha: haceDias(ahora, 9) },

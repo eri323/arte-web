@@ -424,7 +424,7 @@ Completan huecos de las secciones anteriores. Mandan sobre ellas si hay duda.
 
 - [x] H0: base del proyecto
 - [x] H1: lógica pura
-- [ ] H2: páginas de contenido
+- [x] H2: páginas de contenido
 - [ ] H3: configurador
 - [ ] H4: pedido
 - [ ] H5: seguimiento y panel

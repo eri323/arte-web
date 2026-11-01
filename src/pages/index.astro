@@ -1,23 +1,176 @@
 ---
 import Base from '../layouts/Base.astro';
+import ArteGenerado from '../components/ui/ArteGenerado.astro';
 import { negocio } from '../config/negocio';
+
+const pasos = [
+  {
+    titulo: 'Sube tu foto',
+    texto: 'Desde el celular. Te decimos si la calidad alcanza para la medida que quieres.',
+  },
+  {
+    titulo: 'Elige medida',
+    texto: 'Recorta, escoge MDF o acrílico y mira cómo queda en una pared a escala.',
+  },
+  {
+    titulo: 'Recibe tu cuadro',
+    texto: 'Confirmas por WhatsApp, pagas el abono y te lo enviamos a tu ciudad.',
+  },
+];
+
+const galeria = [
+  { diseno: 'atardecer', titulo: 'Atardecer' },
+  { diseno: 'montanas', titulo: 'Cordillera' },
+  { diseno: 'olas', titulo: 'Mar de fondo' },
+  { diseno: 'circulos', titulo: 'Órbitas' },
+  { diseno: 'bloques', titulo: 'Bloques' },
+  { diseno: 'hojas', titulo: 'Monte' },
+] as const;
+
+const preguntas = [
+  {
+    p: '¿Qué foto sirve?',
+    r: 'Casi cualquier foto del celular. Al subirla te mostramos si la calidad es buena, regular o baja para la medida que elijas, y cuál es la medida más grande que queda bien.',
+  },
+  {
+    p: '¿Mi foto se sube a algún servidor?',
+    r: 'No. La foto se procesa en tu propio celular o computador. Cuando confirmas el pedido, la adjuntas tú mismo en el chat de WhatsApp.',
+  },
+  {
+    p: '¿Cómo se paga?',
+    r: `Pagas un abono del ${negocio.pagos.porcentajeAbono}% para empezar y el resto cuando el cuadro esté listo, antes del envío. El taller te indica los medios de pago por WhatsApp.`,
+  },
+  {
+    p: '¿Cuánto cuesta el envío?',
+    r: `${negocio.envio.texto}. Enviamos a todo Colombia.`,
+  },
+  {
+    p: '¿Cómo sé en qué va mi pedido?',
+    r: 'Con tu número de pedido puedes consultar el estado, los pagos, el saldo y las notas del taller en la página de seguimiento.',
+  },
+];
 ---
 
 <Base
-  title="Inicio"
-  description={`${negocio.marca.eslogan}. Cuadros personalizados en MDF o acrílico con envío a todo Colombia.`}
+  title="Cuadros personalizados"
+  description={`${negocio.marca.eslogan}. Cuadros en MDF o acrílico a partir de tu foto, con envío a todo Colombia.`}
 >
-  <section class="mx-auto max-w-6xl px-4 py-16">
-    <h1 class="font-serif text-4xl font-semibold text-dorado sm:text-6xl">
+  <section class="mx-auto max-w-6xl px-4 pt-14 pb-16 sm:pt-20">
+    <p class="text-sm tracking-widest text-texto-suave uppercase">
+      MDF · Acrílico · Envíos a todo Colombia
+    </p>
+    <h1 class="mt-3 max-w-3xl font-serif text-4xl leading-tight font-semibold text-dorado sm:text-6xl">
       {negocio.marca.eslogan}
     </h1>
-    <p class="mt-4 max-w-prose text-lg">
-      Sube tu foto, elige la medida y recibe tu cuadro en MDF o acrílico en cualquier ciudad de
-      Colombia.
+    <p class="mt-5 max-w-prose text-lg">
+      Sube tu foto, recórtala, mira cómo queda en tu pared y pide tu cuadro por WhatsApp con el
+      precio ya calculado.
     </p>
+    <div class="mt-8 flex flex-wrap gap-3">
+      <a
+        href="/crear"
+        class="inline-flex min-h-11 items-center rounded-full bg-dorado px-6 font-medium text-fondo hover:bg-dorado-oscuro"
+      >
+        Crear mi cuadro
+      </a>
+      <a
+        href="/formatos"
+        class="inline-flex min-h-11 items-center rounded-full border border-dorado/60 px-6 font-medium text-texto hover:border-dorado"
+      >
+        Ver medidas y precios
+      </a>
+    </div>
+  </section>
+
+  <section aria-labelledby="como" class="border-t border-white/10 bg-superficie">
+    <div class="mx-auto max-w-6xl px-4 py-14">
+      <h2 id="como" class="font-serif text-3xl font-semibold text-dorado">
+        Cómo funciona
+      </h2>
+      <ol class="mt-8 grid gap-6 sm:grid-cols-3">
+        {pasos.map((paso, i) => (
+          <li class="rounded-lg border border-white/10 p-5">
+            <span class="font-serif text-4xl text-dorado">{i + 1}</span>
+            <h3 class="mt-2 text-lg font-semibold">{paso.titulo}</h3>
+            <p class="mt-1 text-texto-suave">{paso.texto}</p>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <section aria-labelledby="galeria" class="mx-auto max-w-6xl px-4 py-14">
+    <h2 id="galeria" class="font-serif text-3xl font-semibold text-dorado">
+      Así se ven en la pared
+    </h2>
+    <p class="mt-2 max-w-prose text-texto-suave">
+      Ejemplos de arte generado para esta demo. Tu cuadro se imprime con tu propia foto.
+    </p>
+    <div class="mt-8 grid grid-cols-2 gap-6 sm:grid-cols-3">
+      {galeria.map((g) => (
+        <ArteGenerado diseno={g.diseno} titulo={g.titulo} />
+      ))}
+    </div>
+  </section>
+
+  <section aria-labelledby="materiales" class="border-t border-white/10 bg-superficie">
+    <div class="mx-auto max-w-6xl px-4 py-14">
+      <h2 id="materiales" class="font-serif text-3xl font-semibold text-dorado">
+        Materiales
+      </h2>
+      <ul class="mt-8 grid gap-6 sm:grid-cols-2">
+        {negocio.materiales.map((m) => (
+          <li class="rounded-lg border border-white/10 p-5">
+            <h3 class="text-lg font-semibold">{m.nombre}</h3>
+            <p class="mt-1 text-texto-suave">{m.descripcion}</p>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <section aria-labelledby="pagos" class="mx-auto grid max-w-6xl gap-10 px-4 py-14 sm:grid-cols-2">
+    <div>
+      <h2 id="pagos" class="font-serif text-3xl font-semibold text-dorado">
+        Pagas {negocio.pagos.porcentajeAbono}% y {100 - negocio.pagos.porcentajeAbono}%
+      </h2>
+      <p class="mt-3 text-texto-suave">
+        Un abono del {negocio.pagos.porcentajeAbono}% para empezar la producción y el saldo cuando
+        tu cuadro esté listo, antes de enviarlo. Ves cada pago en el seguimiento de tu pedido.
+      </p>
+    </div>
+    <div>
+      <h2 class="font-serif text-3xl font-semibold text-dorado">Envíos a todo Colombia</h2>
+      <p class="mt-3 text-texto-suave">{negocio.envio.texto}.</p>
+    </div>
+  </section>
+
+  <section aria-labelledby="faq" class="border-t border-white/10 bg-superficie">
+    <div class="mx-auto max-w-3xl px-4 py-14">
+      <h2 id="faq" class="font-serif text-3xl font-semibold text-dorado">
+        Preguntas frecuentes
+      </h2>
+      <div class="mt-6 divide-y divide-white/10">
+        {preguntas.map(({ p, r }) => (
+          <details class="group py-2">
+            <summary class="flex min-h-11 cursor-pointer items-center justify-between gap-4 font-medium">
+              {p}
+              <span aria-hidden="true" class="text-dorado transition group-open:rotate-45">
+                +
+              </span>
+            </summary>
+            <p class="pb-3 text-texto-suave">{r}</p>
+          </details>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="mx-auto max-w-6xl px-4 py-16 text-center">
+    <h2 class="font-serif text-3xl font-semibold text-dorado">¿Tienes la foto?</h2>
     <a
       href="/crear"
-      class="mt-8 inline-flex min-h-11 items-center rounded-full bg-dorado px-6 font-medium text-fondo hover:bg-dorado-oscuro"
+      class="mt-6 inline-flex min-h-11 items-center rounded-full bg-dorado px-6 font-medium text-fondo hover:bg-dorado-oscuro"
     >
       Crear mi cuadro
     </a>
