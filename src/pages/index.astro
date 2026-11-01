@@ -1,0 +1,25 @@
+---
+import Base from '../layouts/Base.astro';
+import { negocio } from '../config/negocio';
+---
+
+<Base
+  title="Inicio"
+  description={`${negocio.marca.eslogan}. Cuadros personalizados en MDF o acrílico con envío a todo Colombia.`}
+>
+  <section class="mx-auto max-w-6xl px-4 py-16">
+    <h1 class="font-serif text-4xl font-semibold text-dorado sm:text-6xl">
+      {negocio.marca.eslogan}
+    </h1>
+    <p class="mt-4 max-w-prose text-lg">
+      Sube tu foto, elige la medida y recibe tu cuadro en MDF o acrílico en cualquier ciudad de
+      Colombia.
+    </p>
+    <a
+      href="/crear"
+      class="mt-8 inline-flex min-h-11 items-center rounded-full bg-dorado px-6 font-medium text-fondo hover:bg-dorado-oscuro"
+    >
+      Crear mi cuadro
+    </a>
+  </section>
+</Base>

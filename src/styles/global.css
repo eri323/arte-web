@@ -1,0 +1,24 @@
+@import '@fontsource/cormorant-garamond/500.css';
+@import '@fontsource/cormorant-garamond/600.css';
+@import '@fontsource-variable/inter';
+@import 'tailwindcss';
+
+/* Los valores de --marca-* los declara Base.astro a partir de negocio.ts. */
+@theme inline {
+  --color-fondo: var(--marca-fondo);
+  --color-superficie: var(--marca-superficie);
+  --color-texto: var(--marca-texto);
+  --color-texto-suave: var(--marca-texto-suave);
+  --color-dorado: var(--marca-dorado);
+  --color-dorado-oscuro: var(--marca-dorado-oscuro);
+  --font-serif: 'Cormorant Garamond', Georgia, serif;
+  --font-sans: 'Inter Variable', system-ui, sans-serif;
+}
+
+@layer base {
+  body {
+    background-color: var(--color-fondo);
+    color: var(--color-texto);
+    font-family: var(--font-sans);
+  }
+}
