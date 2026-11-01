@@ -8,7 +8,13 @@ import sharp from 'sharp';
 const carpeta = join(dirname(fileURLToPath(import.meta.url)), '..', 'public', 'og');
 
 // Copiado de src/config/negocio.ts para no compilar TypeScript aquí.
-const marca = { nombre: 'Áurea Estudio', fondo: '#0f0d0b', texto: '#f2ede4', dorado: '#d4af6a' };
+const marca = {
+  nombre: 'Áurea Estudio',
+  acento: '#ca3517',
+  fondo: '#f4efe7',
+  texto: '#231814',
+  cinta: '#e7d2a0',
+};
 
 const paginas = [
   {
@@ -39,7 +45,7 @@ const paginas = [
 ];
 
 // Parte el título en líneas de hasta 20 caracteres para que no se monte sobre el cuadro.
-function lineas(texto, max = 20) {
+function lineas(texto, max = 18) {
   const resultado = [''];
   for (const palabra of texto.split(' ')) {
     const actual = resultado[resultado.length - 1];
@@ -53,22 +59,26 @@ const escapar = (t) => t.replace(/&/g, '&amp;').replace(/</g, '&lt;');
 
 function svg({ titulo, sub }) {
   return `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630">
-  <rect width="1200" height="630" fill="${marca.fondo}"/>
-  <rect x="790" y="95" width="300" height="400" fill="#1a1714" stroke="${marca.dorado}" stroke-width="3"/>
-  <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
-    <stop offset="0" stop-color="#f6c177"/><stop offset="1" stop-color="#56324a"/></linearGradient></defs>
-  <rect x="815" y="120" width="250" height="350" fill="url(#g)"/>
-  <circle cx="940" cy="300" r="60" fill="#fbe7c6"/>
-  <rect x="815" y="340" width="250" height="130" fill="#3a2234"/>
-  <text x="90" y="150" font-family="Georgia, serif" font-size="40" fill="${marca.dorado}">${escapar(marca.nombre)}</text>
+  <rect width="1200" height="630" fill="${marca.acento}"/>
+  <g transform="rotate(2 940 295)">
+    <rect x="800" y="100" width="280" height="390" fill="#0f3b4c" stroke="${marca.texto}" stroke-width="10"/>
+    ${[180, 240, 300, 360, 420]
+      .map(
+        (y, i) =>
+          `<path d="M805 ${y} Q 872 ${y - 36} 940 ${y} T 1075 ${y}" fill="none" stroke="${['#7fc8c2', '#5aa9b0', '#3d8a9b', '#2a6d82', '#1d566b'][i]}" stroke-width="18"/>`,
+      )
+      .join('')}
+  </g>
+  <rect x="895" y="82" width="90" height="30" fill="${marca.cinta}" transform="rotate(-3 940 97)"/>
+  <text x="90" y="140" font-family="Arial Black, Arial, sans-serif" font-weight="900" font-size="34" fill="${marca.fondo}">${escapar(marca.nombre)}</text>
   ${lineas(titulo)
     .map(
       (l, i) =>
-        `<text x="90" y="${260 + i * 72}" font-family="Georgia, serif" font-size="62" font-weight="bold" fill="${marca.texto}">${escapar(l)}</text>`,
+        `<text x="90" y="${260 + i * 72}" font-family="Arial Black, Arial, sans-serif" font-size="64" font-weight="900" fill="${marca.fondo}">${escapar(l)}</text>`,
     )
     .join('')}
-  <text x="90" y="${260 + lineas(titulo).length * 72 + 10}" font-family="Arial, sans-serif" font-size="30" fill="#b9b1a3">${escapar(sub)}</text>
-  <text x="90" y="560" font-family="Arial, sans-serif" font-size="22" fill="#b9b1a3">Demo · marca ficticia</text>
+  <text x="90" y="${260 + lineas(titulo).length * 72 + 10}" font-family="Arial, sans-serif" font-size="30" fill="${marca.fondo}">${escapar(sub)}</text>
+  <text x="90" y="560" font-family="Arial, sans-serif" font-size="22" fill="${marca.fondo}">Demo · marca ficticia</text>
 </svg>`;
 }
 

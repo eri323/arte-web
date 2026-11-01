@@ -23,9 +23,9 @@ interface Props {
 
 const porcentaje = negocio.pagos.porcentajeAbono;
 const ahora = () => new Date().toISOString();
-const campo = 'h-11 rounded-lg border border-white/15 bg-transparent px-3';
+const campo = 'h-11 rounded-lg border border-linea-fuerte bg-transparent px-3';
 const botonSecundario =
-  'inline-flex min-h-11 items-center justify-center rounded-full border border-dorado/60 px-5 font-medium hover:border-dorado disabled:opacity-50';
+  'inline-flex min-h-11 items-center justify-center rounded-sm border border-acento/60 px-5 font-medium hover:border-acento disabled:opacity-50';
 
 export default function EditorPedido({ pedido, onGuardar }: Props) {
   const [error, setError] = useState<string | null>(null);
@@ -101,9 +101,11 @@ export default function EditorPedido({ pedido, onGuardar }: Props) {
   }
 
   return (
-    <div className="flex flex-col gap-6 rounded-lg border border-dorado/40 bg-superficie p-5">
+    <div className="flex flex-col gap-6 rounded-lg border border-acento/40 bg-superficie p-5">
       <div>
-        <h3 className="font-serif text-2xl font-semibold text-dorado">Pedido {pedido.numero}</h3>
+        <h3 className="font-display text-2xl font-semibold text-acento-fuerte">
+          Pedido {pedido.numero}
+        </h3>
         <p className="text-texto-suave">
           {pedido.cliente.nombre} · {pedido.cliente.ciudad}
           {pedido.cliente.celular && ` · ${pedido.cliente.celular}`}
@@ -115,7 +117,7 @@ export default function EditorPedido({ pedido, onGuardar }: Props) {
       </div>
 
       {error && (
-        <p role="alert" className="rounded-lg border border-red-400/60 bg-red-400/10 p-3">
+        <p role="alert" className="rounded-lg border border-red-700/50 bg-red-600/10 p-3">
           {error}
         </p>
       )}
@@ -142,7 +144,7 @@ export default function EditorPedido({ pedido, onGuardar }: Props) {
             type="button"
             onClick={avanzar}
             disabled={bloqueoEnvio || (motivo !== null && !motivo.ok)}
-            className="inline-flex min-h-11 items-center justify-center rounded-full bg-dorado px-6 font-medium text-fondo hover:bg-dorado-oscuro disabled:opacity-50"
+            className="inline-flex min-h-11 items-center justify-center rounded-sm bg-acento px-6 font-medium text-fondo hover:bg-acento-fuerte disabled:opacity-50"
           >
             {textoAvance}
           </button>
@@ -160,7 +162,7 @@ export default function EditorPedido({ pedido, onGuardar }: Props) {
             onChange={(e) => setNota(e.target.value)}
             rows={2}
             maxLength={300}
-            className="rounded-lg border border-white/15 bg-transparent px-3 py-2"
+            className="rounded-lg border border-linea-fuerte bg-transparent px-3 py-2"
           />
         </label>
         <button type="submit" className={botonSecundario} disabled={!nota.trim()}>

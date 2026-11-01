@@ -3,12 +3,12 @@ import { negocio } from '../../config/negocio';
 import ContadorCarrito from '../pedido/ContadorCarrito';
 
 const claseEnlace =
-  'flex min-h-11 items-center px-2 text-sm whitespace-nowrap text-texto hover:text-dorado';
+  'flex min-h-11 items-center px-2 text-[0.9375rem] font-medium whitespace-nowrap text-texto underline-offset-[6px] decoration-2 hover:underline hover:decoration-acento';
 ---
 
-<header class="border-b border-white/10">
-  <div class="mx-auto flex max-w-6xl flex-col gap-1 px-4 py-2 sm:flex-row sm:items-center sm:justify-between">
-    <a href="/" class="flex min-h-11 items-center font-serif text-2xl font-semibold text-dorado">
+<header class="border-b border-linea bg-fondo">
+  <div class="mx-auto flex max-w-6xl flex-col px-4 sm:min-h-14 sm:flex-row sm:items-center sm:justify-between">
+    <a href="/" class="font-display flex min-h-11 items-center text-xl tracking-tight">
       {negocio.marca.nombre}
     </a>
     <nav aria-label="Principal" class="-mx-2 overflow-x-auto">

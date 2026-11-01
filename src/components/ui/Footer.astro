@@ -2,10 +2,12 @@
 import { negocio } from '../../config/negocio';
 ---
 
-<footer class="border-t border-white/10">
-  <div class="mx-auto max-w-6xl px-4 py-6 text-sm text-texto-suave">
-    <p class="font-serif text-lg text-dorado">{negocio.marca.nombre}</p>
-    <p>{negocio.marca.eslogan}</p>
-    <p class="mt-2">Demo · marca ficticia</p>
+<footer class="border-t border-linea">
+  <div class="mx-auto flex max-w-6xl flex-col gap-2 px-4 py-8 text-sm text-texto-suave sm:flex-row sm:items-end sm:justify-between">
+    <div>
+      <p class="font-display text-2xl text-texto">{negocio.marca.nombre}</p>
+      <p class="mt-1">{negocio.marca.eslogan}</p>
+    </div>
+    <p class="lapiz">Demo · marca ficticia</p>
   </div>
 </footer>

@@ -25,16 +25,42 @@ export interface Material {
 }
 
 export interface ColoresMarca {
+  /** La pared: fondo general. */
   fondo: string;
+  /** Bandas y paneles. */
   superficie: string;
   texto: string;
   textoSuave: string;
-  dorado: string;
-  doradoOscuro: string;
+  /** Color de firma: fondo de la portada y del cierre, botón principal. */
+  acento: string;
+  /** Hover del botón y texto de acento en tamaño normal (contraste AA sobre el fondo). */
+  acentoFuerte: string;
+  /** Bordes y divisores. */
+  linea: string;
+  lineaFuerte: string;
+  /** Solo decoración (la cinta de enmarcar). Nunca lleva texto. */
+  cinta: string;
+}
+
+export interface FotoVitrina {
+  /** Ruta dentro de public/, por ejemplo '/vitrina/portada.jpg'. */
+  src: string;
+  alt: string;
 }
 
 export interface Negocio {
   marca: { nombre: string; eslogan: string; prefijoPedido: string; colores: ColoresMarca };
+  /**
+   * Textos y fotos de la portada. Las fotos son propias del taller (nunca de terceros); si faltan,
+   * se muestra arte generado en SVG.
+   */
+  vitrina: {
+    titular: string;
+    bajada: string;
+    fotoPortada?: FotoVitrina;
+    /** Una foto por cuadro de la pared de galería, en el mismo orden. */
+    galeria?: FotoVitrina[];
+  };
   medidas: Medida[];
   materiales: Material[];
   orientaciones: Orientacion[];
@@ -56,14 +82,24 @@ export const negocio: Negocio = {
     nombre: 'Áurea Estudio',
     eslogan: 'Tus fotos, convertidas en cuadros',
     prefijoPedido: 'AE',
+    // Paleta «estudio de afiches de barrio» (ver DESIGN.md). Contraste verificado: texto sobre fondo
+    // 15.2:1, textoSuave sobre superficie 6.3:1, fondo sobre acento 4.6:1, acentoFuerte sobre fondo 6.5:1.
     colores: {
-      fondo: '#0f0d0b',
-      superficie: '#1a1714',
-      texto: '#f2ede4',
-      textoSuave: '#b9b1a3',
-      dorado: '#d4af6a',
-      doradoOscuro: '#a8843f',
+      fondo: '#f4efe7',
+      superficie: '#ebe1d5',
+      texto: '#231814',
+      textoSuave: '#5c4c45',
+      acento: '#ca3517',
+      acentoFuerte: '#a52110',
+      linea: '#23181426',
+      lineaFuerte: '#23181440',
+      cinta: '#e7d2a0',
     },
+  },
+  // SUPUESTO: textos de ejemplo de la marca ficticia; el taller real pone los suyos y sus fotos.
+  vitrina: {
+    titular: 'Tu foto, en tu pared.',
+    bajada: 'Cuadros en MDF y acrílico, a tu medida. Envíos a todo Colombia.',
   },
   medidas: [
     {

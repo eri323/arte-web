@@ -1,7 +1,10 @@
 ---
 import Base from '../layouts/Base.astro';
-import ArteGenerado from '../components/ui/ArteGenerado.astro';
+import Cuadro from '../components/ui/Cuadro.astro';
 import { negocio } from '../config/negocio';
+import { etiquetaMedida } from '../lib/formato';
+
+const { vitrina } = negocio;
 
 const pasos = [
   {
@@ -18,14 +21,28 @@ const pasos = [
   },
 ];
 
-const galeria = [
+// Pared de galería: las cuatro medidas más pequeñas, colgadas con el centro a la misma altura
+// (la regla de montaje de las galerías). Ancho y alto en % de la pared, así la escala es real.
+const obras = [
   { diseno: 'atardecer', titulo: 'Atardecer' },
-  { diseno: 'montanas', titulo: 'Cordillera' },
-  { diseno: 'olas', titulo: 'Mar de fondo' },
-  { diseno: 'circulos', titulo: 'Órbitas' },
   { diseno: 'bloques', titulo: 'Bloques' },
+  { diseno: 'montanas', titulo: 'Cordillera' },
   { diseno: 'hojas', titulo: 'Monte' },
 ] as const;
+const SEPARACION_CM = 10;
+const pequenas = [...negocio.medidas]
+  .sort((a, b) => a.anchoCm * a.altoCm - b.anchoCm * b.altoCm)
+  .slice(0, obras.length);
+// Orden para que la composición respire: mediana, pequeña, la más grande, chica-mediana.
+const orden = [2, 0, 3, 1].filter((i) => i < pequenas.length).map((i) => pequenas[i]!);
+const anchoPared = orden.reduce((s, m) => s + m.anchoCm, 0) + SEPARACION_CM * (orden.length - 1);
+const altoMax = Math.max(...orden.map((m) => m.altoCm));
+const pared = orden.map((m, i) => ({
+  medida: m,
+  obra: obras[i]!,
+  foto: vitrina.galeria?.[i],
+  anchoPct: (m.anchoCm / anchoPared) * 100,
+}));
 
 const preguntas = [
   {
@@ -49,130 +66,231 @@ const preguntas = [
     r: 'Con tu número de pedido puedes consultar el estado, los pagos, el saldo y las notas del taller en la página de seguimiento.',
   },
 ];
+
+const abono = negocio.pagos.porcentajeAbono;
+const medidaPortada = pequenas[2] ?? negocio.medidas[0]!;
+const materialMdf = negocio.materiales.find((m) => m.id === 'mdf');
+const materialAcrilico = negocio.materiales.find((m) => m.id === 'acrilico');
 ---
 
 <Base
   title="Cuadros personalizados"
   description={`${negocio.marca.eslogan}. Cuadros en MDF o acrílico a partir de tu foto, con envío a todo Colombia.`}
 >
-  <section class="mx-auto max-w-6xl px-4 pt-14 pb-16 sm:pt-20">
-    <p class="text-sm tracking-widest text-texto-suave uppercase">
-      MDF · Acrílico · Envíos a todo Colombia
-    </p>
-    <h1 class="mt-3 max-w-3xl font-serif text-4xl leading-tight font-semibold text-dorado sm:text-6xl">
-      {negocio.marca.eslogan}
-    </h1>
-    <p class="mt-5 max-w-prose text-lg">
-      Sube tu foto, recórtala, mira cómo queda en tu pared y pide tu cuadro por WhatsApp con el
-      precio ya calculado.
-    </p>
-    <div class="mt-8 flex flex-wrap gap-3">
-      <a
-        href="/crear"
-        class="inline-flex min-h-11 items-center rounded-full bg-dorado px-6 font-medium text-fondo hover:bg-dorado-oscuro"
-      >
-        Crear mi cuadro
-      </a>
-      <a
-        href="/formatos"
-        class="inline-flex min-h-11 items-center rounded-full border border-dorado/60 px-6 font-medium text-texto hover:border-dorado"
-      >
-        Ver medidas y precios
+  {/* 1 · Portada: una pantalla, una frase, un cuadro, un botón. */}
+  <section class="relative overflow-hidden bg-acento text-fondo" aria-labelledby="portada-titulo">
+    <div class="mx-auto grid min-h-[calc(100svh-5.75rem)] max-w-6xl content-between gap-8 px-4 pt-8 pb-10 sm:min-h-[calc(100svh-3.5rem)] md:grid-cols-[1.5fr_1fr] md:content-center md:items-center md:gap-12 md:py-16">
+      <h1 id="portada-titulo" class="texto-cartel entra-subiendo md:order-1">
+        {vitrina.titular}
+      </h1>
+
+      <div class="justify-self-end md:order-2 md:row-span-2 md:justify-self-center">
+        <div
+          class="entra-colgando w-[min(54vw,22rem)] rotate-2"
+          style="--retraso: 150ms; --giro-inicial: -6deg"
+        >
+          <Cuadro
+            diseno="olas"
+            titulo="Mar de fondo"
+            foto={vitrina.fotoPortada}
+            prioridad
+            aspecto={medidaPortada.anchoCm / medidaPortada.altoCm}
+            cinta
+          />
+        </div>
+        <p class="lapiz mt-4 flex items-center gap-2 text-fondo">
+          <span aria-hidden="true" class="h-px w-6 bg-fondo"></span>
+          {etiquetaMedida(medidaPortada)} · MDF
+        </p>
+      </div>
+
+      <div class="entra-subiendo md:order-3" style="--retraso: 250ms">
+        <p class="max-w-[28ch] text-lg leading-snug sm:text-xl">{vitrina.bajada}</p>
+        <div class="mt-6 flex flex-wrap items-center gap-x-6 gap-y-2">
+          <a href="/crear" class="boton bg-texto text-fondo hover:bg-texto/85">
+            Crear mi cuadro
+          </a>
+          <a href="/formatos" class="enlace-fuerte text-fondo">
+            Ver medidas y precios
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {/* 2 · Así se ven: pared de galería a escala real. */}
+  <section aria-labelledby="galeria" class="py-[clamp(4rem,12vw,8rem)]">
+    <div class="mx-auto max-w-6xl px-4">
+      <div class="flex flex-wrap items-end justify-between gap-x-8 gap-y-3">
+        <h2 id="galeria" class="font-display max-w-[14ch] text-[clamp(2rem,6.5vw,4rem)]">
+          Así se ven en la pared
+        </h2>
+        <p class="max-w-[38ch] text-texto-suave">
+          Cuatro medidas colgadas juntas, a escala real entre ellas. Arte de ejemplo: el tuyo lleva
+          tu foto.
+        </p>
+      </div>
+
+      <div class="aparece mt-12 rounded-sm bg-superficie px-[4%] pt-[7%] pb-[5%] sm:mt-16">
+        <ul
+          class="flex items-center justify-between"
+          style={{ aspectRatio: `${anchoPared} / ${altoMax}` }}
+        >
+          {pared.map(({ medida, obra, foto, anchoPct }) => (
+            <li class="flex h-full flex-col justify-center" style={{ width: `${anchoPct}%` }}>
+              <Cuadro
+                diseno={obra.diseno}
+                titulo={obra.titulo}
+                foto={foto}
+                aspecto={medida.anchoCm / medida.altoCm}
+                class="w-full"
+              />
+            </li>
+          ))}
+        </ul>
+        <ul class="mt-4 flex justify-between" aria-label="Medidas de los cuadros, en centímetros">
+          {pared.map(({ medida, anchoPct }) => (
+            <li
+              class="lapiz flex h-4 items-center gap-1 border-x border-acento-fuerte/70 text-acento-fuerte"
+              style={{ width: `${anchoPct}%` }}
+            >
+              <span aria-hidden="true" class="h-px flex-1 bg-acento-fuerte/50" />
+              {etiquetaMedida(medida)}
+              <span aria-hidden="true" class="h-px flex-1 bg-acento-fuerte/50" />
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <a href="/formatos" class="enlace-fuerte mt-6 text-acento-fuerte">
+        Todas las medidas y precios
       </a>
     </div>
   </section>
 
-  <section aria-labelledby="como" class="border-t border-white/10 bg-superficie">
-    <div class="mx-auto max-w-6xl px-4 py-14">
-      <h2 id="como" class="font-serif text-3xl font-semibold text-dorado">
+  {/* 3 · Cómo funciona: tres pasos, números grandes, sin cajas. */}
+  <section aria-labelledby="como" class="bg-superficie py-[clamp(4rem,12vw,8rem)]">
+    <div class="mx-auto max-w-6xl px-4">
+      <h2 id="como" class="font-display text-[clamp(2rem,6.5vw,4rem)]">
         Cómo funciona
       </h2>
-      <ol class="mt-8 grid gap-6 sm:grid-cols-3">
+      <ol class="mt-10 grid gap-x-10 gap-y-10 sm:mt-14 md:grid-cols-3">
         {pasos.map((paso, i) => (
-          <li class="rounded-lg border border-white/10 p-5">
-            <span class="font-serif text-4xl text-dorado">{i + 1}</span>
-            <h3 class="mt-2 text-lg font-semibold">{paso.titulo}</h3>
-            <p class="mt-1 text-texto-suave">{paso.texto}</p>
+          <li class="aparece border-t-2 border-texto pt-4">
+            <span
+              aria-hidden="true"
+              class="font-display block text-[clamp(4rem,14vw,7rem)] text-acento"
+            >
+              {i + 1}
+            </span>
+            <h3 class="mt-2 text-xl font-bold">{paso.titulo}</h3>
+            <p class="mt-1 max-w-[34ch] text-texto-suave">{paso.texto}</p>
           </li>
         ))}
       </ol>
     </div>
   </section>
 
-  <section aria-labelledby="galeria" class="mx-auto max-w-6xl px-4 py-14">
-    <h2 id="galeria" class="font-serif text-3xl font-semibold text-dorado">
-      Así se ven en la pared
-    </h2>
-    <p class="mt-2 max-w-prose text-texto-suave">
-      Ejemplos de arte generado para esta demo. Tu cuadro se imprime con tu propia foto.
-    </p>
-    <div class="mt-8 grid grid-cols-2 gap-6 sm:grid-cols-3">
-      {galeria.map((g) => (
-        <ArteGenerado diseno={g.diseno} titulo={g.titulo} />
-      ))}
-    </div>
-  </section>
-
-  <section aria-labelledby="materiales" class="border-t border-white/10 bg-superficie">
-    <div class="mx-auto max-w-6xl px-4 py-14">
-      <h2 id="materiales" class="font-serif text-3xl font-semibold text-dorado">
-        Materiales
+  {/* 4 · Materiales: la misma obra en MDF y en acrílico, lado a lado. */}
+  <section aria-labelledby="materiales" class="py-[clamp(4rem,12vw,8rem)]">
+    <div class="mx-auto max-w-6xl px-4">
+      <h2 id="materiales" class="font-display text-[clamp(2rem,6.5vw,4rem)]">
+        MDF o acrílico
       </h2>
-      <ul class="mt-8 grid gap-6 sm:grid-cols-2">
-        {negocio.materiales.map((m) => (
-          <li class="rounded-lg border border-white/10 p-5">
-            <h3 class="text-lg font-semibold">{m.nombre}</h3>
-            <p class="mt-1 text-texto-suave">{m.descripcion}</p>
-          </li>
-        ))}
-      </ul>
-    </div>
-  </section>
-
-  <section aria-labelledby="pagos" class="mx-auto grid max-w-6xl gap-10 px-4 py-14 sm:grid-cols-2">
-    <div>
-      <h2 id="pagos" class="font-serif text-3xl font-semibold text-dorado">
-        Pagas {negocio.pagos.porcentajeAbono}% y {100 - negocio.pagos.porcentajeAbono}%
-      </h2>
-      <p class="mt-3 text-texto-suave">
-        Un abono del {negocio.pagos.porcentajeAbono}% para empezar la producción y el saldo cuando
-        tu cuadro esté listo, antes de enviarlo. Ves cada pago en el seguimiento de tu pedido.
+      <p class="mt-3 max-w-[48ch] text-texto-suave">
+        La misma foto, dos acabados. Los dos cuestan lo mismo.
       </p>
-    </div>
-    <div>
-      <h2 class="font-serif text-3xl font-semibold text-dorado">Envíos a todo Colombia</h2>
-      <p class="mt-3 text-texto-suave">{negocio.envio.texto}.</p>
+      <div class="mt-10 grid grid-cols-2 gap-x-[6%] gap-y-10 sm:mt-14">
+        {[materialMdf, materialAcrilico].map(
+          (m, i) =>
+            m && (
+              <div class="aparece">
+                <div class:list={['mx-auto w-[86%]', i === 0 ? '-rotate-1' : 'rotate-1']}>
+                  <Cuadro diseno="circulos" material={m.id} aspecto={4 / 5} />
+                </div>
+                <h3 class="mt-8 text-xl font-bold sm:text-2xl">{m.nombre}</h3>
+                <p class="mt-1 max-w-[32ch] text-texto-suave">{m.descripcion}</p>
+              </div>
+            ),
+        )}
+      </div>
     </div>
   </section>
 
-  <section aria-labelledby="faq" class="border-t border-white/10 bg-superficie">
-    <div class="mx-auto max-w-3xl px-4 py-14">
-      <h2 id="faq" class="font-serif text-3xl font-semibold text-dorado">
+  {/* 5 · Pagos y envíos: la barra 50/50 explica el pago sin párrafos. */}
+  <section aria-labelledby="pagos" class="bg-superficie py-[clamp(4rem,12vw,8rem)]">
+    <div class="mx-auto max-w-6xl px-4">
+      <h2 id="pagos" class="font-display text-[clamp(2rem,6.5vw,4rem)]">
+        Pagas {abono}% y {100 - abono}%
+      </h2>
+      <div class="aparece mt-10 flex min-h-28 text-base sm:mt-14 sm:text-lg" role="list">
+        <div
+          role="listitem"
+          class="flex flex-col justify-between bg-acento p-4 text-fondo sm:p-6"
+          style={{ width: `${abono}%` }}
+        >
+          <span class="font-display text-3xl sm:text-5xl">{abono}%</span>
+          <span class="mt-3 font-semibold">Para empezar tu cuadro</span>
+        </div>
+        <div
+          role="listitem"
+          class="flex flex-col justify-between border-2 border-texto p-4 sm:p-6"
+          style={{ width: `${100 - abono}%` }}
+        >
+          <span class="font-display text-3xl sm:text-5xl">{100 - abono}%</span>
+          <span class="mt-3 font-semibold">Cuando esté listo, antes de enviarlo</span>
+        </div>
+      </div>
+      <div class="mt-12 grid gap-8 sm:grid-cols-2">
+        <p class="max-w-[42ch] text-texto-suave">
+          Cada pago queda registrado y lo ves en el{' '}
+          <a href="/seguimiento" class="font-semibold text-texto underline underline-offset-4">
+            seguimiento de tu pedido
+          </a>
+          .
+        </p>
+        <div>
+          <h3 class="text-xl font-bold">Envíos a todo Colombia</h3>
+          <p class="mt-1 text-texto-suave">{negocio.envio.texto}.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {/* 6 · Preguntas frecuentes. */}
+  <section aria-labelledby="faq" class="py-[clamp(4rem,12vw,8rem)]">
+    <div class="mx-auto grid max-w-6xl gap-8 px-4 md:grid-cols-[1fr_1.6fr]">
+      <h2 id="faq" class="font-display text-[clamp(2rem,6.5vw,4rem)]">
         Preguntas frecuentes
       </h2>
-      <div class="mt-6 divide-y divide-white/10">
+      <div class="divide-y divide-linea-fuerte border-y border-linea-fuerte">
         {preguntas.map(({ p, r }) => (
-          <details class="group py-2">
-            <summary class="flex min-h-11 cursor-pointer items-center justify-between gap-4 font-medium">
+          <details class="group">
+            <summary class="flex min-h-14 cursor-pointer list-none items-center justify-between gap-4 py-3 text-lg font-semibold [&::-webkit-details-marker]:hidden">
               {p}
-              <span aria-hidden="true" class="text-dorado transition group-open:rotate-45">
+              <span
+                aria-hidden="true"
+                class="font-display text-2xl text-acento-fuerte transition-transform duration-300 ease-expo group-open:rotate-45"
+              >
                 +
               </span>
             </summary>
-            <p class="pb-3 text-texto-suave">{r}</p>
+            <p class="max-w-[60ch] pb-5 text-texto-suave">{r}</p>
           </details>
         ))}
       </div>
     </div>
   </section>
 
-  <section class="mx-auto max-w-6xl px-4 py-16 text-center">
-    <h2 class="font-serif text-3xl font-semibold text-dorado">¿Tienes la foto?</h2>
-    <a
-      href="/crear"
-      class="mt-6 inline-flex min-h-11 items-center rounded-full bg-dorado px-6 font-medium text-fondo hover:bg-dorado-oscuro"
-    >
-      Crear mi cuadro
-    </a>
+  {/* 7 · Cierre: vuelve la pared de color. */}
+  <section class="bg-acento text-fondo" aria-labelledby="cierre">
+    <div class="mx-auto max-w-6xl px-4 py-[clamp(4rem,14vw,9rem)]">
+      <h2 id="cierre" class="texto-cartel max-w-[10ch]">
+        ¿Tienes la foto?
+      </h2>
+      <a href="/crear" class="boton mt-10 bg-texto text-fondo hover:bg-texto/85">
+        Crear mi cuadro
+      </a>
+    </div>
   </section>
 </Base>

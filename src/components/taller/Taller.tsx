@@ -42,7 +42,7 @@ export default function Taller() {
 
   return (
     <div className="flex flex-col gap-10">
-      <p role="note" className="rounded-lg border border-amber-300/50 bg-amber-300/10 p-4">
+      <p role="note" className="rounded-lg border border-amber-600/50 bg-amber-400/15 p-4">
         <strong>Panel demo sin login.</strong> En la versión real solo entra el taller con su
         usuario. Los cambios se guardan en este navegador.
       </p>
@@ -52,7 +52,7 @@ export default function Taller() {
         className="grid gap-6 lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)]"
       >
         <div>
-          <h2 id="pedidos" className="mb-3 font-serif text-3xl font-semibold text-dorado">
+          <h2 id="pedidos" className="mb-3 font-display text-3xl font-semibold text-acento-fuerte">
             Pedidos
           </h2>
           {pedidos === null ? (
@@ -65,7 +65,7 @@ export default function Taller() {
                     type="button"
                     onClick={() => setSeleccionado(p.numero)}
                     aria-pressed={p.numero === seleccionado}
-                    className="flex min-h-11 w-full flex-col rounded-lg border border-white/10 p-3 text-left hover:border-dorado/60 aria-pressed:border-dorado aria-pressed:bg-dorado/10"
+                    className="flex min-h-11 w-full flex-col rounded-lg border border-linea p-3 text-left hover:border-acento/60 aria-pressed:border-acento aria-pressed:bg-acento/10"
                   >
                     <span className="flex w-full justify-between gap-2">
                       <span className="font-semibold">{p.numero}</span>
@@ -84,7 +84,7 @@ export default function Taller() {
             type="button"
             onClick={restaurar}
             onBlur={() => setConfirmarRestaurar(false)}
-            className="mt-4 inline-flex min-h-11 items-center rounded-full border border-red-400/60 px-5 text-sm hover:border-red-400"
+            className="mt-4 inline-flex min-h-11 items-center rounded-sm border border-red-700/50 px-5 text-sm hover:border-red-700"
           >
             {confirmarRestaurar ? 'Toca otra vez para confirmar' : 'Restaurar datos de ejemplo'}
           </button>
@@ -100,7 +100,7 @@ export default function Taller() {
               onGuardar={guardar}
             />
           ) : (
-            <p className="rounded-lg border border-dashed border-white/15 p-6 text-texto-suave">
+            <p className="rounded-lg border border-dashed border-linea-fuerte p-6 text-texto-suave">
               Elige un pedido para cambiar su estado, registrar pagos o dejar una nota.
             </p>
           )}
@@ -108,7 +108,7 @@ export default function Taller() {
       </section>
 
       <section aria-labelledby="precios">
-        <h2 id="precios" className="mb-1 font-serif text-3xl font-semibold text-dorado">
+        <h2 id="precios" className="mb-1 font-display text-3xl font-semibold text-acento-fuerte">
           Precios y promociones
         </h2>
         <p className="mb-4 text-texto-suave">

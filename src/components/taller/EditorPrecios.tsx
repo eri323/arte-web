@@ -6,7 +6,7 @@ import { describirPromocion } from '../../lib/precios';
 import { $medidas, editarMedida, restaurarPrecios } from '../../stores/precios';
 
 type TipoPromo = 'ninguna' | Promocion['tipo'];
-const campo = 'h-11 w-full rounded-lg border border-white/15 bg-transparent px-3';
+const campo = 'h-11 w-full rounded-lg border border-linea-fuerte bg-transparent px-3';
 
 function FilaPrecio({ medida }: { medida: Medida }) {
   const etiqueta = etiquetaMedida(medida);
@@ -50,9 +50,12 @@ function FilaPrecio({ medida }: { medida: Medida }) {
   }
 
   return (
-    <fieldset className="grid gap-2 rounded-lg border border-white/10 p-3 sm:grid-cols-[6rem_1fr_1fr_1fr_1fr_auto] sm:items-end">
+    <fieldset className="grid gap-2 rounded-lg border border-linea p-3 sm:grid-cols-[6rem_1fr_1fr_1fr_1fr_auto] sm:items-end">
       <legend className="sr-only">Medida {etiqueta}</legend>
-      <p className="font-serif text-xl font-semibold text-dorado sm:self-center" aria-hidden="true">
+      <p
+        className="font-display text-xl font-semibold text-acento-fuerte sm:self-center"
+        aria-hidden="true"
+      >
         {etiqueta}
       </p>
       <label className="flex flex-col gap-1">
@@ -105,7 +108,7 @@ function FilaPrecio({ medida }: { medida: Medida }) {
       <button
         type="button"
         onClick={guardar}
-        className="inline-flex min-h-11 items-center justify-center rounded-full border border-dorado/60 px-5 font-medium hover:border-dorado"
+        className="inline-flex min-h-11 items-center justify-center rounded-sm border border-acento/60 px-5 font-medium hover:border-acento"
       >
         Guardar {etiqueta}
       </button>

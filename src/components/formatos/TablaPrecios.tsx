@@ -7,7 +7,7 @@ import { $medidas } from '../../stores/precios';
 export default function TablaPrecios() {
   const medidas = useStore($medidas);
   return (
-    <div className="overflow-x-auto rounded-lg border border-white/10">
+    <div className="overflow-x-auto rounded-lg border border-linea">
       <table className="w-full text-left text-sm sm:text-base">
         <caption className="sr-only">Medidas, precios y promociones</caption>
         <thead className="bg-superficie text-texto-suave">
@@ -25,8 +25,11 @@ export default function TablaPrecios() {
         </thead>
         <tbody>
           {medidas.map((m) => (
-            <tr key={m.id} className="border-t border-white/10">
-              <th scope="row" className="px-4 py-3 font-serif text-lg font-semibold text-dorado">
+            <tr key={m.id} className="border-t border-linea">
+              <th
+                scope="row"
+                className="px-4 py-3 font-display text-lg font-semibold text-acento-fuerte"
+              >
                 {etiquetaMedida(m)}
               </th>
               <td className="px-4 py-3 whitespace-nowrap">{formatearPesos(m.precio)}</td>

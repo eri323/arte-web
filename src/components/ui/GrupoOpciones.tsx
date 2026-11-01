@@ -39,7 +39,7 @@ export default function GrupoOpciones<T extends string>({
               onChange={() => onCambio(o.valor)}
               className="peer sr-only"
             />
-            <span className="flex min-h-11 flex-col justify-center rounded-lg border border-white/15 px-3 py-2 peer-checked:border-dorado peer-checked:bg-dorado/10 peer-focus-visible:ring-2 peer-focus-visible:ring-dorado">
+            <span className="flex min-h-11 flex-col justify-center rounded-lg border border-linea-fuerte px-3 py-2 peer-checked:border-acento peer-checked:bg-acento/10 peer-focus-visible:ring-2 peer-focus-visible:ring-acento">
               <span className="font-medium">{o.etiqueta}</span>
               {o.detalle && <span className="text-sm text-texto-suave">{o.detalle}</span>}
             </span>

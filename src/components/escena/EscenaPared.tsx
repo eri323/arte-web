@@ -76,8 +76,8 @@ export default function EscenaPared({ cuadro, contornos = [], titulo }: Props) {
           <stop offset="1" stopColor="#ddd3c4" />
         </linearGradient>
         <linearGradient id={`${id}-relleno`} x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0" stopColor="#d4af6a" />
-          <stop offset="1" stopColor="#5b4a33" />
+          <stop offset="0" stopColor="#e7d2a0" />
+          <stop offset="1" stopColor="#ca3517" />
         </linearGradient>
         <linearGradient id={`${id}-brillo`} x1="0" y1="0" x2="1" y2="1">
           <stop offset="0" stopColor="#ffffff" stopOpacity="0.45" />

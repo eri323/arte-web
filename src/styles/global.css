@@ -1,6 +1,5 @@
-@import '@fontsource/cormorant-garamond/500.css';
-@import '@fontsource/cormorant-garamond/600.css';
-@import '@fontsource-variable/inter';
+/* Un solo archivo de fuente variable: peso 100–900 y ancho 62–125%. */
+@import '@fontsource-variable/archivo/wdth.css';
 @import 'tailwindcss';
 
 /* Los valores de --marca-* los declara Base.astro a partir de negocio.ts. */
@@ -9,22 +8,153 @@
   --color-superficie: var(--marca-superficie);
   --color-texto: var(--marca-texto);
   --color-texto-suave: var(--marca-texto-suave);
-  --color-dorado: var(--marca-dorado);
-  --color-dorado-oscuro: var(--marca-dorado-oscuro);
-  --font-serif: 'Cormorant Garamond', Georgia, serif;
-  --font-sans: 'Inter Variable', system-ui, sans-serif;
+  --color-acento: var(--marca-acento);
+  --color-acento-fuerte: var(--marca-acento-fuerte);
+  --color-linea: var(--marca-linea);
+  --color-linea-fuerte: var(--marca-linea-fuerte);
+  --color-cinta: var(--marca-cinta);
+  --font-sans: 'Archivo Variable', Arial, sans-serif;
+  --font-display: 'Archivo Variable', 'Arial Black', sans-serif;
+}
+
+@theme {
+  --ease-expo: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 @layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
   body {
     background-color: var(--color-fondo);
     color: var(--color-texto);
     font-family: var(--font-sans);
+    font-size: 1.0625rem;
+    line-height: 1.55;
+  }
+  :focus-visible {
+    outline: 3px solid currentColor;
+    outline-offset: 3px;
+  }
+  ::selection {
+    background-color: var(--color-acento);
+    color: var(--color-fondo);
   }
 }
 
-/* Cormorant usa números de estilo antiguo; en medidas y precios se leen mejor alineados. */
-@utility font-serif {
-  font-family: var(--font-serif);
-  font-variant-numeric: lining-nums;
+/* Títulos de cartel: Archivo expandida y pesada. */
+@utility font-display {
+  font-family: var(--font-display);
+  font-stretch: 115%;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 0.95;
+}
+
+/* El grito de la portada y del cierre. Una sola vez por pantalla. */
+@utility texto-cartel {
+  font-family: var(--font-display);
+  font-stretch: 125%;
+  font-weight: 850;
+  letter-spacing: -0.035em;
+  line-height: 0.9;
+  font-size: clamp(3rem, 12.5vw, 7.75rem);
+  text-wrap: balance;
+}
+
+/* La anotación del taller: medidas y notas pequeñas, condensadas. */
+@utility lapiz {
+  font-stretch: 70%;
+  font-weight: 500;
+  font-size: 0.875rem;
+  letter-spacing: 0.01em;
+  line-height: 1.2;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Sombra de objeto colgado en la pared; la interfaz en sí es plana. */
+@utility sombra-cuadro {
+  box-shadow:
+    0 1px 1px #23181430,
+    0 18px 30px -12px #23181466;
+}
+
+@utility sombra-acrilico {
+  box-shadow:
+    0 2px 2px #23181440,
+    0 24px 40px -14px #23181480;
+}
+
+/* Botón principal: casi recto, alto de 48 px. */
+@utility boton {
+  display: inline-flex;
+  min-height: 3rem;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border-radius: 2px;
+  padding-inline: 1.75rem;
+  font-weight: 700;
+  font-stretch: 110%;
+  transition:
+    background-color 150ms ease-out,
+    transform 150ms ease-out;
+  &:active {
+    transform: translateY(1px);
+  }
+}
+
+/* Enlace secundario: subrayado grueso, sin caja. */
+@utility enlace-fuerte {
+  display: inline-flex;
+  min-height: 2.75rem;
+  align-items: center;
+  font-weight: 700;
+  text-decoration-line: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 5px;
+  &:hover {
+    text-decoration-thickness: 4px;
+  }
+}
+
+/* Entrada de la portada: el texto sube y el cuadro "se cuelga". */
+@keyframes subir {
+  from {
+    opacity: 0;
+    transform: translateY(28px);
+  }
+}
+
+@keyframes colgar {
+  from {
+    opacity: 0;
+    transform: translateY(-28px) rotate(var(--giro-inicial, -4deg));
+  }
+}
+
+@keyframes aparecer {
+  from {
+    opacity: 0;
+    transform: translateY(32px);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .entra-subiendo {
+    animation: subir 800ms var(--ease-expo) both;
+    animation-delay: var(--retraso, 0ms);
+  }
+  .entra-colgando {
+    animation: colgar 1000ms var(--ease-expo) both;
+    animation-delay: var(--retraso, 0ms);
+  }
+  /* Las secciones aparecen al entrar en pantalla donde el navegador lo soporta; si no, quietas. */
+  @supports (animation-timeline: view()) {
+    .aparece {
+      animation: aparecer linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 40%;
+    }
+  }
 }

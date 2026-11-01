@@ -34,9 +34,9 @@ const TEXTO_CALIDAD = {
 } as const;
 
 const ESTILO_CALIDAD = {
-  buena: 'border-emerald-400/50 bg-emerald-400/10',
-  regular: 'border-amber-300/50 bg-amber-300/10',
-  baja: 'border-red-400/60 bg-red-400/10',
+  buena: 'border-emerald-700/40 bg-emerald-600/10',
+  regular: 'border-amber-600/50 bg-amber-400/15',
+  baja: 'border-red-700/50 bg-red-600/10',
 } as const;
 
 export default function Configurador() {
@@ -155,7 +155,7 @@ export default function Configurador() {
   return (
     <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
       <div className="flex flex-col gap-4 lg:sticky lg:top-4 lg:self-start">
-        <label className="flex min-h-14 cursor-pointer items-center justify-center rounded-lg border border-dashed border-dorado/60 px-4 py-4 text-center focus-within:ring-2 focus-within:ring-dorado hover:border-dorado">
+        <label className="flex min-h-14 cursor-pointer items-center justify-center rounded-lg border border-dashed border-acento/60 px-4 py-4 text-center focus-within:ring-2 focus-within:ring-acento hover:border-acento">
           <input
             type="file"
             accept="image/jpeg,image/png,image/webp,image/heic,image/heif,.heic,.heif"
@@ -163,7 +163,7 @@ export default function Configurador() {
             className="sr-only"
           />
           <span>
-            <span className="font-medium text-dorado">
+            <span className="font-medium text-acento-fuerte">
               {foto ? 'Cambiar foto' : 'Sube tu foto'}
             </span>
             <span className="block text-sm text-texto-suave">
@@ -174,7 +174,7 @@ export default function Configurador() {
 
         {cargando && <p className="text-texto-suave">Abriendo tu foto…</p>}
         {error && (
-          <p role="alert" className="rounded-lg border border-red-400/60 bg-red-400/10 p-3">
+          <p role="alert" className="rounded-lg border border-red-700/50 bg-red-600/10 p-3">
             {error}
           </p>
         )}
@@ -205,7 +205,7 @@ export default function Configurador() {
                 step={0.05}
                 value={zoom}
                 onChange={(e) => setZoom(Number(e.target.value))}
-                className="h-11 flex-1 accent-dorado"
+                className="h-11 flex-1 accent-acento"
               />
             </label>
             <p className="text-sm text-texto-suave">
@@ -256,7 +256,7 @@ export default function Configurador() {
               type="button"
               onClick={() => setCantidad((c) => Math.max(1, c - 1))}
               aria-label="Quitar uno"
-              className="size-11 rounded-lg border border-white/15 text-xl"
+              className="size-11 rounded-lg border border-linea-fuerte text-xl"
             >
               −
             </button>
@@ -269,13 +269,13 @@ export default function Configurador() {
               onChange={(e) =>
                 setCantidad(Math.min(99, Math.max(1, Math.trunc(Number(e.target.value)) || 1)))
               }
-              className="h-11 w-16 rounded-lg border border-white/15 bg-transparent text-center"
+              className="h-11 w-16 rounded-lg border border-linea-fuerte bg-transparent text-center"
             />
             <button
               type="button"
               onClick={() => setCantidad((c) => Math.min(99, c + 1))}
               aria-label="Agregar uno"
-              className="size-11 rounded-lg border border-white/15 text-xl"
+              className="size-11 rounded-lg border border-linea-fuerte text-xl"
             >
               +
             </button>
@@ -299,7 +299,7 @@ export default function Configurador() {
                     <button
                       type="button"
                       onClick={() => setMedidaId(sugerida.id)}
-                      className="min-h-11 text-dorado underline underline-offset-4"
+                      className="min-h-11 text-acento-fuerte underline underline-offset-4"
                     >
                       Usar {etiquetaMedida(sugerida, orientacion)}
                     </button>
@@ -323,12 +323,15 @@ export default function Configurador() {
           }}
         />
 
-        <div className="rounded-lg border border-white/10 bg-superficie p-4">
+        <div className="rounded-lg border border-linea bg-superficie p-4">
           <p className="flex items-baseline justify-between gap-4">
             <span className="text-texto-suave">
               {cantidad} × {etiquetaMedida(medida, orientacion)}
             </span>
-            <span className="font-serif text-3xl font-semibold text-dorado" data-testid="precio">
+            <span
+              className="font-display text-3xl font-semibold text-acento-fuerte"
+              data-testid="precio"
+            >
               {formatearPesos(linea.total)}
             </span>
           </p>
@@ -337,12 +340,12 @@ export default function Configurador() {
               <s>{formatearPesos(linea.subtotal)}</s> · ahorras {formatearPesos(linea.descuento)}
             </p>
           )}
-          {promo && <p className="mt-2 text-sm text-dorado">{promo.mensaje}</p>}
+          {promo && <p className="mt-2 text-sm text-acento-fuerte">{promo.mensaje}</p>}
           <button
             type="button"
             onClick={agregar}
             disabled={!foto || !recorte}
-            className="mt-4 inline-flex min-h-11 w-full items-center justify-center rounded-full bg-dorado px-6 font-medium text-fondo hover:bg-dorado-oscuro disabled:cursor-not-allowed disabled:opacity-50"
+            className="mt-4 inline-flex min-h-11 w-full items-center justify-center rounded-sm bg-acento px-6 font-medium text-fondo hover:bg-acento-fuerte disabled:cursor-not-allowed disabled:opacity-50"
           >
             Agregar al pedido
           </button>
@@ -354,9 +357,12 @@ export default function Configurador() {
         </div>
 
         {agregado && (
-          <p role="status" className="rounded-lg border border-dorado/50 bg-dorado/10 p-3">
+          <p role="status" className="rounded-lg border border-acento/50 bg-acento/10 p-3">
             {agregado}{' '}
-            <a href="/pedido" className="font-medium text-dorado underline underline-offset-4">
+            <a
+              href="/pedido"
+              className="font-medium text-acento-fuerte underline underline-offset-4"
+            >
               Ver mi pedido
             </a>
           </p>

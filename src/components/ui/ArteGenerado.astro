@@ -1,96 +1,98 @@
 ---
 // Arte generado en SVG para la galería (regla 2: nada de carátulas ni fotos de terceros).
-// Cada diseño ocupa un lienzo de 30×40 y se muestra como un cuadro colgado.
+// Cada diseño es un lienzo de 30×40 que llena su contenedor; el marco lo pone quien lo usa.
 
 interface Props {
   diseno: 'atardecer' | 'montanas' | 'olas' | 'circulos' | 'bloques' | 'hojas';
-  titulo: string;
+  /** Nombre de la obra. Sin título, el arte es decorativo (aria-hidden). */
+  titulo?: string;
+  class?: string;
 }
 
-const { diseno, titulo } = Astro.props;
-const id = `arte-${diseno}`;
+const { diseno, titulo, class: clase } = Astro.props;
+// Sufijo para que el degradado no choque si la misma obra aparece dos veces en la página.
+const id = `arte-${diseno}-${Math.random().toString(36).slice(2, 7)}`;
 ---
 
-<figure class="flex flex-col gap-3">
-  <svg
-    viewBox="0 0 30 40"
-    role="img"
-    aria-label={titulo}
-    class="aspect-[3/4] w-full rounded-sm shadow-[0_10px_30px_rgba(0,0,0,0.5)] ring-1 ring-black/40"
-  >
-    {diseno === 'atardecer' && (
-      <>
-        <defs>
-          <linearGradient id={id} x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0" stop-color="#f6c177" />
-            <stop offset="1" stop-color="#b4637a" />
-          </linearGradient>
-        </defs>
-        <rect width="30" height="40" fill={`url(#${id})`} />
-        <circle cx="15" cy="22" r="7" fill="#fbe7c6" />
-        <rect y="26" width="30" height="14" fill="#56324a" />
-        <path d="M0 30 Q 8 27 15 30 T 30 30 V40 H0Z" fill="#3a2234" />
-      </>
-    )}
-    {diseno === 'montanas' && (
-      <>
-        <rect width="30" height="40" fill="#d9e2e6" />
-        <path d="M0 30 L9 14 L15 22 L21 10 L30 26 V40 H0Z" fill="#41545e" />
-        <path d="M0 34 L7 24 L14 31 L22 21 L30 32 V40 H0Z" fill="#26333a" />
-        <circle cx="23" cy="7" r="2.5" fill="#f2ede4" />
-      </>
-    )}
-    {diseno === 'olas' && (
-      <>
-        <rect width="30" height="40" fill="#0f3b4c" />
-        {[10, 16, 22, 28, 34].map((y, i) => (
-          <path
-            d={`M0 ${y} Q 7.5 ${y - 4} 15 ${y} T 30 ${y}`}
-            fill="none"
-            stroke={['#7fc8c2', '#5aa9b0', '#3d8a9b', '#2a6d82', '#1d566b'][i]}
-            stroke-width="2"
-          />
-        ))}
-      </>
-    )}
-    {diseno === 'circulos' && (
-      <>
-        <rect width="30" height="40" fill="#f2ede4" />
-        <circle cx="11" cy="15" r="8" fill="#d4af6a" />
-        <circle cx="19" cy="24" r="8" fill="#a8843f" fill-opacity="0.8" />
-        <circle cx="13" cy="30" r="5" fill="#1a1714" />
-      </>
-    )}
-    {diseno === 'bloques' && (
-      <>
-        <rect width="30" height="40" fill="#e8dfd0" />
-        <rect x="3" y="3" width="14" height="20" fill="#c0392b" />
-        <rect x="17" y="3" width="10" height="10" fill="#1a1714" />
-        <rect x="17" y="13" width="10" height="24" fill="#d4af6a" />
-        <rect x="3" y="23" width="14" height="14" fill="#2f4858" />
-      </>
-    )}
-    {diseno === 'hojas' && (
-      <>
-        <rect width="30" height="40" fill="#1f2d24" />
-        {[
-          [8, 12, -30],
-          [20, 10, 25],
-          [12, 24, 15],
-          [22, 28, -20],
-          [7, 33, 40],
-        ].map(([cx, cy, giro]) => (
-          <ellipse
-            cx={cx}
-            cy={cy}
-            rx="3"
-            ry="7"
-            fill="#7c9a6e"
-            transform={`rotate(${giro} ${cx} ${cy})`}
-          />
-        ))}
-      </>
-    )}
-  </svg>
-  <figcaption class="text-sm text-texto-suave">{titulo}</figcaption>
-</figure>
+<svg
+  viewBox="0 0 30 40"
+  preserveAspectRatio="xMidYMid slice"
+  role={titulo ? 'img' : undefined}
+  aria-label={titulo}
+  aria-hidden={titulo ? undefined : 'true'}
+  class:list={['block size-full', clase]}
+>
+  {diseno === 'atardecer' && (
+    <>
+      <defs>
+        <linearGradient id={id} x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#f6c177" />
+          <stop offset="1" stop-color="#b4637a" />
+        </linearGradient>
+      </defs>
+      <rect width="30" height="40" fill={`url(#${id})`} />
+      <circle cx="15" cy="22" r="7" fill="#fbe7c6" />
+      <rect y="26" width="30" height="14" fill="#56324a" />
+      <path d="M0 30 Q 8 27 15 30 T 30 30 V40 H0Z" fill="#3a2234" />
+    </>
+  )}
+  {diseno === 'montanas' && (
+    <>
+      <rect width="30" height="40" fill="#d9e2e6" />
+      <path d="M0 30 L9 14 L15 22 L21 10 L30 26 V40 H0Z" fill="#41545e" />
+      <path d="M0 34 L7 24 L14 31 L22 21 L30 32 V40 H0Z" fill="#26333a" />
+      <circle cx="23" cy="7" r="2.5" fill="#f2ede4" />
+    </>
+  )}
+  {diseno === 'olas' && (
+    <>
+      <rect width="30" height="40" fill="#0f3b4c" />
+      {[10, 16, 22, 28, 34].map((y, i) => (
+        <path
+          d={`M0 ${y} Q 7.5 ${y - 4} 15 ${y} T 30 ${y}`}
+          fill="none"
+          stroke={['#7fc8c2', '#5aa9b0', '#3d8a9b', '#2a6d82', '#1d566b'][i]}
+          stroke-width="2"
+        />
+      ))}
+    </>
+  )}
+  {diseno === 'circulos' && (
+    <>
+      <rect width="30" height="40" fill="#f2ede4" />
+      <circle cx="11" cy="15" r="8" fill="#ca3517" />
+      <circle cx="19" cy="24" r="8" fill="#e7d2a0" fill-opacity="0.8" />
+      <circle cx="13" cy="30" r="5" fill="#1a1714" />
+    </>
+  )}
+  {diseno === 'bloques' && (
+    <>
+      <rect width="30" height="40" fill="#e8dfd0" />
+      <rect x="3" y="3" width="14" height="20" fill="#c0392b" />
+      <rect x="17" y="3" width="10" height="10" fill="#1a1714" />
+      <rect x="17" y="13" width="10" height="24" fill="#e7b04a" />
+      <rect x="3" y="23" width="14" height="14" fill="#2f4858" />
+    </>
+  )}
+  {diseno === 'hojas' && (
+    <>
+      <rect width="30" height="40" fill="#1f2d24" />
+      {[
+        [8, 12, -30],
+        [20, 10, 25],
+        [12, 24, 15],
+        [22, 28, -20],
+        [7, 33, 40],
+      ].map(([cx, cy, giro]) => (
+        <ellipse
+          cx={cx}
+          cy={cy}
+          rx="3"
+          ry="7"
+          fill="#7c9a6e"
+          transform={`rotate(${giro} ${cx} ${cy})`}
+        />
+      ))}
+    </>
+  )}
+</svg>

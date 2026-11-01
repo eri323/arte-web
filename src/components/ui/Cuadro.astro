@@ -1,0 +1,63 @@
+---
+// Un cuadro colgado: marco según el material, sombra de objeto en la pared y, adentro, la foto
+// del taller o, si no hay, arte generado. Llena el ancho de su contenedor; el alto sale de `aspecto`.
+import type { FotoVitrina, MaterialId } from '../../config/negocio';
+import ArteGenerado from './ArteGenerado.astro';
+
+interface Props {
+  diseno: 'atardecer' | 'montanas' | 'olas' | 'circulos' | 'bloques' | 'hojas';
+  titulo?: string;
+  foto?: FotoVitrina;
+  material?: MaterialId;
+  /** ancho / alto. */
+  aspecto?: number;
+  /** Cinta de enmarcar en la esquina. Máximo una por pantalla. */
+  cinta?: boolean;
+  /** Foto que se ve al cargar (la portada): se pide de una vez, sin esperar al scroll. */
+  prioridad?: boolean;
+  class?: string;
+}
+
+const {
+  diseno,
+  titulo,
+  foto,
+  material = 'mdf',
+  aspecto = 3 / 4,
+  cinta = false,
+  prioridad = false,
+  class: clase,
+} = Astro.props;
+---
+
+<div
+  class:list={[
+    'relative',
+    material === 'mdf' ? 'sombra-cuadro border-[6px] border-texto' : 'sombra-acrilico',
+    clase,
+  ]}
+  style={{ aspectRatio: String(aspecto) }}
+>
+  {foto ? (
+    <img
+      src={foto.src}
+      alt={foto.alt}
+      class="block size-full object-cover"
+      loading={prioridad ? 'eager' : 'lazy'}
+    />
+  ) : (
+    <ArteGenerado diseno={diseno} titulo={titulo} />
+  )}
+  {material === 'acrilico' && (
+    <div
+      aria-hidden="true"
+      class="pointer-events-none absolute inset-0 bg-linear-to-br from-white/50 via-white/5 via-45% to-transparent to-50% ring-1 ring-white/60 ring-inset"
+    />
+  )}
+  {cinta && (
+    <div
+      aria-hidden="true"
+      class="absolute -top-3 left-1/2 h-6 w-20 -translate-x-1/2 -rotate-3 bg-cinta/90 shadow-sm"
+    />
+  )}
+</div>

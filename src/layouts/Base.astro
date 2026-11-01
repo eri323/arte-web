@@ -34,6 +34,7 @@ const variablesMarca = Object.entries(negocio.marca.colores)
     <meta property="og:description" content={description} />
     <meta property="og:image" content={ogImageUrl} />
     <meta property="og:locale" content="es_CO" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <meta name="theme-color" content={negocio.marca.colores.fondo} />
     <style set:html={`:root { ${variablesMarca} }`}></style>
     <slot name="head" />

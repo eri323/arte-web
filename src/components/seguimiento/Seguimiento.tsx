@@ -29,14 +29,14 @@ function LineaEstados({ pedido }: { pedido: Pedido }) {
               aria-hidden="true"
               className={`mt-1 size-4 shrink-0 rounded-full border-2 ${
                 i === actual
-                  ? 'border-dorado bg-dorado'
+                  ? 'border-acento bg-acento'
                   : hecho
-                    ? 'border-dorado bg-dorado/40'
-                    : 'border-white/30'
+                    ? 'border-acento bg-acento/40'
+                    : 'border-linea-fuerte'
               }`}
             />
             <span className={hecho ? '' : 'text-texto-suave'}>
-              <span className={i === actual ? 'font-semibold text-dorado' : ''}>
+              <span className={i === actual ? 'font-semibold text-acento-fuerte' : ''}>
                 {ETIQUETAS_ESTADO[estado]}
               </span>
               {i === actual && <span className="sr-only"> (estado actual)</span>}
@@ -56,8 +56,8 @@ function DetallePedido({ pedido }: { pedido: Pedido }) {
   const saldo = saldoPendiente(pedido);
   return (
     <article aria-labelledby="titulo-pedido" className="grid gap-6 lg:grid-cols-2">
-      <div className="rounded-lg border border-white/10 bg-superficie p-5">
-        <h2 id="titulo-pedido" className="font-serif text-3xl font-semibold text-dorado">
+      <div className="rounded-lg border border-linea bg-superficie p-5">
+        <h2 id="titulo-pedido" className="font-display text-3xl font-semibold text-acento-fuerte">
           Pedido {pedido.numero}
         </h2>
         <p className="text-texto-suave">
@@ -73,8 +73,8 @@ function DetallePedido({ pedido }: { pedido: Pedido }) {
       </div>
 
       <div className="flex flex-col gap-6">
-        <section className="rounded-lg border border-white/10 p-5" aria-labelledby="pagos">
-          <h3 id="pagos" className="mb-3 font-serif text-2xl font-semibold text-dorado">
+        <section className="rounded-lg border border-linea p-5" aria-labelledby="pagos">
+          <h3 id="pagos" className="mb-3 font-display text-2xl font-semibold text-acento-fuerte">
             Pagos
           </h3>
           {pedido.pagos.length === 0 ? (
@@ -92,7 +92,7 @@ function DetallePedido({ pedido }: { pedido: Pedido }) {
               ))}
             </ul>
           )}
-          <div className="mt-3 flex flex-col gap-1 border-t border-white/10 pt-3">
+          <div className="mt-3 flex flex-col gap-1 border-t border-linea pt-3">
             <p className="flex justify-between">
               <span>Total</span>
               <span>{formatearPesos(pedido.total)}</span>
@@ -109,8 +109,8 @@ function DetallePedido({ pedido }: { pedido: Pedido }) {
         </section>
 
         {pedido.envio && (
-          <section className="rounded-lg border border-white/10 p-5" aria-labelledby="envio">
-            <h3 id="envio" className="mb-2 font-serif text-2xl font-semibold text-dorado">
+          <section className="rounded-lg border border-linea p-5" aria-labelledby="envio">
+            <h3 id="envio" className="mb-2 font-display text-2xl font-semibold text-acento-fuerte">
               Envío
             </h3>
             <p>Transportadora: {pedido.envio.transportadora}</p>
@@ -120,8 +120,8 @@ function DetallePedido({ pedido }: { pedido: Pedido }) {
           </section>
         )}
 
-        <section className="rounded-lg border border-white/10 p-5" aria-labelledby="notas">
-          <h3 id="notas" className="mb-2 font-serif text-2xl font-semibold text-dorado">
+        <section className="rounded-lg border border-linea p-5" aria-labelledby="notas">
+          <h3 id="notas" className="mb-2 font-display text-2xl font-semibold text-acento-fuerte">
             Notas del taller
           </h3>
           {pedido.notas.length === 0 ? (
@@ -182,12 +182,12 @@ export default function Seguimiento() {
             placeholder={`${negocio.marca.prefijoPedido}-1041`}
             required
             autoCapitalize="characters"
-            className="h-11 rounded-lg border border-white/15 bg-transparent px-3 uppercase placeholder:normal-case"
+            className="h-11 rounded-lg border border-linea-fuerte bg-transparent px-3 uppercase placeholder:normal-case"
           />
         </label>
         <button
           type="submit"
-          className="inline-flex min-h-11 items-center justify-center rounded-full bg-dorado px-6 font-medium text-fondo hover:bg-dorado-oscuro"
+          className="inline-flex min-h-11 items-center justify-center rounded-sm bg-acento px-6 font-medium text-fondo hover:bg-acento-fuerte"
         >
           Buscar
         </button>
@@ -195,7 +195,7 @@ export default function Seguimiento() {
 
       <div aria-live="polite">
         {resultado?.tipo === 'no-encontrado' && (
-          <p className="rounded-lg border border-amber-300/50 bg-amber-300/10 p-4">
+          <p className="rounded-lg border border-amber-600/50 bg-amber-400/15 p-4">
             No encontramos el pedido {resultado.numero}. Revisa el número que te llegó por WhatsApp.
             En esta demo los pedidos se guardan en este navegador.
           </p>

@@ -36,7 +36,7 @@ Todo corre en el navegador. **La foto del cliente nunca sale de su equipo.**
 | H5 · Seguimiento y panel                                  | ✅     |
 | H6 · Pulido                                               | ✅     |
 
-Lighthouse móvil (build local): `/` y `/formatos` en 100 en rendimiento, accesibilidad, buenas prácticas y SEO; `/crear`, 94 en rendimiento.
+Lighthouse móvil (build local): `/` 99 y `/formatos` 97 en rendimiento, y 100 en accesibilidad y SEO (rediseño del 31-oct-2026).
 
 ## Probar la demo
 
@@ -83,16 +83,17 @@ La e2e levanta su propio servidor en el puerto **4322**, así que puede correr c
 
 Todo lo que cambia de un taller a otro está en **un solo archivo**: [`src/config/negocio.ts`](src/config/negocio.ts).
 
-| Campo                   | Qué cambiar                                                                                                                                             |
-| ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `marca`                 | Nombre, eslogan, prefijo de pedido (`AE` → `AE-1042`) y colores. Los colores se vuelven variables CSS y clases de Tailwind (`bg-fondo`, `text-dorado`…) |
-| `medidas`               | Medidas en cm (en vertical), precio en pesos enteros y promoción opcional                                                                               |
-| `materiales`            | Nombre, descripción y recargo de cada material                                                                                                          |
-| `resolucion`            | dpi mínimos para calidad «buena» y «regular»                                                                                                            |
-| `archivo`               | Tamaño máximo y formatos de imagen aceptados                                                                                                            |
-| `whatsapp.numero`       | Número en formato internacional sin `+` (`57XXXXXXXXXX`). Vacío = modo demo, no abre ningún chat                                                        |
-| `pagos.porcentajeAbono` | Porcentaje del abono inicial                                                                                                                            |
-| `envio.texto`           | Texto sobre el envío                                                                                                                                    |
+| Campo                   | Qué cambiar                                                                                                                                                                 |
+| ----------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `marca`                 | Nombre, eslogan, prefijo de pedido (`AE` → `AE-1042`) y colores. Los colores se vuelven variables CSS y clases de Tailwind (`bg-fondo`, `bg-acento`, `text-acento-fuerte`…) |
+| `vitrina`               | Frase y bajada de la portada, y fotos propias del taller (`fotoPortada`, `galeria`) en `public/`. Sin fotos se muestra arte generado                                        |
+| `medidas`               | Medidas en cm (en vertical), precio en pesos enteros y promoción opcional                                                                                                   |
+| `materiales`            | Nombre, descripción y recargo de cada material                                                                                                                              |
+| `resolucion`            | dpi mínimos para calidad «buena» y «regular»                                                                                                                                |
+| `archivo`               | Tamaño máximo y formatos de imagen aceptados                                                                                                                                |
+| `whatsapp.numero`       | Número en formato internacional sin `+` (`57XXXXXXXXXX`). Vacío = modo demo, no abre ningún chat                                                                            |
+| `pagos.porcentajeAbono` | Porcentaje del abono inicial                                                                                                                                                |
+| `envio.texto`           | Texto sobre el envío                                                                                                                                                        |
 
 Promociones disponibles:
 
@@ -104,6 +105,8 @@ Promociones disponibles:
 Si cambias el nombre o los colores, actualiza también la constante `marca` de `scripts/generar-og.mjs` y corre `npm run og` para regenerar las imágenes que se ven al compartir el link.
 
 Si cambias los colores, corre `npm run test:e2e`: axe avisa si algún texto queda sin contraste suficiente.
+
+El sistema visual (paleta, tipografía, componentes y reglas) está en [`DESIGN.md`](DESIGN.md), y la marca y su público en [`PRODUCT.md`](PRODUCT.md). Sirve también como base para otro tipo de tienda (por ejemplo ropa): se cambian textos, fotos y colores en `negocio.ts`.
 
 ## Supuestos
 

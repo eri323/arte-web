@@ -272,8 +272,9 @@ Las páginas se generan en el build con los valores de `negocio.ts`. Si el panel
 
 ## 12. Diseño visual
 
-- **Estética:** fondo oscuro, acentos dorados, títulos en serif (por ejemplo Cormorant Garamond o Playfair Display) y cuerpo en sans (por ejemplo Inter), todo con Fontsource. Los colores salen de `negocio.marca.colores` como variables CSS.
-- **Contraste AA** en todos los textos. El dorado sobre negro se usa para títulos y acentos, no para párrafos largos en gris.
+- **Estética (rediseño del 31-oct-2026):** «estudio de afiches de barrio». Fondo claro de cal, un bermellón de firma en la portada y el cierre, y una sola familia (Archivo, con Fontsource) que juega con el ancho. El sistema completo está en `DESIGN.md` y la marca en `PRODUCT.md`; mandan sobre esta sección. Los colores salen de `negocio.marca.colores` como variables CSS.
+- **Contraste AA** en todos los textos. El texto de acento pequeño va en `acentoFuerte`; el `acento` claro solo como fondo o en texto grande.
+- **Fotos de la portada:** solo fotos propias del taller, en `negocio.vitrina`. Sin ellas se usa arte generado en SVG.
 - **Mobile-first:** a 375 px no hay scroll horizontal, los objetivos táctiles miden al menos 44 px y el recorte funciona con los dedos.
 - **SEO y Open Graph:** cada página tiene `title`, `description`, `og:title`, `og:description`, `og:image` (1200×630, en `public/og/`) y `og:locale = es_CO`. Esto importa porque el link se comparte por WhatsApp e Instagram.
 
