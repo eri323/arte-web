@@ -427,5 +427,5 @@ Completan huecos de las secciones anteriores. Mandan sobre ellas si hay duda.
 - [x] H2: páginas de contenido
 - [x] H3: configurador
 - [x] H4: pedido
-- [ ] H5: seguimiento y panel
+- [x] H5: seguimiento y panel
 - [ ] H6: pulido

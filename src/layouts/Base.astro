@@ -36,6 +36,7 @@ const variablesMarca = Object.entries(negocio.marca.colores)
     <meta property="og:locale" content="es_CO" />
     <meta name="theme-color" content={negocio.marca.colores.fondo} />
     <style set:html={`:root { ${variablesMarca} }`}></style>
+    <slot name="head" />
   </head>
   <body class="flex min-h-dvh flex-col">
     <Header />

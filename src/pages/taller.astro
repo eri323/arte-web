@@ -1,0 +1,16 @@
+---
+import Base from '../layouts/Base.astro';
+import Taller from '../components/taller/Taller';
+---
+
+<Base
+  title="Panel del taller"
+  description="Panel demo del taller: estados de los pedidos, pagos, notas y precios."
+  ogImage="/og/inicio.png"
+>
+  <meta slot="head" name="robots" content="noindex" />
+  <section class="mx-auto max-w-6xl px-4 pt-10 pb-16">
+    <h1 class="mb-6 font-serif text-4xl font-semibold text-dorado sm:text-5xl">Panel del taller</h1>
+    <Taller client:load />
+  </section>
+</Base>
