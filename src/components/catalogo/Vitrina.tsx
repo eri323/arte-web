@@ -15,59 +15,10 @@ import { $imagenPropia, ponerImagenPropia } from '../../stores/vitrina';
 import GrupoOpciones from '../ui/GrupoOpciones';
 import ArteCatalogo, { nombreVariante, VARIANTES, type VarianteId } from './ArteCatalogo';
 
-// Catálogo con filtros y la pared donde va el diseño elegido, con una cama a escala real.
-// Todo lo que se mide va en centímetros: 1 cm = 100cqw / ancho de la escena, así que el cuadro y
-// los muebles mantienen su proporción en cualquier pantalla sin medir nada con JS.
+// Catálogo con filtros y la pared donde va el diseño elegido, solo con el cuadro y sus medidas.
+// Todo lo que se mide va en centímetros: 1 cm = 100cqw / ancho de la escena, así que el cuadro
+// mantiene su tamaño relativo en cualquier pantalla sin medir nada con JS.
 
-interface Pieza {
-  x: number;
-  y: number;
-  w: number;
-  h: number;
-  fondo?: string;
-  /** Radio en cm: [arriba, abajo]. */
-  radio?: [number, number];
-  borde?: string;
-  led?: boolean;
-}
-
-interface Mueble {
-  nombre: string;
-  /** Texto de referencia para que el cliente entienda la escala. */
-  referencia: string;
-  /** Altura del centro del cuadro sobre el piso (la regla de montaje: 145–150 cm). */
-  centroCm: number;
-  anchoCm: number;
-  altoCm: number;
-  piezas: Pieza[];
-}
-
-// SUPUESTO: una cama queen típica en Colombia (1,60 m) da la escala. No es de ningún mueble real.
-const MUEBLE: Mueble = {
-  nombre: 'Cuarto',
-  referencia: 'La cama queen mide 1,60 m.',
-  centroCm: 150,
-  anchoCm: 240,
-  altoCm: 100,
-  piezas: [
-    { x: 40, y: 0, w: 160, h: 100, fondo: '#2a2320', radio: [6, 0] },
-    { x: 40, y: 98, w: 160, h: 1.2, led: true },
-    { x: 52, y: 44, w: 62, h: 22, fondo: '#3b3632', radio: [10, 10] },
-    { x: 126, y: 44, w: 62, h: 22, fondo: '#3b3632', radio: [10, 10] },
-    {
-      x: 36,
-      y: 0,
-      w: 168,
-      h: 50,
-      fondo: 'linear-gradient(180deg,#4a4440 0 18%,#2f2a27 18% 100%)',
-      radio: [6, 0],
-    },
-    { x: 0, y: 0, w: 34, h: 52, fondo: '#1d1916' },
-    { x: 206, y: 0, w: 34, h: 52, fondo: '#1d1916' },
-  ],
-};
-
-const PISO_CM = 12;
 const cm = (n: number) => `calc(${n} * var(--u))`;
 
 const catalogo = negocio.catalogo;
@@ -264,7 +215,6 @@ export default function Vitrina() {
 
   const diseno = catalogo.find((d) => d.id === disenoId) ?? catalogo[0];
   const medida = medidas.find((m) => m.id === medidaId) ?? medidas[0]!;
-  const mueble = MUEBLE;
   const { anchoCm, altoCm } = dimensionesMedida(medida, orientacion);
   const medidaCuadro = etiquetaMedida(medida, orientacion);
   const precio = usePrecioAnimado(medida.precio);
@@ -374,12 +324,12 @@ export default function Vitrina() {
   const estiloEscena = {
     '--cmw': anchoCm,
     '--cmh': altoCm,
-    '--centro': mueble.centroCm,
-    '--piso': PISO_CM,
     '--led': led === 'si' ? 1 : 0,
   } as CSSProperties;
-  // Centro a la altura de montaje, pero sin salirse del techo de la escena.
-  const abajo = `calc((var(--piso) + min(var(--centro), var(--H) - var(--piso) - var(--cmh) / 2 - 10) - var(--cmh) / 2) * var(--u))`;
+  // El cuadro va centrado en la pared.
+  const abajo = `calc((var(--H) - var(--cmh)) / 2 * var(--u))`;
+  const curva = '800ms cubic-bezier(.22,.61,.36,1)';
+  const transicionLado = `left ${curva}, height ${curva}, bottom ${curva}`;
   const transicion =
     'width 800ms cubic-bezier(.22,.61,.36,1), height 800ms cubic-bezier(.22,.61,.36,1), margin-left 800ms cubic-bezier(.22,.61,.36,1), bottom 800ms cubic-bezier(.22,.61,.36,1)';
 
@@ -739,50 +689,14 @@ export default function Vitrina() {
           <div className="relative mt-[clamp(32px,4vw,48px)] overflow-hidden rounded-[16px]">
             <div
               style={estiloEscena}
-              className="relative aspect-[4/5] overflow-hidden [--H:300] [--W:240] [--cx:50%] [--u:calc(100cqw/var(--W))] [container-type:inline-size] [background:radial-gradient(ellipse_34%_52%_at_var(--cx)_30%,rgb(255_226_180/.12),transparent_70%),#15120f] sm:aspect-video sm:[--H:225] sm:[--W:400] xl:aspect-[3/2] xl:[--H:267] xl:[--cx:35%]"
+              className="relative aspect-[4/5] overflow-hidden [--H:250] [--W:200] [--cx:50%] [--u:calc(100cqw/var(--W))] [container-type:inline-size] [background:radial-gradient(ellipse_34%_52%_at_var(--cx)_50%,rgb(255_226_180/.12),transparent_70%),#15120f] sm:aspect-video sm:[--H:191] sm:[--W:340] xl:aspect-[3/2] xl:[--H:227] xl:[--cx:35%]"
             >
               {/* Luz roja del LED sobre la pared. */}
               <div
                 aria-hidden="true"
-                className="pointer-events-none absolute inset-0 transition-opacity duration-[800ms] [background:radial-gradient(ellipse_30%_46%_at_var(--cx)_32%,rgb(255_45_32/.42),transparent_70%)]"
+                className="pointer-events-none absolute inset-0 transition-opacity duration-[800ms] [background:radial-gradient(ellipse_30%_46%_at_var(--cx)_50%,rgb(255_45_32/.42),transparent_70%)]"
                 style={{ opacity: 'var(--led)' }}
               />
-              <div
-                aria-hidden="true"
-                className="absolute left-(--cx) z-[1] -translate-x-1/2"
-                style={{
-                  bottom: cm(PISO_CM),
-                  width: cm(mueble.anchoCm),
-                  height: cm(mueble.altoCm),
-                }}
-              >
-                {mueble.piezas.map((p, i) => (
-                  <i
-                    key={i}
-                    className="absolute block transition-[box-shadow,background-color] duration-[800ms]"
-                    style={{
-                      left: cm(p.x),
-                      bottom: cm(p.y),
-                      width: cm(p.w),
-                      height: cm(p.h),
-                      background: p.led ? `rgb(255 80 60 / calc(.25 + var(--led) * .75))` : p.fondo,
-                      boxShadow: p.led
-                        ? `0 0 ${cm(8)} ${cm(2)} rgb(255 45 32 / calc(var(--led) * .85))`
-                        : undefined,
-                      border: p.borde ? `${cm(1.5)} solid ${p.borde}` : undefined,
-                      borderRadius: p.radio
-                        ? `${cm(p.radio[0])} ${cm(p.radio[0])} ${cm(p.radio[1])} ${cm(p.radio[1])}`
-                        : undefined,
-                    }}
-                  />
-                ))}
-              </div>
-              <div
-                aria-hidden="true"
-                className="absolute inset-x-0 bottom-0 border-t border-white/5 bg-[#100e0d]"
-                style={{ height: cm(PISO_CM) }}
-              />
-
               {/* El cuadro, montado directo sobre la pared. */}
               <div
                 className="absolute left-(--cx) z-[2]"
@@ -804,10 +718,10 @@ export default function Vitrina() {
                   >
                     <span
                       aria-hidden="true"
-                      className="absolute -inset-[6%] -z-10 transition-opacity duration-[800ms]"
+                      className="absolute inset-0 -z-10 transition-opacity duration-[800ms]"
                       style={{
                         opacity: 'var(--led)',
-                        boxShadow: `0 0 ${cm(14)} ${cm(5)} rgb(255 45 32 / .45)`,
+                        boxShadow: `0 0 ${cm(22)} ${cm(1)} rgb(255 45 32 / .4)`,
                       }}
                     />
                     <div ref={imagenColgada} className="size-full">
@@ -831,9 +745,10 @@ export default function Vitrina() {
                 </div>
               </div>
 
-              {/* Cota con la medida, debajo del cuadro. */}
+              {/* Cotas como en un plano: el ancho debajo del cuadro y el alto a su derecha. */}
               <div
                 aria-hidden="true"
+                data-cota="ancho"
                 className="absolute left-(--cx) z-[2] flex items-center gap-2 text-[11px] tracking-[0.08em] whitespace-nowrap text-[rgb(243_236_224/.75)] tabular-nums before:h-px before:min-w-1.5 before:flex-1 before:bg-current before:opacity-60 after:h-px after:min-w-1.5 after:flex-1 after:bg-current after:opacity-60"
                 style={{
                   width: cm(anchoCm),
@@ -842,12 +757,25 @@ export default function Vitrina() {
                   transition: transicion,
                 }}
               >
-                {medidaCuadro} cm
+                {anchoCm} cm
+              </div>
+              <div
+                aria-hidden="true"
+                data-cota="alto"
+                className="absolute z-[2] flex flex-col items-center gap-2 text-[11px] tracking-[0.08em] whitespace-nowrap text-[rgb(243_236_224/.75)] tabular-nums before:w-px before:min-h-1.5 before:flex-1 before:bg-current before:opacity-60 after:w-px after:min-h-1.5 after:flex-1 after:bg-current after:opacity-60"
+                style={{
+                  left: `calc(var(--cx) + var(--cmw) * var(--u) * 0.5 + 12px)`,
+                  height: cm(altoCm),
+                  bottom: abajo,
+                  transition: transicionLado,
+                }}
+              >
+                <span className="rotate-180 [writing-mode:vertical-rl]">{altoCm} cm</span>
               </div>
             </div>
             {/* En el celular van debajo de la escena; en escritorio, encima de ella. */}
             <p className="border-t border-linea bg-superficie px-4 pt-4 text-[0.8125rem] text-texto-suave sm:px-6 xl:absolute xl:top-[6%] xl:left-[3.5%] xl:z-[3] xl:max-w-[26ch] xl:border-0 xl:bg-transparent xl:p-0">
-              {mueble.referencia} Todo está a escala real.
+              Todo está a escala real: el ancho va debajo del cuadro y el alto, al lado.
             </p>
             <div className="bg-superficie p-4 pt-5 sm:p-6 xl:absolute xl:inset-y-0 xl:right-0 xl:z-[3] xl:w-[min(320px,30%)] xl:overflow-auto xl:border-l xl:border-linea xl:bg-[rgb(11_10_9/.82)] xl:p-6 xl:backdrop-blur-sm">
               {panel}
