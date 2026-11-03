@@ -1,5 +1,5 @@
 import { useStore } from '@nanostores/react';
-import { Fragment, useEffect, useLayoutEffect, useRef, useState, type CSSProperties } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties } from 'react';
 import { negocio, type DisenoCatalogo, type MaterialId } from '../../config/negocio';
 import { etiquetaMedida, formatearPesos } from '../../lib/formato';
 import { describirPromocion } from '../../lib/precios';
@@ -110,12 +110,15 @@ const cm = (n: number) => `calc(${n} * var(--u))`;
 const catalogo = negocio.catalogo;
 const categorias = ['Todos', ...new Set(catalogo.map((d) => d.categoria))];
 
-// Las tres formas de pedir: el catálogo es punto de partida, no un menú cerrado.
-const MODOS = [
-  { titulo: 'Tal cual', texto: 'Te gusta una referencia y la hacemos igual.' },
-  { titulo: 'Adaptado', texto: 'Cambiamos colores, texto, estilo o medida.' },
-  { titulo: 'Desde cero', texto: 'Nos cuentas tu idea y la diseñamos contigo.' },
+// La escalera de inspiración: cuántos cuadros se ven a la vez y el titular, palabra por palabra.
+const VISIBLES = 5;
+const TITULAR: { palabras: string[]; acento?: boolean }[] = [
+  { palabras: ['Encuentra', 'inspiración'] },
+  { palabras: ['para', 'tu', 'espacio,'], acento: true },
+  { palabras: ['a', 'tu', 'manera.'] },
 ];
+const dosCifras = (n: number) => String(n).padStart(2, '0');
+const etiqueta = (categoria: string) => `#${categoria.toLowerCase().replace(/\s+/g, '')}`;
 
 /** Muestra de cada variante de color: un círculo partido en dos. */
 const MUESTRA: Record<VarianteId, string> = {
@@ -249,114 +252,6 @@ function Muestras({
   );
 }
 
-function Tarjeta({
-  diseno,
-  oculta,
-  orden,
-  onVer,
-}: {
-  diseno: DisenoCatalogo;
-  oculta: boolean;
-  /** Posición en la fila, para que aparezcan en cascada. */
-  orden: number;
-  onVer: (variante: VarianteId) => void;
-}) {
-  const [variante, setVariante] = useState<VarianteId>('orig');
-  const [cambiando, setCambiando] = useState(false);
-
-  function cambiar(v: VarianteId) {
-    if (v === variante) return;
-    if (reduceMovimiento()) return setVariante(v);
-    // Se desenfoca, cambia el color y se vuelve a enfocar: se lee como un solo cuadro que cambia.
-    setCambiando(true);
-    setTimeout(() => {
-      setVariante(v);
-      setCambiando(false);
-    }, 160);
-  }
-
-  return (
-    <li
-      hidden={oculta}
-      data-tarjeta
-      style={{ '--i': orden } as CSSProperties}
-      className="aparece group flex flex-col gap-3.5"
-    >
-      <div className="relative aspect-[3/4] overflow-hidden rounded-[12px] bg-superficie shadow-[0_1px_2px_rgb(11_10_9/.1),0_14px_28px_-16px_rgb(11_10_9/.35)] transition-[transform,box-shadow] duration-300 ease-(--ease-out) group-hover:-translate-y-1 group-hover:shadow-[0_2px_4px_rgb(11_10_9/.1),0_26px_44px_-18px_rgb(11_10_9/.45)]">
-        <div
-          className={`absolute inset-0 transition-[transform,opacity,filter] duration-[1000ms,160ms,160ms] ease-(--ease-out) group-hover:scale-[1.04] ${cambiando ? 'opacity-40 blur-[3px]' : ''}`}
-        >
-          <ImagenDiseno diseno={diseno} variante={variante} />
-        </div>
-        {/* Atajo con el cursor; con teclado y en el celular se usa el enlace de abajo. */}
-        <button
-          type="button"
-          tabIndex={-1}
-          aria-hidden="true"
-          onClick={() => onVer(variante)}
-          className="absolute inset-x-0 bottom-0 hidden translate-y-full bg-[rgb(11_10_9/.9)] p-3 text-[0.8125rem] font-semibold tracking-[0.04em] text-[#fbfaf7] transition-transform duration-300 ease-(--ease-out) group-hover:translate-y-0 hover:bg-[#0b0a09] sm:block"
-        >
-          Ver en mi pared
-        </button>
-      </div>
-      <div className="flex flex-col items-start gap-2 sm:flex-row sm:justify-between sm:gap-3">
-        <div className="min-w-0">
-          <h3 className="font-editorial text-lg leading-tight sm:text-xl">{diseno.nombre}</h3>
-          <p className="mt-0.5 text-xs text-texto-suave">Referencia · {diseno.categoria}</p>
-        </div>
-        {!diseno.foto && (
-          <Muestras
-            valor={variante}
-            onCambio={cambiar}
-            etiqueta={`Probar ${diseno.nombre} en otros colores`}
-          />
-        )}
-      </div>
-      <button type="button" onClick={() => onVer(variante)} className="enlace-fuerte self-start">
-        Quiero algo así<span className="sr-only">: ver {diseno.nombre} en mi pared</span>
-      </button>
-    </li>
-  );
-}
-
-/** Tarjeta grande dentro de la grilla que invita a salirse del catálogo. */
-function Invitacion({
-  oscura,
-  titulo,
-  texto,
-  boton,
-  oculta,
-}: {
-  oscura: boolean;
-  titulo: string;
-  texto: string;
-  boton: string;
-  oculta: boolean;
-}) {
-  return (
-    <li
-      hidden={oculta}
-      className={`col-span-2 flex flex-col justify-between gap-7 rounded-[16px] p-[clamp(28px,3.4vw,48px)] ${
-        oscura ? 'noche' : 'border border-linea bg-fondo'
-      }`}
-    >
-      <div>
-        <h3 className="font-display max-w-[16ch] text-[clamp(1.625rem,2.6vw,2.25rem)]">{titulo}</h3>
-        <p className="mt-3.5 max-w-[36ch] text-texto-suave">{texto}</p>
-      </div>
-      <a
-        href="#personalizado"
-        className={`boton self-start ${oscura ? 'boton-oro' : 'boton-linea'}`}
-      >
-        {boton}{' '}
-        <span aria-hidden="true" className="flecha">
-          →
-        </span>
-      </a>
-    </li>
-  );
-}
-
 export default function Vitrina() {
   const medidas = useStore($medidas);
   const propia = useStore($imagenPropia);
@@ -376,9 +271,12 @@ export default function Vitrina() {
   const imagenColgada = useRef<HTMLDivElement>(null);
   const filtros = useRef<HTMLDivElement>(null);
   const raya = useRef<HTMLSpanElement>(null);
-  const grilla = useRef<HTMLUListElement>(null);
   const primeraVez = useRef(true);
   const [recienAgregado, setRecienAgregado] = useState(false);
+  // La escalera: qué cuadro va al frente y el color elegido para cada diseño.
+  const [inicio, setInicio] = useState(0);
+  const [colores, setColores] = useState<Record<string, VarianteId>>({});
+  const [cambiando, setCambiando] = useState(false);
 
   // La raya de los filtros se mueve (no aparece y desaparece): se ve de dónde viene y a dónde va.
   useLayoutEffect(() => {
@@ -398,30 +296,6 @@ export default function Vitrina() {
     const alCambiarTamano = () => colocar(false);
     window.addEventListener('resize', alCambiarTamano);
     return () => window.removeEventListener('resize', alCambiarTamano);
-  }, [categoria]);
-
-  // Al filtrar, las tarjetas que quedan se reacomodan en cascada en vez de saltar.
-  useEffect(() => {
-    if (primeraVez.current) return;
-    const visibles = grilla.current?.querySelectorAll<HTMLElement>('[data-tarjeta]:not([hidden])');
-    const quieto = reduceMovimiento();
-    visibles?.forEach((el, k) => {
-      if (typeof el.animate !== 'function') return;
-      el.animate(
-        quieto
-          ? [{ opacity: 0 }, { opacity: 1 }]
-          : [
-              { opacity: 0, transform: 'translateY(10px)' },
-              { opacity: 1, transform: 'none' },
-            ],
-        {
-          duration: quieto ? 150 : 380,
-          delay: quieto ? 0 : Math.min(k, 8) * 40,
-          easing: 'cubic-bezier(0.23, 1, 0.32, 1)',
-          fill: 'backwards',
-        },
-      );
-    });
   }, [categoria]);
 
   // Cada vez que cambia lo que cuelga en la pared (diseño, color o imagen propia), se revela.
@@ -537,7 +411,34 @@ export default function Vitrina() {
     setRecienAgregado(true);
   }
 
-  if (!diseno) return null;
+  const lista =
+    categoria === 'Todos' ? catalogo : catalogo.filter((d) => d.categoria === categoria);
+  const frente = lista[inicio] ?? lista[0];
+  const colorFrente: VarianteId = (frente && colores[frente.id]) ?? 'orig';
+
+  function filtrar(c: string) {
+    setCategoria(c);
+    setInicio(0);
+  }
+
+  function mover(paso: number) {
+    setInicio((i) => Math.min(Math.max(i + paso, 0), lista.length - 1));
+  }
+
+  function cambiarColor(v: VarianteId) {
+    if (!frente || v === colorFrente) return;
+    const id = frente.id;
+    const poner = () => setColores((m) => ({ ...m, [id]: v }));
+    if (reduceMovimiento()) return poner();
+    // Se desenfoca, cambia el color y se vuelve a enfocar: se lee como un solo cuadro que cambia.
+    setCambiando(true);
+    setTimeout(() => {
+      poner();
+      setCambiando(false);
+    }, 160);
+  }
+
+  if (!diseno || !frente) return null;
 
   const estiloEscena = {
     '--cmw': medida.anchoCm,
@@ -702,52 +603,62 @@ export default function Vitrina() {
 
   return (
     <>
+      {/* Inspiración: el texto a la izquierda y los cuadros en escalera a la derecha, que se
+          abren desde un mazo al entrar en pantalla (Base.astro pone .visto). El cuadro del frente
+          es el que se describe abajo, cambia de color y se cuelga en la pared. */}
       <section
         id="catalogo"
         aria-labelledby="catalogo-titulo"
-        className="scroll-mt-16 border-t border-linea py-[clamp(80px,10vw,136px)]"
+        className="scroll-mt-16 overflow-x-clip border-t border-linea py-[clamp(72px,9vw,128px)]"
       >
-        <div className="mx-auto max-w-[1240px] px-4">
-          <div className="aparece grid items-end gap-x-[clamp(20px,5vw,80px)] gap-y-4 lg:grid-cols-2">
-            <div>
-              <p className="antetitulo">Nuestros cuadros más pedidos</p>
-              <h2 id="catalogo-titulo" className="titulo-seccion">
-                Encuentra inspiración <span className="text-texto-suave">para tu espacio</span>
-              </h2>
-            </div>
-            <p className="max-w-[54ch] text-[1.0625rem] text-texto-suave">
-              Estos diseños son referencias, no un catálogo cerrado. Úsalos como punto de partida:
-              cambiamos colores, textos y medida, o creamos algo nuevo contigo.
+        <div className="aparece escalera mx-auto grid max-w-[1240px] items-center gap-x-[clamp(32px,4vw,64px)] gap-y-12 px-4 lg:grid-cols-[minmax(0,4fr)_minmax(0,7fr)]">
+          <div className="max-w-[460px]">
+            <p className="text-[0.6875rem] font-semibold tracking-[0.16em] text-texto-suave uppercase">
+              Nuestros cuadros más pedidos
             </p>
-          </div>
-
-          <ol className="mt-[clamp(44px,5vw,64px)] grid border-t border-linea md:grid-cols-3">
-            {MODOS.map((m, i) => (
-              <li
-                key={m.titulo}
-                style={{ '--i': i } as CSSProperties}
-                className="aparece flex items-baseline gap-4 border-b border-linea py-[18px] md:border-b-0 md:py-0 md:pt-[22px] md:pr-6 md:pb-1 md:[&+&]:border-l md:[&+&]:pl-6"
+            <h2
+              id="catalogo-titulo"
+              className="font-display mt-4 text-[clamp(2.125rem,3.8vw,3.375rem)] leading-[1.04]"
+            >
+              {(() => {
+                let w = 0;
+                return TITULAR.map((linea, l) => (
+                  <span key={l} className={`block ${linea.acento ? 'text-acento-fuerte' : ''}`}>
+                    {linea.palabras.map((p, k) => (
+                      <span key={p + k}>
+                        <span className="palabra" style={{ '--w': w++ } as CSSProperties}>
+                          {p}
+                        </span>
+                        {k < linea.palabras.length - 1 && ' '}
+                      </span>
+                    ))}{' '}
+                  </span>
+                ));
+              })()}
+            </h2>
+            <p className="mt-5 max-w-[40ch] text-[0.9375rem] leading-relaxed text-texto-suave">
+              Son referencias, no un catálogo cerrado. Te lo hacemos tal cual, lo adaptamos a tu
+              espacio o lo diseñamos contigo desde cero.
+            </p>
+            <div className="mt-7 flex flex-wrap gap-2.5">
+              <button
+                type="button"
+                onClick={() => elegir(frente.id, colorFrente)}
+                aria-label={`Ver en mi pared: ${frente.nombre}`}
+                className="boton boton-negro"
               >
-                <span
-                  aria-hidden="true"
-                  className="font-editorial text-[22px] leading-none text-acento-fuerte"
-                >
-                  {i + 1}
-                </span>
-                <div>
-                  <h3 className="font-semibold">{m.titulo}</h3>
-                  <p className="mt-0.5 text-sm leading-normal text-texto-suave">{m.texto}</p>
-                </div>
-              </li>
-            ))}
-          </ol>
+                Ver en mi pared
+              </button>
+              <a href="#personalizado" className="boton boton-linea">
+                Crear desde cero
+              </a>
+            </div>
 
-          <div className="mt-[clamp(52px,6vw,72px)] flex items-center justify-between gap-3.5 border-b border-linea">
             <div
               ref={filtros}
               role="group"
               aria-label="Filtrar por estilo"
-              className="relative -mb-px flex gap-x-5 overflow-x-auto [scrollbar-width:none] sm:flex-wrap sm:gap-x-[26px] [&::-webkit-scrollbar]:hidden"
+              className="relative mt-10 -mb-px flex gap-x-5 overflow-x-auto border-b border-linea [scrollbar-width:none] sm:flex-wrap [&::-webkit-scrollbar]:hidden"
             >
               {categorias.map((c) => (
                 <button
@@ -755,7 +666,7 @@ export default function Vitrina() {
                   type="button"
                   data-categoria={c}
                   aria-pressed={categoria === c}
-                  onClick={() => setCategoria(c)}
+                  onClick={() => filtrar(c)}
                   className="min-h-11 shrink-0 text-sm text-texto-suave transition-colors duration-200 hover:text-texto aria-pressed:text-texto"
                 >
                   {c}
@@ -768,46 +679,109 @@ export default function Vitrina() {
                 className="pointer-events-none absolute bottom-0 left-0 h-px w-px origin-left bg-texto"
               />
             </div>
-            <p className="hidden shrink-0 text-[0.8125rem] text-texto-suave md:block">
-              Toca los círculos para ver la misma idea en otros colores
+            <p className="mt-4 text-xs leading-snug text-texto-suave">
+              Diseños de ejemplo: aquí van las fotos reales del catálogo del taller. El precio
+              depende de la medida, no del diseño.
             </p>
           </div>
 
-          <ul
-            ref={grilla}
-            className="mt-9 grid grid-flow-dense grid-cols-2 gap-x-3.5 gap-y-8 sm:grid-cols-3 sm:gap-x-[clamp(16px,2vw,28px)] sm:gap-y-[clamp(36px,4vw,56px)] lg:grid-cols-4"
-          >
-            {catalogo.map((d, i) => (
-              <Fragment key={d.id}>
-                <Tarjeta
-                  diseno={d}
-                  oculta={categoria !== 'Todos' && d.categoria !== categoria}
-                  orden={i % 4}
-                  onVer={(v) => elegir(d.id, v)}
-                />
-                {i === 4 && (
-                  <Invitacion
-                    oscura
-                    oculta={categoria !== 'Todos'}
-                    titulo="¿No ves lo que buscas?"
-                    texto="Ninguno de estos diseños es obligatorio. Tráenos tu idea o una imagen y la convertimos en tu cuadro."
-                    boton="Crear desde cero"
+          <div className="relative h-[calc(var(--cw)*1.3333+var(--dy)+176px)] [--cw:clamp(138px,40vw,200px)] [--dx:calc(var(--cw)*0.55)] [--dy:calc(var(--cw)*0.16)] md:[--cw:clamp(200px,26vw,240px)] md:[--dx:calc(var(--cw)*0.62)] md:[--dy:calc(var(--cw)*0.18)] lg:[--cw:clamp(180px,17vw,260px)] lg:[--dx:calc(var(--cw)*0.64)] lg:[--dy:calc(var(--cw)*0.2)]">
+            <ul aria-label="Diseños de referencia" className="absolute inset-0">
+              {catalogo.map((d) => {
+                const k = lista.indexOf(d);
+                const lugar = k < 0 ? VISIBLES : k - inicio;
+                const visible = k >= 0 && lugar >= 0 && lugar < VISIBLES;
+                const s = Math.max(-1, Math.min(lugar, VISIBLES));
+                const color = colores[d.id] ?? 'orig';
+                return (
+                  <li
+                    key={d.id}
+                    aria-hidden={!visible}
+                    className={`esc-item ${visible ? '' : 'fuera'}`}
+                    style={{ '--s': s, zIndex: s < 0 ? 0 : VISIBLES + 1 - s } as CSSProperties}
+                  >
+                    {/* Atajo con el mouse: el del frente va a la pared y los demás pasan al
+                        frente. Con teclado se usan las flechas y el botón «Ver en mi pared». */}
+                    <button
+                      type="button"
+                      tabIndex={-1}
+                      aria-hidden="true"
+                      onClick={() => (s === 0 ? elegir(d.id, color) : setInicio(k))}
+                      className="esc-arte block aspect-[3/4] w-full overflow-hidden rounded-[14px] bg-superficie"
+                    >
+                      <span
+                        className={`block size-full transition-[opacity,filter] duration-150 ${
+                          s === 0 && cambiando ? 'opacity-40 blur-[3px]' : ''
+                        }`}
+                      >
+                        <ImagenDiseno diseno={d} variante={color} decorativa />
+                      </span>
+                    </button>
+                    <span className="sr-only">{d.nombre}</span>
+                    <span
+                      aria-hidden="true"
+                      className={`burbuja esc-burbuja ${
+                        s === 2
+                          ? 'right-3 bg-texto after:right-5'
+                          : 'left-3 bg-[#e3b54a] after:left-5'
+                      } ${visible && (s === 0 || s === 2) ? '' : 'oculta'}`}
+                      style={s === 2 ? { color: 'var(--color-fondo)' } : undefined}
+                    >
+                      {etiqueta(d.categoria)}
+                    </span>
+                  </li>
+                );
+              })}
+            </ul>
+
+            <div className="absolute top-[calc(var(--cw)*1.3333+var(--dy)+16px)] left-0 w-[calc(var(--dx)*2-12px)]">
+              <p className="text-xs text-texto-suave tabular-nums">
+                {dosCifras(inicio + 1)} / {dosCifras(lista.length)}
+              </p>
+              <div aria-live="polite">
+                <h3 className="font-editorial mt-1 text-xl leading-tight">{frente.nombre}</h3>
+                <p className="mt-0.5 text-xs text-texto-suave">Referencia · {frente.categoria}</p>
+              </div>
+              {!frente.foto && (
+                <div className="mt-2.5">
+                  <Muestras
+                    valor={colorFrente}
+                    onCambio={cambiarColor}
+                    etiqueta={`Probar ${frente.nombre} en otros colores`}
                   />
-                )}
-              </Fragment>
-            ))}
-            <Invitacion
-              oscura={false}
-              oculta={categoria !== 'Todos'}
-              titulo="¿Tienes una foto o un diseño?"
-              texto="Súbela y mírala colgada en tu pared en segundos, a escala real."
-              boton="Subir mi imagen"
-            />
-          </ul>
-          <p className="mt-8 text-sm text-texto-suave">
-            Diseños de ejemplo. Aquí van las fotos reales del catálogo del taller. El precio depende
-            de la medida, no del diseño.
-          </p>
+                </div>
+              )}
+            </div>
+
+            <div className="absolute right-0 bottom-0 z-20 flex gap-1.5 lg:top-0 lg:bottom-auto lg:flex-col">
+              {[
+                { paso: -1, nombre: 'Diseño anterior', d: 'M15 6l-6 6 6 6' },
+                { paso: 1, nombre: 'Siguiente diseño', d: 'M9 6l6 6-6 6' },
+              ].map((f) => (
+                <button
+                  key={f.paso}
+                  type="button"
+                  aria-label={f.nombre}
+                  disabled={f.paso < 0 ? inicio === 0 : inicio >= lista.length - 1}
+                  onClick={() => mover(f.paso)}
+                  className="presionable grid size-11 place-items-center rounded-full bg-[color-mix(in_srgb,var(--color-texto)_6%,var(--color-fondo))] text-texto transition-[background-color,opacity] duration-200 hover:bg-[color-mix(in_srgb,var(--color-texto)_12%,var(--color-fondo))] disabled:pointer-events-none disabled:opacity-30"
+                >
+                  <svg
+                    aria-hidden="true"
+                    viewBox="0 0 24 24"
+                    className="size-4 lg:rotate-90"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="1.8"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path d={f.d} />
+                  </svg>
+                </button>
+              ))}
+            </div>
+          </div>
         </div>
       </section>
 

@@ -380,6 +380,89 @@
   }
 }
 
+/* ---------- Inspiración: los cuadros en escalera ---------- */
+
+/* Cada cuadro baja y se corre a la derecha según su lugar (--s): 0 es el del frente. Se mueve con
+   transform (lo hace la tarjeta gráfica) y en cascada corta, de adelante hacia atrás. */
+.esc-item {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: var(--cw);
+  transform: translate(calc(var(--s) * var(--dx)), calc(var(--s) * var(--dy)));
+  transition:
+    transform 650ms var(--ease-in-out),
+    opacity 350ms var(--ease-out);
+  transition-delay: calc(max(var(--s), 0) * 45ms);
+}
+.esc-item.fuera {
+  opacity: 0;
+  pointer-events: none;
+}
+.esc-arte {
+  box-shadow:
+    0 1px 2px rgb(11 10 9 / 0.12),
+    0 10px 24px -8px rgb(11 10 9 / 0.28),
+    0 28px 48px -24px rgb(11 10 9 / 0.3);
+  transition:
+    transform 300ms var(--ease-out),
+    box-shadow 300ms var(--ease-out);
+}
+@media (hover: hover) and (pointer: fine) {
+  .esc-arte:hover {
+    transform: translateY(-8px);
+    box-shadow:
+      0 2px 4px rgb(11 10 9 / 0.12),
+      0 24px 44px -12px rgb(11 10 9 / 0.4);
+  }
+}
+/* Las etiquetas de la escalera usan el globo de la portada, pero sin su entrada ni su vaivén. */
+.burbuja.esc-burbuja {
+  top: -14px;
+  animation: none;
+  transition: opacity 300ms var(--ease-out) 250ms;
+}
+.burbuja.esc-burbuja.oculta {
+  opacity: 0;
+  transition-delay: 0ms;
+}
+
+.palabra {
+  display: inline-block;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  /* El contenedor no se mueve: se mueven sus piezas. */
+  .js .aparece.escalera {
+    opacity: 1;
+    transform: none;
+  }
+  /* Antes de entrar en pantalla los cuadros están en un mazo y el titular, desenfocado. */
+  .js .escalera:not(.visto) .esc-item {
+    transform: none;
+  }
+  .js .escalera:not(.visto) .esc-burbuja {
+    opacity: 0;
+  }
+  .escalera .palabra {
+    transition:
+      opacity 600ms var(--ease-out),
+      filter 600ms var(--ease-out),
+      transform 700ms var(--ease-out);
+    transition-delay: calc(var(--w) * 60ms);
+  }
+  .js .escalera:not(.visto) .palabra {
+    opacity: 0;
+    filter: blur(6px);
+    transform: translateY(0.3em);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .esc-item {
+    transition: opacity 200ms ease;
+  }
+}
+
 /* Preguntas frecuentes: la respuesta se despliega en vez de saltar (donde el navegador lo soporta). */
 @supports selector(::details-content) {
   :root {

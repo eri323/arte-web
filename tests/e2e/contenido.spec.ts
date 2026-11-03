@@ -12,7 +12,11 @@ test.describe('páginas de contenido', () => {
     await page.goto('/');
     await expect(page.getByRole('heading', { name: 'Así nace tu cuadro' })).toBeVisible();
     await expect(page.getByRole('heading', { name: 'Lo fabricamos' })).toBeVisible();
-    await expect(page.getByRole('img', { name: 'Diseño Ronin' }).first()).toBeVisible();
+    const escalera = page.locator('#catalogo').getByRole('list', { name: 'Diseños de referencia' });
+    await expect(escalera).toBeVisible();
+    await expect(
+      page.locator('#catalogo').getByRole('heading', { name: 'Cuatro Cuatros' }),
+    ).toBeVisible();
     await expect(page.getByRole('heading', { name: /Pagas 50% y 50%/ })).toBeVisible();
     await page.getByText('¿Cuánto cuesta el envío?').click();
     await expect(page.getByText(/Se cotiza por WhatsApp según tu ciudad/).first()).toBeVisible();
@@ -58,7 +62,7 @@ test.describe('catálogo y pared de la portada', () => {
     await expect(catalogo.getByRole('heading', { name: 'Ronin' })).toBeVisible();
     await expect(catalogo.getByRole('heading', { name: 'Chicle Pop' })).toBeHidden();
 
-    await catalogo.getByRole('button', { name: /ver Ronin en mi pared/ }).click();
+    await catalogo.getByRole('button', { name: 'Ver en mi pared: Ronin' }).click();
     const pared = page.locator('#pared');
     await expect(pared.getByText('Ronin', { exact: true })).toBeVisible();
     // El precio sale de negocio.ts: 45×60 cuesta $80.000 y 60×80, $130.000.
@@ -82,13 +86,16 @@ test.describe('catálogo y pared de la portada', () => {
   test('una tarjeta cambia de color y la pared lo cuelga en ese color', async ({ page }) => {
     await irA(page, '/');
     const catalogo = page.locator('#catalogo');
+    await catalogo.getByRole('button', { name: 'Música', exact: true }).click();
+    await expect(catalogo.getByRole('heading', { name: 'Riff Pesado' })).toBeVisible();
+    await catalogo.getByRole('button', { name: 'Siguiente diseño' }).click();
     const colores = catalogo.getByRole('group', { name: 'Probar Lado A en otros colores' });
     await colores.getByRole('button', { name: 'Rojo LED' }).click();
     await expect(colores.getByRole('button', { name: 'Rojo LED' })).toHaveAttribute(
       'aria-pressed',
       'true',
     );
-    await catalogo.getByRole('button', { name: /ver Lado A en mi pared/ }).click();
+    await catalogo.getByRole('button', { name: 'Ver en mi pared: Lado A' }).click();
     const pared = page.locator('#pared');
     await expect(
       pared
