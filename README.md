@@ -126,7 +126,7 @@ Están marcados en el código con `// SUPUESTO:`. Los principales:
 - «Agrega N más…» se muestra siempre que falte al menos una unidad para la promoción.
 - Los pedidos del cliente se numeran desde `AE-1043`, después de los tres de ejemplo.
 - Se puede agregar un cuadro con calidad baja: el aviso se muestra y la calidad viaja en el mensaje para que el taller decida.
-- El dominio en `astro.config.mjs` (`site`) es provisional.
+- El dominio en `astro.config.mjs` (`site`) es el de la demo publicada (`arte-web-tau.vercel.app`). Para un taller real se cambia por el suyo.
 
 ## Despliegue
 

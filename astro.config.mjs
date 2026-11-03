@@ -6,8 +6,8 @@ import react from '@astrojs/react';
 import tailwindcss from '@tailwindcss/vite';
 
 export default defineConfig({
-  // SUPUESTO: dominio provisional; Erick lo cambia al desplegar.
-  site: 'https://arte-web.example',
+  // Dominio de la demo publicada. De aquí salen las URL absolutas de og:image; para un taller real va su dominio.
+  site: 'https://arte-web-tau.vercel.app',
   output: 'static',
   integrations: [react()],
 
