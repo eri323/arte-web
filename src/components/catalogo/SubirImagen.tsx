@@ -2,6 +2,7 @@ import { useStore } from '@nanostores/react';
 import { useState, type ChangeEvent, type DragEvent } from 'react';
 import { negocio } from '../../config/negocio';
 import { esHeic, MENSAJE_HEIC, validarArchivo } from '../../lib/archivo';
+import { guardarFotoPendiente } from '../../stores/foto-pendiente';
 import { $imagenPropia, ponerImagenPropia } from '../../stores/vitrina';
 import { abrirFoto } from '../configurador/imagen';
 
@@ -23,6 +24,8 @@ export default function SubirImagen() {
     try {
       const { vistaPrevia } = await abrirFoto(archivo);
       ponerImagenPropia({ url: vistaPrevia, nombre: archivo.name });
+      // El original se guarda para que «Seguir con mi foto» lo abra en /crear sin pedirlo otra vez.
+      await guardarFotoPendiente(archivo);
     } catch {
       setError(
         esHeic(archivo)

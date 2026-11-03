@@ -448,7 +448,10 @@ export default function Vitrina() {
       />
       {propia ? (
         <>
-          <a href="/crear" className="boton boton-oro w-full">
+          <a
+            href={`/crear?${new URLSearchParams({ medida: medida.id, orientacion, material })}`}
+            className="boton boton-oro w-full"
+          >
             Seguir con mi foto
           </a>
           <p className="-mt-2 text-xs leading-snug text-texto-suave">

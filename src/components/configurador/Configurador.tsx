@@ -14,6 +14,7 @@ import {
   type Dimensiones,
 } from '../../lib/resolucion';
 import { $carrito, agregarAlCarrito } from '../../stores/carrito';
+import { tomarFotoPendiente } from '../../stores/foto-pendiente';
 import { guardarMiniatura } from '../../stores/miniaturas';
 import { $medidas } from '../../stores/precios';
 import EscenaPared from '../escena/EscenaPared';
@@ -74,10 +75,37 @@ export default function Configurador() {
     setZoom(1);
   }, [proporcion]);
 
-  async function alElegirArchivo(evento: ChangeEvent<HTMLInputElement>) {
+  // Si viene de «Seguir con mi foto» en la portada, llegan la foto (en IndexedDB) y las opciones que
+  // eligió en la pared (en la URL), para no pedirle todo otra vez.
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const medidaUrl = params.get('medida');
+    const orientacionUrl = params.get('orientacion');
+    const materialUrl = params.get('material');
+    if (medidaUrl && medidas.some((m) => m.id === medidaUrl)) setMedidaId(medidaUrl);
+    const orientacionValida = negocio.orientaciones.find((o) => o === orientacionUrl);
+    if (orientacionValida) setOrientacion(orientacionValida);
+    const materialValido = negocio.materiales.find((m) => m.id === materialUrl);
+    if (materialValido) setMaterial(materialValido.id);
+
+    let vigente = true;
+    void tomarFotoPendiente().then((archivo) => {
+      if (archivo && vigente) void usarArchivo(archivo, !orientacionValida);
+    });
+    return () => {
+      vigente = false;
+    };
+    // Solo al abrir la página.
+  }, []);
+
+  function alElegirArchivo(evento: ChangeEvent<HTMLInputElement>) {
     const archivo = evento.target.files?.[0];
     evento.target.value = '';
-    if (!archivo) return;
+    if (archivo) void usarArchivo(archivo);
+  }
+
+  /** Abre la foto. Si `orientarSegunFoto`, la orientación sigue a la foto (ancha → horizontal). */
+  async function usarArchivo(archivo: File, orientarSegunFoto = true) {
     setError(null);
     setAgregado(null);
 
@@ -92,7 +120,9 @@ export default function Configurador() {
       const abierta = await abrirFoto(archivo);
       setFoto({ archivo: archivo.name, ...abierta });
       setRecorte(null);
-      setOrientacion(abierta.original.ancho > abierta.original.alto ? 'horizontal' : 'vertical');
+      if (orientarSegunFoto) {
+        setOrientacion(abierta.original.ancho > abierta.original.alto ? 'horizontal' : 'vertical');
+      }
     } catch {
       // Si el navegador no decodifica HEIC, se explica cómo cambiar el formato.
       setError(
