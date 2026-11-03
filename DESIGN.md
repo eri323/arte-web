@@ -120,7 +120,7 @@ en cada sección: el rojo LED solo vive en la pared y en una burbuja.
 
 - **Botones**: `boton-negro` (principal), `boton-linea` (gris, secundario), `boton-oro` (pedir). Se hunden a `scale(0.97)` al tocarlos.
 - **Abanico**: baja hacia la izquierda y sube hacia la derecha, como visto de lado. En el celular se ocultan las cartas de las puntas y la burbuja derecha.
-- **Inspiración** (`Vitrina.tsx`): sigue la segunda sección del video del pin. Texto a la izquierda (antetítulo en versalitas, titular en tres líneas con la del medio en oro, que entra palabra por palabra) y, a la derecha, los diseños en escalera que se abren desde un mazo y se salen por el borde. El del frente se describe abajo (nombre, categoría, colores), se cuelga con «Ver en mi pared» y las flechas lo cambian. Globos con el `#estilo` en el primero y el tercero. Filtros debajo de los botones.
+- **Inspiración** (`Vitrina.tsx`): sigue la segunda sección del video del pin. Texto a la izquierda (antetítulo en versalitas, titular en tres líneas con la del medio en oro, que entra palabra por palabra) y, a la derecha, los diseños en escalera que se abren desde un mazo y se salen por el borde. El del frente se describe abajo (número, nombre y categoría), se cuelga con «Ver en mi pared» y las flechas lo cambian. Globos con el `#estilo` en el primero y el tercero. Filtros debajo de los botones.
 - **Pared**: bloque negro de 24 px de radio. Solo el cuadro, a escala real y centrado sobre la pared (sin muebles, clavo ni cuerda), con cotas de plano: el ancho debajo y el alto a la derecha. Gira entre vertical y horizontal. Desde 1280 px, escena 3:2 con el panel encima a la derecha.
 - **Personalizado**, **proceso**, **resultados**: huecos punteados de 14 px de radio con el nombre del material que va ahí.
 
@@ -134,7 +134,8 @@ en cada sección: el rojo LED solo vive en la pared y en una burbuja.
 
 ## 7. Do's and Don'ts
 
-- **Do** reemplazar los huecos por fotos y videos reales del taller, y el arte por fotos (`negocio.catalogo[].foto`).
+- **Catálogo**: solo fotos reales (los pósters que mandó a hacer el taller y cuadros de su Instagram), en `public/catalogo/` a 800 y 1600 px y servidas con `srcset`. Las fotos no tienen variantes de color; las horizontales se abren en horizontal en la pared.
+- **Do** reemplazar los huecos por fotos y videos reales del taller, y pedir los originales de Instagram para que todas las fotos queden en alta.
 - **Do** mantener el titular moderado: si crece, pierde el abanico.
 - **Don't** redondear todo: las líneas de 1 px siguen ordenando listas, modos y preguntas.
 - **Don't** píldoras en botones, degradados de fondo, vidrio esmerilado fuera del header ni grano.

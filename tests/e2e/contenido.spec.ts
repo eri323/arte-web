@@ -15,7 +15,7 @@ test.describe('páginas de contenido', () => {
     const escalera = page.locator('#catalogo').getByRole('list', { name: 'Diseños de referencia' });
     await expect(escalera).toBeVisible();
     await expect(
-      page.locator('#catalogo').getByRole('heading', { name: 'Cuatro Cuatros' }),
+      page.locator('#catalogo').getByRole('heading', { name: 'A mis 20' }),
     ).toBeVisible();
     await expect(page.getByRole('heading', { name: /Pagas 50% y 50%/ })).toBeVisible();
     await page.getByText('¿Cuánto cuesta el envío?').click();
@@ -58,13 +58,15 @@ test.describe('catálogo y pared de la portada', () => {
   test('filtra por categoría, cuelga el diseño y lo agrega al pedido', async ({ page }) => {
     await irA(page, '/');
     const catalogo = page.locator('#catalogo');
-    await catalogo.getByRole('button', { name: 'Anime', exact: true }).click();
-    await expect(catalogo.getByRole('heading', { name: 'Ronin' })).toBeVisible();
-    await expect(catalogo.getByRole('heading', { name: 'Chicle Pop' })).toBeHidden();
+    await catalogo.getByRole('button', { name: 'Cine', exact: true }).click();
+    await expect(catalogo.getByRole('heading', { name: 'El mundo es tuyo' })).toBeVisible();
+    await expect(catalogo.getByRole('heading', { name: 'A mis 20' })).toBeHidden();
+    await catalogo.getByRole('button', { name: 'Siguiente diseño' }).click();
+    await expect(catalogo.getByRole('heading', { name: 'Fight Club' })).toBeVisible();
 
-    await catalogo.getByRole('button', { name: 'Ver en mi pared: Ronin' }).click();
+    await catalogo.getByRole('button', { name: 'Ver en mi pared: Fight Club' }).click();
     const pared = page.locator('#pared');
-    await expect(pared.getByText('Ronin', { exact: true })).toBeVisible();
+    await expect(pared.getByText('Fight Club', { exact: true })).toBeVisible();
     // El precio sale de negocio.ts: 45×60 cuesta $80.000 y 60×80, $130.000.
     await expect(pared.getByText(/80\.000/).first()).toBeVisible();
     await pared.getByText('60×80', { exact: true }).click();
@@ -72,49 +74,42 @@ test.describe('catálogo y pared de la portada', () => {
     await pared.getByText('Acrílico', { exact: true }).click();
 
     await pared.getByRole('button', { name: 'Agregar al pedido' }).click();
-    await expect(pared.getByText(/Ronin en 60×80 cm, Acrílico está en tu pedido/)).toBeVisible();
+    await expect(
+      pared.getByText(/Fight Club en 60×80 cm, Acrílico está en tu pedido/),
+    ).toBeVisible();
     await expect(page.getByTestId('contador-carrito')).toHaveText('1');
 
     await pared.getByRole('link', { name: 'Ver mi pedido' }).click();
     await page.waitForFunction(() => document.querySelectorAll('astro-island[ssr]').length === 0);
-    await expect(page.getByText('Diseño del catálogo: Ronin').first()).toBeVisible();
+    await expect(page.getByText('Diseño del catálogo: Fight Club').first()).toBeVisible();
     const mensaje = page.getByTestId('mensaje');
-    await expect(mensaje).toContainText('Diseño del catálogo: Ronin');
+    await expect(mensaje).toContainText('Diseño del catálogo: Fight Club');
     await expect(mensaje).not.toContainText('Adjunto mis fotos');
-  });
-
-  test('una tarjeta cambia de color y la pared lo cuelga en ese color', async ({ page }) => {
-    await irA(page, '/');
-    const catalogo = page.locator('#catalogo');
-    await catalogo.getByRole('button', { name: 'Música', exact: true }).click();
-    await expect(catalogo.getByRole('heading', { name: 'Riff Pesado' })).toBeVisible();
-    await catalogo.getByRole('button', { name: 'Siguiente diseño' }).click();
-    const colores = catalogo.getByRole('group', { name: 'Probar Lado A en otros colores' });
-    await colores.getByRole('button', { name: 'Rojo LED' }).click();
-    await expect(colores.getByRole('button', { name: 'Rojo LED' })).toHaveAttribute(
-      'aria-pressed',
-      'true',
-    );
-    await catalogo.getByRole('button', { name: 'Ver en mi pared: Lado A' }).click();
-    const pared = page.locator('#pared');
-    await expect(
-      pared
-        .getByRole('group', { name: 'Color del diseño' })
-        .getByRole('button', { name: 'Rojo LED' }),
-    ).toHaveAttribute('aria-pressed', 'true');
-    await pared.getByRole('button', { name: 'Agregar al pedido' }).click();
-    await expect(
-      pared.getByText(/Lado A en rojo led en 45×60 cm, MDF está en tu pedido/),
-    ).toBeVisible();
   });
 
   test('la pared gira el cuadro a horizontal y así va al pedido', async ({ page }) => {
     await irA(page, '/');
+    const catalogo = page.locator('#catalogo');
+    await catalogo.getByRole('button', { name: 'Música', exact: true }).click();
+    await catalogo.getByRole('button', { name: 'Ver en mi pared: A mis 20' }).click();
     const pared = page.locator('#pared');
     await pared.getByText('Horizontal', { exact: true }).click();
     await expect(pared.getByText(/recorte de referencia/)).toBeVisible();
     await pared.getByRole('button', { name: 'Agregar al pedido' }).click();
-    await expect(pared.getByText(/en 60×45 cm, horizontal, MDF está en tu pedido/)).toBeVisible();
+    await expect(
+      pared.getByText(/A mis 20 en 60×45 cm, horizontal, MDF está en tu pedido/),
+    ).toBeVisible();
+  });
+
+  test('una foto horizontal del taller se muestra horizontal en la pared', async ({ page }) => {
+    await irA(page, '/');
+    const catalogo = page.locator('#catalogo');
+    await catalogo.getByRole('button', { name: 'Deportes', exact: true }).click();
+    await catalogo.getByRole('button', { name: 'Ver en mi pared: La chilena' }).click();
+    const pared = page.locator('#pared');
+    await expect(pared.getByRole('img', { name: /futbolista haciendo una chilena/ })).toBeVisible();
+    await pared.getByRole('button', { name: 'Agregar al pedido' }).click();
+    await expect(pared.getByText(/La chilena en 60×45 cm, horizontal, MDF/)).toBeVisible();
   });
 
   test('la imagen que sube el cliente queda colgada en la pared', async ({ page }) => {
@@ -138,8 +133,8 @@ test.describe('catálogo y pared de la portada', () => {
     // registrar su escucha de clics un instante después de hidratarse.
     const pared = page.locator('#pared');
     await expect(async () => {
-      await page.getByRole('link', { name: 'Ver Chicle Pop en mi pared' }).press('Enter');
-      await expect(pared.getByText('Chicle Pop', { exact: true })).toBeVisible({ timeout: 1000 });
+      await page.getByRole('link', { name: 'Ver Estatua pop en mi pared' }).press('Enter');
+      await expect(pared.getByText('Estatua pop', { exact: true })).toBeVisible({ timeout: 1000 });
     }).toPass();
   });
 });

@@ -10,8 +10,18 @@ const { vitrina, catalogo } = negocio;
 
 // El abanico de la portada: nueve diseños del catálogo, el del centro adelante. En el celular
 // se ocultan los de las puntas.
-const abanico = [5, 2, 10, 4, 0, 6, 8, 1, 11]
-  .map((i) => catalogo[i])
+const abanico = [
+  'frase-neon',
+  'fight-club',
+  'feliz-cumpleanos-ferxxo',
+  'sagrado-corazon',
+  'a-mis-20',
+  'estatua-pop',
+  'sayonara',
+  'el-mundo-es-tuyo',
+  'tu-mascota',
+]
+  .map((id) => catalogo.find((d) => d.id === id))
   .filter((d) => d !== undefined)
   .map((diseno, k, lista) => {
     const i = k - Math.floor(lista.length / 2);
@@ -119,7 +129,12 @@ const titular = [vitrina.titular, vitrina.titularSuave].filter(Boolean).join(' '
           >
             <a href="#pared" data-diseno={diseno.id} class="block focus-visible:outline-none">
               <span class="alza sombra-cuadro block aspect-[3/4] overflow-hidden rounded-[14px]">
-                <ImagenDiseno diseno={diseno} decorativa />
+                <ImagenDiseno
+                  diseno={diseno}
+                  decorativa
+                  cargar="eager"
+                  sizes="(min-width: 640px) 192px, 140px"
+                />
                 <span class="sr-only">Ver {diseno.nombre} en mi pared</span>
               </span>
               <span

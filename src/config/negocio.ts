@@ -57,7 +57,13 @@ export interface DisenoCatalogo {
 export interface FotoVitrina {
   /** Ruta dentro de public/, por ejemplo '/vitrina/portada.jpg'. */
   src: string;
+  /** La misma foto en alta resolución, para pantallas grandes y la pared. */
+  srcGrande?: string;
   alt: string;
+  /** Qué parte de la foto se ve cuando se recorta (object-position), por ejemplo '40% 50%'. */
+  posicion?: string;
+  /** Forma del cuadro de la foto. La pared lo muestra así al elegirlo. Por defecto, vertical. */
+  orientacion?: Orientacion;
 }
 
 export interface Negocio {
@@ -122,22 +128,170 @@ export const negocio: Negocio = {
     bajada:
       'Inspírate con nuestros diseños o crea uno desde cero. Lo hacemos a mano y lo enviamos a todo Colombia.',
   },
-  // SUPUESTO: diseños, nombres y categorías de ejemplo, con arte generado en SVG. El taller pone las
-  // fotos reales de su catálogo en `foto`. El precio es el de la medida elegida (no hay recargo por
-  // diseño).
+  // Fotos reales: pósters que el taller mandó a hacer y cuadros de su Instagram (@midasatelier444).
+  // Excepción de la rama feat/midas-atelier (CLAUDE.md, sección 18): hay carátulas de álbumes y
+  // fotogramas de películas porque es lo que el taller vende de verdad.
+  // SUPUESTO: nombres y categorías los puso la demo, no el taller. El precio es el de la medida
+  // elegida (no hay recargo por diseño).
   catalogo: [
-    { id: 'cuatro-cuatros', nombre: 'Cuatro Cuatros', categoria: 'Lujo' },
-    { id: 'verde-billete', nombre: 'Verde Billete', categoria: 'Lujo' },
-    { id: 'no-pares', nombre: 'No Pares', categoria: 'Motivación' },
-    { id: 'disciplina', nombre: 'Disciplina', categoria: 'Motivación' },
-    { id: 'chicle-pop', nombre: 'Chicle Pop', categoria: 'Pop art' },
-    { id: 'boom-comic', nombre: 'Boom Cómic', categoria: 'Pop art' },
-    { id: 'escena-final', nombre: 'Escena Final', categoria: 'Cine' },
-    { id: 'sala-oscura', nombre: 'Sala Oscura', categoria: 'Cine' },
-    { id: 'riff-pesado', nombre: 'Riff Pesado', categoria: 'Música' },
-    { id: 'lado-a', nombre: 'Lado A', categoria: 'Música' },
-    { id: 'ronin', nombre: 'Ronin', categoria: 'Anime' },
-    { id: 'sakura', nombre: 'Sakura', categoria: 'Anime' },
+    {
+      id: 'a-mis-20',
+      nombre: 'A mis 20',
+      categoria: 'Música',
+      foto: {
+        src: '/catalogo/a-mis-20-800.webp',
+        srcGrande: '/catalogo/a-mis-20-1600.webp',
+        alt: 'Póster del álbum A mis 20 con la lista de canciones',
+      },
+    },
+    {
+      id: 'el-mundo-es-tuyo',
+      nombre: 'El mundo es tuyo',
+      categoria: 'Cine',
+      foto: {
+        src: '/catalogo/el-mundo-es-tuyo-800.webp',
+        srcGrande: '/catalogo/el-mundo-es-tuyo-1600.webp',
+        alt: 'Cuadro pop art de un gánster de traje blanco con un letrero de neón',
+        posicion: '52% 50%',
+        orientacion: 'horizontal',
+      },
+    },
+    {
+      id: 'estatua-pop',
+      nombre: 'Estatua pop',
+      categoria: 'Urbano',
+      foto: {
+        src: '/catalogo/estatua-pop-800.webp',
+        srcGrande: '/catalogo/estatua-pop-1600.webp',
+        alt: 'Cuadro de una estatua griega con audífonos y gafas rosadas haciendo una bomba de chicle',
+      },
+    },
+    {
+      id: 'fight-club',
+      nombre: 'Fight Club',
+      categoria: 'Cine',
+      foto: {
+        src: '/catalogo/fight-club-800.webp',
+        srcGrande: '/catalogo/fight-club-1600.webp',
+        alt: 'Póster de la película Fight Club con la lista de sus reglas',
+      },
+    },
+    {
+      id: 'feliz-cumpleanos-ferxxo',
+      nombre: 'Feliz Cumpleaños Ferxxo',
+      categoria: 'Música',
+      foto: {
+        src: '/catalogo/feliz-cumpleanos-ferxxo-800.webp',
+        srcGrande: '/catalogo/feliz-cumpleanos-ferxxo-1600.webp',
+        alt: 'Póster de álbum en forma de chat, con la lista de canciones',
+      },
+    },
+    {
+      id: 'frase-neon',
+      nombre: '¿Y si todo sale bien?',
+      categoria: 'Urbano',
+      foto: {
+        src: '/catalogo/frase-neon-800.webp',
+        srcGrande: '/catalogo/frase-neon-1600.webp',
+        alt: 'Cuadro con una frase escrita a mano sobre un periódico, con luz LED azul',
+      },
+    },
+    {
+      id: 'sagrado-corazon',
+      nombre: 'Sagrado Corazón',
+      categoria: 'Arte',
+      foto: {
+        src: '/catalogo/sagrado-corazon-800.webp',
+        srcGrande: '/catalogo/sagrado-corazon-1600.webp',
+        alt: 'Cuadro del Sagrado Corazón de Jesús con un halo dorado',
+      },
+    },
+    {
+      id: 'sayonara',
+      nombre: 'Sayonara',
+      categoria: 'Música',
+      foto: {
+        src: '/catalogo/sayonara-800.webp',
+        srcGrande: '/catalogo/sayonara-1600.webp',
+        alt: 'Póster del álbum Sayonara con la lista de canciones',
+      },
+    },
+    {
+      id: 'cien-dolares',
+      nombre: 'Cien dólares',
+      categoria: 'Urbano',
+      foto: {
+        src: '/catalogo/cien-dolares-800.webp',
+        srcGrande: '/catalogo/cien-dolares-1600.webp',
+        alt: 'Cuadro de un billete de cien dólares con luz LED blanca',
+        posicion: '42% 50%',
+        orientacion: 'horizontal',
+      },
+    },
+    {
+      id: 'tu-mascota',
+      nombre: 'Tu mascota',
+      categoria: 'Mascotas',
+      foto: {
+        src: '/catalogo/tu-mascota-800.webp',
+        srcGrande: '/catalogo/tu-mascota-1600.webp',
+        alt: 'Cuadro con la foto de un gato atigrado mirando hacia arriba',
+      },
+    },
+    {
+      id: 'la-bomba-de-ziroshima',
+      nombre: 'La bomba de Ziroshima',
+      categoria: 'Música',
+      foto: {
+        src: '/catalogo/la-bomba-de-ziroshima-800.webp',
+        srcGrande: '/catalogo/la-bomba-de-ziroshima-1600.webp',
+        alt: 'Cuadro de álbum al estilo de un grabado japonés, con un monje en un lago',
+      },
+    },
+    {
+      id: 'la-chilena',
+      nombre: 'La chilena',
+      categoria: 'Deportes',
+      foto: {
+        src: '/catalogo/la-chilena-800.webp',
+        srcGrande: '/catalogo/la-chilena-1600.webp',
+        alt: 'Cuadro de un futbolista haciendo una chilena en un estadio lleno',
+        posicion: '55% 50%',
+        orientacion: 'horizontal',
+      },
+    },
+    {
+      id: 'fight-club-fotocopia',
+      nombre: 'Fight Club en fotocopia',
+      categoria: 'Cine',
+      foto: {
+        src: '/catalogo/fight-club-fotocopia-800.webp',
+        srcGrande: '/catalogo/fight-club-fotocopia-1600.webp',
+        alt: 'Póster de Fight Club con textura de fotocopia en blanco y negro',
+      },
+    },
+    {
+      id: 'set-anime',
+      nombre: 'Set anime',
+      categoria: 'Anime',
+      foto: {
+        src: '/catalogo/set-anime-800.webp',
+        srcGrande: '/catalogo/set-anime-1600.webp',
+        alt: 'Set de cinco cuadros de anime montados juntos en la pared',
+        orientacion: 'horizontal',
+      },
+    },
+    {
+      id: 'la-creacion',
+      nombre: 'La creación',
+      categoria: 'Arte',
+      foto: {
+        src: '/catalogo/la-creacion-800.webp',
+        srcGrande: '/catalogo/la-creacion-1600.webp',
+        alt: 'Cuadro de dos manos a punto de tocarse, en tonos azules',
+        orientacion: 'horizontal',
+      },
+    },
   ],
   redes: { instagram: 'midasatelier444' },
   medidas: [

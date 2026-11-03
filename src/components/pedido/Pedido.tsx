@@ -27,7 +27,12 @@ function Miniatura({ item }: { item: ItemCarrito }) {
     return (
       <div className="h-20 w-15 shrink-0 overflow-hidden rounded-sm">
         {diseno?.foto ? (
-          <img src={diseno.foto.src} alt={diseno.foto.alt} className="size-full object-cover" />
+          <img
+            src={diseno.foto.src}
+            alt={diseno.foto.alt}
+            className="size-full object-cover"
+            style={diseno.foto.posicion ? { objectPosition: diseno.foto.posicion } : undefined}
+          />
         ) : (
           <ArteCatalogo
             disenoId={item.disenoId}

@@ -420,6 +420,7 @@ Completan huecos de las secciones anteriores. Mandan sobre ellas si hay duda.
 - **«Te falta N» con paquete:** «Agrega 1 más de 45×60 y llevas 2 por $130.000». Con `desde` se mantiene «Agrega 1 más de 30×40 y pagas $40.000 c/u».
 - **Lighthouse** se corre con `npx` en H6. No se agrega a `package.json`.
 - **Propuesta Midas Atelier (3-nov-2026, rama `feat/midas-atelier`):** Erick decidió usar la marca real «Midas Atelier» (Instagram @midasatelier444) y subir la rama al repo público. Es una excepción explícita a la regla 3.1 solo en esa rama. El prefijo de pedido es `MA`, el footer dice «Demo · propuesta web» y la estética sigue `DESIGN.md` (rediseño del 3-nov-2026 inspirado en un pin de Pinterest: fondo neutro, tinta como color principal, abanico de cuadros en la portada y bloques negros redondeados para la pared y el cierre). El catálogo de diseños usa los precios de `negocio.ts` (sin recargo por diseño ni por material) y sus ítems van al carrito con `disenoId`.
+  - **Excepción a la regla 3.2, solo en esa rama (3-nov-2026):** el catálogo y el abanico usan fotos reales de lo que vende el taller, aunque incluyan carátulas de álbumes o fotogramas de películas: pósters que mandó a hacer y cuadros de su Instagram. Siguen prohibidas las APIs de Spotify y Apple, y no se traen imágenes de Pinterest ni de otros talleres.
 - **Rama:** en este repo personal se hace commit y push directo a `main`, como dice la sección 13, aunque el entorno de trabajo de Erick sugiera ramas.
 
 ## 19. Registro de avance (actualízalo al cerrar cada hito)

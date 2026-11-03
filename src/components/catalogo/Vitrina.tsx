@@ -31,6 +31,9 @@ const TITULAR: { palabras: string[]; acento?: boolean }[] = [
   { palabras: ['para', 'tu', 'espacio,'], acento: true },
   { palabras: ['a', 'tu', 'manera.'] },
 ];
+/** La forma en que el taller hizo el diseño: las fotos pueden ser horizontales; el arte, vertical. */
+const orientacionDe = (d: DisenoCatalogo | undefined): Orientacion =>
+  d?.foto?.orientacion ?? 'vertical';
 const dosCifras = (n: number) => String(n).padStart(2, '0');
 const etiqueta = (categoria: string) => `#${categoria.toLowerCase().replace(/\s+/g, '')}`;
 
@@ -92,19 +95,33 @@ export function ImagenDiseno({
   diseno,
   decorativa = false,
   variante = 'orig',
+  cargar = 'lazy',
+  sizes = '(min-width: 1024px) 260px, 45vw',
 }: {
   diseno: DisenoCatalogo;
   decorativa?: boolean;
   variante?: VarianteId;
+  /** En la portada las fotos se ven de una: ahí van con 'eager'. */
+  cargar?: 'lazy' | 'eager';
+  /** Qué tan ancha se ve la foto, para que el navegador baje el tamaño justo. */
+  sizes?: string;
 }) {
   // Con foto real del taller no hay variantes de color: se muestra la foto tal cual.
   if (diseno.foto) {
     return (
       <img
         src={diseno.foto.src}
+        srcSet={
+          diseno.foto.srcGrande
+            ? `${diseno.foto.src} 800w, ${diseno.foto.srcGrande} 1600w`
+            : undefined
+        }
+        sizes={diseno.foto.srcGrande ? sizes : undefined}
         alt={decorativa ? '' : diseno.foto.alt}
-        loading="lazy"
+        loading={cargar}
+        decoding="async"
         className="block size-full object-cover"
+        style={diseno.foto.posicion ? { objectPosition: diseno.foto.posicion } : undefined}
       />
     );
   }
@@ -163,7 +180,7 @@ export default function Vitrina() {
     (negocio.medidas.find((m) => m.id === '45x60') ?? negocio.medidas[2] ?? negocio.medidas[0])!.id,
   );
   const [material, setMaterial] = useState<MaterialId>('mdf');
-  const [orientacion, setOrientacion] = useState<Orientacion>('vertical');
+  const [orientacion, setOrientacion] = useState<Orientacion>(orientacionDe(catalogo[0]));
   const [led, setLed] = useState<'si' | 'no'>('si');
   const [agregado, setAgregado] = useState<string | null>(null);
   const imagenColgada = useRef<HTMLDivElement>(null);
@@ -231,6 +248,7 @@ export default function Vitrina() {
   function elegir(id: string, v: VarianteId) {
     setDisenoId(id);
     setVariante(v);
+    setOrientacion(orientacionDe(catalogo.find((d) => d.id === id)));
     setAgregado(null);
     ponerImagenPropia(null);
     irALaPared();
@@ -245,6 +263,7 @@ export default function Vitrina() {
       if (!id || !catalogo.some((d) => d.id === id)) return;
       setDisenoId(id);
       setVariante('orig');
+      setOrientacion(orientacionDe(catalogo.find((d) => d.id === id)));
       setAgregado(null);
       ponerImagenPropia(null);
     }
@@ -394,11 +413,12 @@ export default function Vitrina() {
           etiqueta: o === 'vertical' ? 'Vertical' : 'Horizontal',
         }))}
       />
-      {orientacion === 'horizontal' && !propia && (
-        // SUPUESTO: los diseños se hacen en vertical; en horizontal el taller los adapta, así que
+      {orientacion !== orientacionDe(diseno) && !propia && (
+        // SUPUESTO: cada diseño se hace en una orientación; en la otra el taller lo adapta, así que
         // la pared muestra un recorte solo como referencia del tamaño.
         <p className="-mt-3 text-xs leading-snug text-texto-suave">
-          En horizontal adaptamos el diseño a la nueva forma. Aquí ves un recorte de referencia.
+          Este diseño es {orientacionDe(diseno)}: en {orientacion} lo adaptamos a la nueva forma.
+          Aquí ves un recorte de referencia.
         </p>
       )}
       <GrupoOpciones
@@ -499,7 +519,7 @@ export default function Vitrina() {
         aria-labelledby="catalogo-titulo"
         className="scroll-mt-16 overflow-x-clip border-t border-linea py-[clamp(72px,9vw,128px)]"
       >
-        <div className="aparece escalera mx-auto grid max-w-[1240px] items-center gap-x-[clamp(32px,4vw,64px)] gap-y-12 px-4 lg:grid-cols-[minmax(0,4fr)_minmax(0,7fr)]">
+        <div className="aparece escalera mx-auto grid max-w-[1240px] grid-cols-1 items-center gap-x-[clamp(32px,4vw,64px)] gap-y-12 px-4 lg:grid-cols-[minmax(0,4fr)_minmax(0,7fr)]">
           <div className="max-w-[460px]">
             <p className="text-[0.6875rem] font-semibold tracking-[0.16em] text-texto-suave uppercase">
               Nuestros cuadros más pedidos
@@ -546,7 +566,7 @@ export default function Vitrina() {
               ref={filtros}
               role="group"
               aria-label="Filtrar por estilo"
-              className="relative mt-10 -mb-px flex gap-x-5 overflow-x-auto border-b border-linea [scrollbar-width:none] sm:flex-wrap [&::-webkit-scrollbar]:hidden"
+              className="relative mt-10 -mb-px flex gap-x-4 overflow-x-auto border-b border-linea [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
             >
               {categorias.map((c) => (
                 <button
@@ -568,8 +588,8 @@ export default function Vitrina() {
               />
             </div>
             <p className="mt-4 text-xs leading-snug text-texto-suave">
-              Diseños de ejemplo: aquí van las fotos reales del catálogo del taller. El precio
-              depende de la medida, no del diseño.
+              Fotos reales de cuadros del taller. Cualquiera se hace en tu medida; el precio depende
+              de la medida, no del diseño.
             </p>
           </div>
 
@@ -732,7 +752,11 @@ export default function Vitrina() {
                           className="block size-full object-cover"
                         />
                       ) : (
-                        <ImagenDiseno diseno={diseno} variante={variante} />
+                        <ImagenDiseno
+                          diseno={diseno}
+                          variante={variante}
+                          sizes="(min-width: 1280px) 640px, 92vw"
+                        />
                       )}
                     </div>
                     <span
