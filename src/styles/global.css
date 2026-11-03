@@ -233,15 +233,12 @@
 
 /* ---------- Portada: el abanico de cuadros ---------- */
 
-@property --abre {
-  syntax: '<number>';
-  inherits: true;
-  initial-value: 1;
-}
-
-@keyframes abrir-abanico {
+/* Cada cuadro sale apilado en el centro y abre hasta su lugar. Se anima el transform de la carta
+   (no una variable de CSS) para que lo haga la tarjeta gráfica: así no se traba mientras la página
+   todavía está cargando fuentes e hidratando las islas. Sin `to`, termina en su transform final. */
+@keyframes abrir-carta {
   from {
-    --abre: 0;
+    transform: translateX(0) translateY(0) rotate(0deg) scale(calc(1 - var(--d) * 0.03));
   }
 }
 
@@ -275,9 +272,9 @@
 /* El abanico baja un poco hacia la izquierda y sube hacia la derecha, como visto de lado. */
 .carta {
   z-index: var(--z);
-  transform: translateX(calc(var(--i) * var(--sep) * var(--abre)))
-    translateY(calc((var(--i2) * 5px - var(--i) * 6px) * var(--abre)))
-    rotate(calc(var(--i) * 4deg * var(--abre))) scale(calc(1 - var(--d) * 0.03));
+  transform: translateX(calc(var(--i) * var(--sep)))
+    translateY(calc(var(--i2) * 5px - var(--i) * 6px)) rotate(calc(var(--i) * 4deg))
+    scale(calc(1 - var(--d) * 0.03));
 }
 
 /* Burbujas de chat sobre el abanico: el pedido se conversa por WhatsApp. */
@@ -356,8 +353,8 @@
     animation: entrar 800ms var(--ease-out) both;
     animation-delay: calc(var(--i, 0) * 70ms);
   }
-  .abanico {
-    animation: abrir-abanico 1300ms var(--ease-out) 380ms both;
+  .carta {
+    animation: abrir-carta 1000ms var(--ease-out) 250ms both;
   }
   /* Las burbujas llegan cuando el abanico ya abrió, y luego flotan apenas. */
   .burbuja {
