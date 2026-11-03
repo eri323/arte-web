@@ -97,14 +97,19 @@ Los del sitio salen de `negocio.marca.colores` (variables `--marca-*`), así el 
 **Bloques de noche** (`.noche` en `global.css`): la pared, el cierre, la tarjeta «¿No ves lo que
 buscas?» y el footer. Fondo `#0b0a09`, texto hueso `#f3ece0`, oro `#e3b54a`.
 
-**La regla del oro.** El dorado se reserva para pedir y para la marca. No todos los colores de Midas
+**Modo oscuro** (`html[data-tema='oscuro']`): sigue al sistema hasta que el cliente elige con el
+botón de luna/sol del header (se guarda en `localStorage`). Fondo `#161513`, superficie `#201e1b`,
+texto hueso y oro `#e3b54a`; las bandas de noche llevan un filo claro para separarse del fondo.
+
+**La regla del oro.** El dorado es la firma: pedir, la marca, la segunda línea de los titulares,
+los antetítulos, la raya de los filtros y el subrayado del menú. No todos los colores de Midas
 en cada sección: el rojo LED solo vive en la pared y en una burbuja.
 
 ## 3. Typography
 
 - **Display** (`texto-cartel`): titular de portada, moderado para no competir con los cuadros.
-- **Headline** (`titulo-seccion`): títulos en dos tonos (tinta y `texto-suave`).
-- **Antetítulo** (`antetitulo`): cartela en Newsreader cursiva de 17 px, sin mayúsculas.
+- **Headline** (`titulo-seccion`): títulos en dos tonos (tinta y oro `acento-fuerte`), igual que el titular de portada.
+- **Antetítulo** (`antetitulo`): cartela en Newsreader cursiva de 17 px, sin mayúsculas, en oro.
 - **Cartela** (`font-editorial`): nombres de los diseños y números.
 - **Body** (Inter Tight 400, 16 px, interlineado 1,6).
 - Big Shoulders (`--font-cartel`) queda solo dentro del arte generado de los diseños.

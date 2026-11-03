@@ -38,6 +38,29 @@ const variablesMarca = Object.entries(negocio.marca.colores)
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <meta name="theme-color" content={negocio.marca.colores.fondo} />
     <style set:html={`:root { ${variablesMarca} }`}></style>
+    <!-- Tema claro u oscuro antes de pintar, para que no parpadee. -->
+    <script is:inline>
+      (() => {
+        let guardado = null;
+        try {
+          guardado = localStorage.getItem('arte-web:tema');
+        } catch {
+          // Sin localStorage se sigue el tema del sistema.
+        }
+        const sistema = window.matchMedia('(prefers-color-scheme: dark)');
+        const aplicar = (tema) => {
+          document.documentElement.dataset.tema = tema;
+          document
+            .querySelector('meta[name="theme-color"]')
+            ?.setAttribute('content', tema === 'oscuro' ? '#161513' : '#f2f2f0');
+        };
+        aplicar(guardado || (sistema.matches ? 'oscuro' : 'claro'));
+        // Si el cliente nunca eligió, el sitio sigue al sistema aunque cambie con la página abierta.
+        if (!guardado) {
+          sistema.addEventListener('change', (e) => aplicar(e.matches ? 'oscuro' : 'claro'));
+        }
+      })();
+    </script>
     <!-- Con JS las secciones esperan a entrar en pantalla para aparecer; sin JS se ven quietas. -->
     <script is:inline>
       document.documentElement.classList.add('js');

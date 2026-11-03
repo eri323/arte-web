@@ -14,6 +14,16 @@ for (const ruta of paginas) {
       expect(graves.map((v) => `${v.id}: ${v.nodes[0]?.target}`)).toEqual([]);
     });
 
+    test('axe sin violaciones serias ni críticas en modo oscuro', async ({ page }) => {
+      await page.emulateMedia({ colorScheme: 'dark' });
+      await irA(page, ruta);
+      await expect(page.locator('html')).toHaveAttribute('data-tema', 'oscuro');
+      const graves = (await new AxeBuilder({ page }).analyze()).violations.filter(
+        (v) => v.impact === 'serious' || v.impact === 'critical',
+      );
+      expect(graves.map((v) => `${v.id}: ${v.nodes[0]?.target}`)).toEqual([]);
+    });
+
     test('sin scroll horizontal a 375 px', async ({ page }) => {
       await page.setViewportSize({ width: 375, height: 812 });
       await irA(page, ruta);
@@ -47,3 +57,17 @@ for (const ruta of paginas) {
     });
   });
 }
+
+test('el botón del header cambia el tema y lo recuerda', async ({ page }) => {
+  await page.emulateMedia({ colorScheme: 'light' });
+  await irA(page, '/');
+  const html = page.locator('html');
+  await expect(html).toHaveAttribute('data-tema', 'claro');
+  const boton = page.getByRole('button', { name: 'Modo oscuro' });
+  await expect(boton).toHaveAttribute('aria-pressed', 'false');
+  await boton.click();
+  await expect(html).toHaveAttribute('data-tema', 'oscuro');
+  await expect(boton).toHaveAttribute('aria-pressed', 'true');
+  await page.reload();
+  await expect(html).toHaveAttribute('data-tema', 'oscuro');
+});

@@ -112,42 +112,19 @@ test.describe('catálogo y pared de la portada', () => {
     await expect(pared.getByText(/La chilena en 60×45 cm, horizontal, MDF/)).toBeVisible();
   });
 
-  test('la imagen que sube el cliente queda colgada en la pared', async ({ page }) => {
-    await irA(page, '/');
-    await page.getByTestId('subir-imagen').setInputFiles('tests/fixtures/pequena.jpg');
-    const pared = page.locator('#pared');
-    await expect(pared.getByRole('img', { name: 'Tu imagen colgada en la pared' })).toBeVisible();
-    await expect(pared.getByText('Personalizado', { exact: true })).toBeVisible();
-    await expect(pared.getByRole('link', { name: 'Seguir con mi foto' })).toHaveAttribute(
-      'href',
-      /^\/crear\?medida=45x60&orientacion=vertical&material=mdf$/,
-    );
-    await pared.getByRole('button', { name: 'Volver a los diseños' }).click();
-    await expect(pared.getByRole('button', { name: 'Agregar al pedido' })).toBeVisible();
-  });
-
-  test('«Seguir con mi foto» lleva la foto y las opciones de la pared a /crear', async ({
+  test('«Prefiero subir mis fotos» lleva a /crear con la medida y el material de la pared', async ({
     page,
   }) => {
     await irA(page, '/');
-    await page.getByTestId('subir-imagen').setInputFiles('tests/fixtures/retrato-12mp.jpg');
     const pared = page.locator('#pared');
-    await expect(pared.getByRole('img', { name: 'Tu imagen colgada en la pared' })).toBeVisible();
-    // Se toca la opción como lo haría el cliente (el radio real es invisible).
     await pared.getByText('Acrílico', { exact: true }).click();
-    await pared.getByText('Horizontal', { exact: true }).click();
-    await pared.getByRole('link', { name: 'Seguir con mi foto' }).click();
-
-    await expect(page).toHaveURL(/\/crear\?/);
-    // La foto llega sola: no hay que subirla otra vez.
-    await expect(page.getByText('3024×4032 px')).toBeVisible();
+    await pared.getByRole('link', { name: 'Prefiero subir mis fotos' }).click();
+    await expect(page).toHaveURL(/\/crear\?medida=45x60&material=acrilico$/);
+    // Las fotos que suba llegan con esa medida y ese material.
+    await page.waitForFunction(() => document.querySelectorAll('astro-island[ssr]').length === 0);
+    await page.locator('input[type=file]').setInputFiles('tests/fixtures/retrato-12mp.jpg');
     await expect(page.locator('input[name=medida][value="45x60"]')).toBeChecked();
-    await expect(page.locator('input[name=orientacion][value="horizontal"]')).toBeChecked();
     await expect(page.locator('input[name=material][value="acrilico"]')).toBeChecked();
-
-    // Se toma una sola vez: al recargar ya no aparece.
-    await page.reload();
-    await expect(page.getByText('Sube tu foto')).toBeVisible();
   });
 
   test('un cuadro del abanico de la portada elige el diseño de la pared', async ({ page }) => {

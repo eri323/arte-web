@@ -49,6 +49,47 @@ test.describe('configurador', () => {
     expect(graves.map((v) => v.id)).toEqual([]);
   });
 
+  test('sube varias fotos a la vez y la promoción suma las de la misma medida', async ({
+    page,
+  }) => {
+    await irA(page, '/crear');
+    await page
+      .locator('input[type=file]')
+      .setInputFiles([
+        fixture('retrato-12mp.jpg'),
+        fixture('pequena.jpg'),
+        fixture('retrato-12mp.jpg'),
+      ]);
+    const tanda = page.getByRole('list', { name: /Tus fotos \(3\)/ });
+    await expect(tanda.getByRole('button', { name: /de (30×40|40×30)/ })).toHaveCount(3);
+    // pequena.jpg es ancha: entra en horizontal.
+    await expect(tanda.getByRole('button', { name: /pequena\.jpg: 1 de 40×30/ })).toBeVisible();
+
+    // 3 de 30×40 entran en la promoción de 40.000 c/u.
+    await expect(page.getByTestId('precio')).toHaveText(/120\.000/);
+    await expect(page.getByText(/ahorras/)).toBeVisible();
+
+    // Una se cambia de medida y otra se quita.
+    await tanda
+      .getByRole('button', { name: /pequena\.jpg/ })
+      .first()
+      .click();
+    await page.locator('input[name=medida][value="20x27"]').check({ force: true });
+    await expect(page.getByTestId('precio')).toHaveText(/150\.000/);
+    await page.getByRole('button', { name: 'Usar 27×20 en MDF para todas' }).click();
+    await expect(page.getByTestId('precio')).toHaveText(/90\.000/);
+    await page.getByRole('button', { name: 'Quitar pequena.jpg' }).click();
+    await expect(tanda).toHaveCount(0);
+
+    await page.getByRole('button', { name: 'Agregar las 2 fotos al pedido' }).click();
+    await expect(page.getByRole('status')).toContainText('Agregaste 2 cuadros de 20×27 al pedido.');
+    const carrito = await page.evaluate(() =>
+      JSON.parse(localStorage.getItem('arte-web:carrito') ?? '[]'),
+    );
+    expect(carrito).toHaveLength(2);
+    expect(carrito.map((i: { medidaId: string }) => i.medidaId)).toEqual(['20x27', '20x27']);
+  });
+
   test('pequena.jpg en 60×80 da calidad baja', async ({ page }) => {
     await irA(page, '/crear');
     await page.locator('input[type=file]').setInputFiles(fixture('pequena.jpg'));

@@ -11,7 +11,6 @@ import { describirPromocion } from '../../lib/precios';
 import { dimensionesMedida } from '../../lib/resolucion';
 import { agregarAlCarrito } from '../../stores/carrito';
 import { $medidas } from '../../stores/precios';
-import { $imagenPropia, ponerImagenPropia } from '../../stores/vitrina';
 import GrupoOpciones from '../ui/GrupoOpciones';
 import ArteCatalogo, { nombreVariante, VARIANTES, type VarianteId } from './ArteCatalogo';
 
@@ -171,7 +170,6 @@ function Muestras({
 
 export default function Vitrina() {
   const medidas = useStore($medidas);
-  const propia = useStore($imagenPropia);
   const [categoria, setCategoria] = useState('Todos');
   const [disenoId, setDisenoId] = useState(catalogo[0]?.id ?? '');
   const [variante, setVariante] = useState<VarianteId>('orig');
@@ -213,11 +211,11 @@ export default function Vitrina() {
     return () => window.removeEventListener('resize', alCambiarTamano);
   }, [categoria]);
 
-  // Cada vez que cambia lo que cuelga en la pared (diseño, color o imagen propia), se revela.
+  // Cada vez que cambia lo que cuelga en la pared (diseño o color), se revela.
   useEffect(() => {
     if (primeraVez.current) return;
     revelar(imagenColgada.current);
-  }, [disenoId, variante, propia?.url]);
+  }, [disenoId, variante]);
 
   useEffect(() => {
     primeraVez.current = false;
@@ -250,7 +248,6 @@ export default function Vitrina() {
     setVariante(v);
     setOrientacion(orientacionDe(catalogo.find((d) => d.id === id)));
     setAgregado(null);
-    ponerImagenPropia(null);
     irALaPared();
   }
 
@@ -265,18 +262,10 @@ export default function Vitrina() {
       setVariante('orig');
       setOrientacion(orientacionDe(catalogo.find((d) => d.id === id)));
       setAgregado(null);
-      ponerImagenPropia(null);
     }
     document.addEventListener('click', alTocar);
     return () => document.removeEventListener('click', alTocar);
   }, []);
-
-  // Cuando el cliente suelta su imagen en la portada, la pared la cuelga y se va hasta allá.
-  useEffect(() => {
-    if (!propia) return;
-    setAgregado(null);
-    irALaPared();
-  }, [propia]);
 
   function cambio<T>(set: (v: T) => void) {
     return (v: T) => {
@@ -352,8 +341,8 @@ export default function Vitrina() {
   const transicion =
     'width 800ms cubic-bezier(.22,.61,.36,1), height 800ms cubic-bezier(.22,.61,.36,1), margin-left 800ms cubic-bezier(.22,.61,.36,1), bottom 800ms cubic-bezier(.22,.61,.36,1)';
 
-  const nombreColgado = propia ? 'Tu imagen' : diseno.nombre;
-  const tipoColgado = propia ? 'Personalizado' : `Referencia · ${diseno.categoria}`;
+  const nombreColgado = diseno.nombre;
+  const tipoColgado = `Referencia · ${diseno.categoria}`;
 
   const panel = (
     <div className="flex flex-col gap-5 xl:gap-4">
@@ -370,7 +359,7 @@ export default function Vitrina() {
           {promocion && ` Promoción: ${promocion}.`}
         </p>
       </div>
-      {!propia && !diseno.foto && (
+      {!diseno.foto && (
         <div>
           <p className="mb-2 text-[0.6875rem] font-semibold tracking-[0.14em] text-texto-suave uppercase">
             Color
@@ -413,7 +402,7 @@ export default function Vitrina() {
           etiqueta: o === 'vertical' ? 'Vertical' : 'Horizontal',
         }))}
       />
-      {orientacion !== orientacionDe(diseno) && !propia && (
+      {orientacion !== orientacionDe(diseno) && (
         // SUPUESTO: cada diseño se hace en una orientación; en la otra el taller lo adapta, así que
         // la pared muestra un recorte solo como referencia del tamaño.
         <p className="-mt-3 text-xs leading-snug text-texto-suave">
@@ -446,69 +435,51 @@ export default function Vitrina() {
           },
         ]}
       />
-      {propia ? (
-        <>
-          <a
-            href={`/crear?${new URLSearchParams({ medida: medida.id, orientacion, material })}`}
-            className="boton boton-oro w-full"
+      <>
+        {/* Las dos etiquetas ocupan la misma celda y se cruzan con un desenfoque corto. */}
+        <button
+          type="button"
+          onClick={agregar}
+          aria-label={recienAgregado ? 'Agregado al pedido' : 'Agregar al pedido'}
+          className="boton boton-oro grid w-full"
+        >
+          <span
+            aria-hidden="true"
+            className={`[grid-area:1/1] transition-[opacity,filter,transform] duration-200 ease-(--ease-out) ${
+              recienAgregado ? 'translate-y-1 opacity-0 blur-[2px]' : ''
+            }`}
           >
-            Seguir con mi foto
-          </a>
-          <p className="-mt-2 text-xs leading-snug text-texto-suave">
-            En el configurador la recortas y te decimos si tiene calidad para esa medida.
-          </p>
-          <button
-            type="button"
-            onClick={() => ponerImagenPropia(null)}
-            className="enlace-fuerte -mt-2 self-start text-texto-suave"
+            Agregar al pedido
+          </span>
+          <span
+            aria-hidden="true"
+            className={`[grid-area:1/1] transition-[opacity,filter,transform] duration-200 ease-(--ease-out) ${
+              recienAgregado ? '' : '-translate-y-1 opacity-0 blur-[2px]'
+            }`}
           >
-            Volver a los diseños
-          </button>
-        </>
-      ) : (
-        <>
-          {/* Las dos etiquetas ocupan la misma celda y se cruzan con un desenfoque corto. */}
-          <button
-            type="button"
-            onClick={agregar}
-            aria-label={recienAgregado ? 'Agregado al pedido' : 'Agregar al pedido'}
-            className="boton boton-oro grid w-full"
-          >
-            <span
-              aria-hidden="true"
-              className={`[grid-area:1/1] transition-[opacity,filter,transform] duration-200 ease-(--ease-out) ${
-                recienAgregado ? 'translate-y-1 opacity-0 blur-[2px]' : ''
-              }`}
-            >
-              Agregar al pedido
-            </span>
-            <span
-              aria-hidden="true"
-              className={`[grid-area:1/1] transition-[opacity,filter,transform] duration-200 ease-(--ease-out) ${
-                recienAgregado ? '' : '-translate-y-1 opacity-0 blur-[2px]'
-              }`}
-            >
-              Agregado ✓
-            </span>
-          </button>
-          <div aria-live="polite" className="-mt-2 text-sm empty:hidden">
-            {agregado && (
-              <p>
-                Listo: {agregado} está en tu pedido.{' '}
-                <a
-                  href="/pedido"
-                  className="font-semibold text-acento-fuerte underline underline-offset-4"
-                >
-                  Ver mi pedido
-                </a>
-              </p>
-            )}
-          </div>
-          <a href="#personalizado" className="enlace-fuerte -mt-2 self-start text-texto-suave">
-            Prefiero ponerle mi imagen
-          </a>
-        </>
-      )}
+            Agregado ✓
+          </span>
+        </button>
+        <div aria-live="polite" className="-mt-2 text-sm empty:hidden">
+          {agregado && (
+            <p>
+              Listo: {agregado} está en tu pedido.{' '}
+              <a
+                href="/pedido"
+                className="font-semibold text-acento-fuerte underline underline-offset-4"
+              >
+                Ver mi pedido
+              </a>
+            </p>
+          )}
+        </div>
+        <a
+          href={`/crear?${new URLSearchParams({ medida: medida.id, material })}`}
+          className="enlace-fuerte -mt-2 self-start text-texto-suave"
+        >
+          Prefiero subir mis fotos
+        </a>
+      </>
     </div>
   );
 
@@ -524,7 +495,7 @@ export default function Vitrina() {
       >
         <div className="aparece escalera mx-auto grid max-w-[1240px] grid-cols-1 items-center gap-x-[clamp(32px,4vw,64px)] gap-y-12 px-4 lg:grid-cols-[minmax(0,4fr)_minmax(0,7fr)]">
           <div className="max-w-[460px]">
-            <p className="text-[0.6875rem] font-semibold tracking-[0.16em] text-texto-suave uppercase">
+            <p className="text-[0.6875rem] font-semibold tracking-[0.16em] text-acento-fuerte uppercase">
               Nuestros cuadros más pedidos
             </p>
             <h2
@@ -560,7 +531,7 @@ export default function Vitrina() {
               >
                 Ver en mi pared
               </button>
-              <a href="#personalizado" className="boton boton-linea">
+              <a href="/crear" className="boton boton-linea">
                 Crear desde cero
               </a>
             </div>
@@ -587,7 +558,7 @@ export default function Vitrina() {
               <span
                 ref={raya}
                 aria-hidden="true"
-                className="pointer-events-none absolute bottom-0 left-0 h-px w-px origin-left bg-texto"
+                className="pointer-events-none absolute bottom-0 left-0 h-0.5 w-px origin-left bg-acento"
               />
             </div>
             <p className="mt-4 text-xs leading-snug text-texto-suave">
@@ -618,7 +589,7 @@ export default function Vitrina() {
                       tabIndex={-1}
                       aria-hidden="true"
                       onClick={() => (s === 0 ? elegir(d.id, color) : setInicio(k))}
-                      className="esc-arte block aspect-[3/4] w-full overflow-hidden rounded-[14px] bg-superficie"
+                      className="esc-arte block aspect-[3/4] w-full overflow-hidden bg-superficie"
                     >
                       <span
                         className={`block size-full transition-[opacity,filter] duration-150 ${
@@ -646,7 +617,7 @@ export default function Vitrina() {
             </ul>
 
             <div className="absolute top-[calc(var(--cw)*1.3333+var(--dy)+16px)] left-0 w-[calc(var(--dx)*2-12px)]">
-              <p className="text-xs text-texto-suave tabular-nums">
+              <p className="text-xs font-semibold text-acento-fuerte tabular-nums">
                 {dosCifras(inicio + 1)} / {dosCifras(lista.length)}
               </p>
               <div aria-live="polite">
@@ -748,19 +719,11 @@ export default function Vitrina() {
                       }}
                     />
                     <div ref={imagenColgada} className="size-full">
-                      {propia ? (
-                        <img
-                          src={propia.url}
-                          alt="Tu imagen colgada en la pared"
-                          className="block size-full object-cover"
-                        />
-                      ) : (
-                        <ImagenDiseno
-                          diseno={diseno}
-                          variante={variante}
-                          sizes="(min-width: 1280px) 640px, 92vw"
-                        />
-                      )}
+                      <ImagenDiseno
+                        diseno={diseno}
+                        variante={variante}
+                        sizes="(min-width: 1280px) 640px, 92vw"
+                      />
                     </div>
                     <span
                       aria-hidden="true"

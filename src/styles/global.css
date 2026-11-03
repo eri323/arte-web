@@ -105,7 +105,7 @@
   font-style: italic;
   font-size: 1.0625rem;
   line-height: 1.3;
-  color: var(--color-texto-suave);
+  color: var(--color-acento-fuerte);
 }
 
 /* Títulos de obra y pies de foto. */
@@ -125,7 +125,7 @@
   font-variant-numeric: tabular-nums;
 }
 
-/* Un cuadro físico: esquinas apenas redondeadas y una sombra suave en capas. */
+/* Un cuadro físico: esquinas rectas y una sombra suave en capas. */
 @utility sombra-cuadro {
   box-shadow:
     0 1px 2px rgb(11 10 9 / 0.12),
@@ -276,7 +276,7 @@
   transform: translateX(calc(var(--i) * var(--sep))) scale(calc(1 - var(--d) * 0.03));
 }
 
-/* Burbujas de chat sobre el abanico: el pedido se conversa por WhatsApp. */
+/* Globos sobre el abanico que cuentan la variedad: cualquier imagen, cualquier tamaño. */
 .burbuja {
   position: absolute;
   z-index: 40;
@@ -482,6 +482,39 @@
       transition: none;
     }
   }
+}
+
+/* ---------- Modo oscuro ---------- */
+
+/* El tema se elige antes de pintar (script en Base.astro): el que el cliente escogió con el botón
+   del header o, si nunca escogió, el de su sistema. Se redefinen los --marca-* con !important
+   porque los colores probados en el panel del taller llegan como estilo en línea en <html>; en
+   oscuro mandan estos para no romper el contraste. Contraste sobre el fondo: texto 15,6:1, texto
+   suave 6,9:1 y oro 9,5:1. */
+html[data-tema='oscuro'] {
+  --marca-fondo: #161513 !important;
+  --marca-superficie: #201e1b !important;
+  --marca-texto: #f3ece0 !important;
+  --marca-texto-suave: #a39b90 !important;
+  --marca-acento: #e3b54a !important;
+  --marca-acento-fuerte: #e3b54a !important;
+  --marca-sobre-acento: #0b0a09 !important;
+  --marca-acento-hover: #f1d186 !important;
+  --marca-linea: #f3ece024 !important;
+  --marca-linea-fuerte: #f3ece040 !important;
+  --marca-cinta: #f1d186 !important;
+  color-scheme: dark;
+}
+
+/* En oscuro las bandas de noche casi no se distinguen del fondo: un filo claro las separa. */
+html[data-tema='oscuro'] .noche {
+  box-shadow: inset 0 0 0 1px #f3ece01f;
+}
+
+/* El botón del header muestra la luna en claro y el sol en oscuro. */
+html[data-tema='oscuro'] .icono-luna,
+html:not([data-tema='oscuro']) .icono-sol {
+  display: none;
 }
 
 /* ---------- Bandas de noche ---------- */

@@ -1,6 +1,5 @@
 ---
 import Base from '../layouts/Base.astro';
-import SubirImagen from '../components/catalogo/SubirImagen';
 import Vitrina, { ImagenDiseno } from '../components/catalogo/Vitrina';
 import { negocio } from '../config/negocio';
 import { etiquetaMedida } from '../lib/formato';
@@ -31,15 +30,6 @@ const abanico = [
 const porArea = [...negocio.medidas].sort((a, b) => a.anchoCm * a.altoCm - b.anchoCm * b.altoCm);
 const menor = porArea[0];
 const mayor = porArea[porArea.length - 1];
-
-const personalizado = [
-  {
-    titulo: 'Cualquier imagen:',
-    texto: 'tu artista, tu película, tu carro, tu mascota o una foto tuya.',
-  },
-  { titulo: 'Tus colores:', texto: 'lo adaptamos a tu cuarto, tu sala o tu negocio.' },
-  { titulo: 'Te lo mostramos antes:', texto: 'apruebas el diseño y luego lo fabricamos.' },
-];
 
 // SUPUESTO: los huecos de video y de fotos esperan el material del taller (historias destacadas
 // "Procesos", "Clientes" y "Resultados"). No se inventan fotos de clientes.
@@ -85,11 +75,7 @@ const preguntas = [
 ];
 
 const abono = negocio.pagos.porcentajeAbono;
-// Con número de WhatsApp los botones abren el chat; en modo demo llevan al configurador.
-const chatIdea = urlWhatsApp(
-  negocio.whatsapp.numero,
-  `Hola ${negocio.marca.nombre}, quiero un cuadro personalizado`,
-);
+// Con número de WhatsApp el botón del cierre abre el chat; en modo demo lleva a /crear.
 const chat = urlWhatsApp(negocio.whatsapp.numero, `Hola ${negocio.marca.nombre}, quiero un cuadro`);
 const seccion = 'py-[clamp(80px,10vw,136px)]';
 const titular = [vitrina.titular, vitrina.titularSuave].filter(Boolean).join(' ');
@@ -109,7 +95,8 @@ const titular = [vitrina.titular, vitrina.titularSuave].filter(Boolean).join(' '
       {vitrina.titular}
       {vitrina.titularSuave && (
         <>
-          <br class="max-sm:hidden" /> {vitrina.titularSuave}
+          <br class="max-sm:hidden" />{' '}
+          <span class="text-acento-fuerte">{vitrina.titularSuave}</span>
         </>
       )}
     </h1>
@@ -128,7 +115,7 @@ const titular = [vitrina.titular, vitrina.titularSuave].filter(Boolean).join(' '
             style={`--i:${i};--d:${d};--z:${z}`}
           >
             <a href="#pared" data-diseno={diseno.id} class="block focus-visible:outline-none">
-              <span class="alza sombra-cuadro block aspect-[3/4] overflow-hidden rounded-[14px]">
+              <span class="alza sombra-cuadro block aspect-[3/4] overflow-hidden">
                 <ImagenDiseno
                   diseno={diseno}
                   decorativa
@@ -147,16 +134,16 @@ const titular = [vitrina.titular, vitrina.titularSuave].filter(Boolean).join(' '
           </li>
         ))}
       </ul>
-      {/* Lo que se habla por WhatsApp, flotando sobre los cuadros. Decorativo. */}
+      {/* Globos sobre los cuadros que cuentan la variedad: cualquier imagen, cualquier tamaño. */}
       <p aria-hidden="true" class="burbuja burbuja-izq bg-[#e3b54a]">
-        ¿Me lo haces en 60×80?
+        Tu foto, tu álbum o tu anime
       </p>
       <p
         aria-hidden="true"
         class="burbuja burbuja-der bg-led max-sm:hidden"
         style="--retraso: 1350ms"
       >
-        ¡Claro! Y en acrílico.
+        De {menor && etiquetaMedida(menor)} a {mayor && etiquetaMedida(mayor)} cm
       </p>
     </div>
 
@@ -172,8 +159,8 @@ const titular = [vitrina.titular, vitrina.titularSuave].filter(Boolean).join(' '
             →
           </span>
         </a>
-        <a href="#personalizado" class="boton boton-linea">
-          Personalizar mi cuadro
+        <a href="/crear" class="boton boton-linea">
+          Subir mis fotos
         </a>
       </div>
     </div>
@@ -182,48 +169,13 @@ const titular = [vitrina.titular, vitrina.titularSuave].filter(Boolean).join(' '
   {/* 2 y 3 · Inspiración con filtros y la pared a escala (una isla: comparten el diseño elegido). */}
   <Vitrina client:idle />
 
-  {/* 4 · Personalizado: la imagen del cliente, colgada en la pared en segundos. */}
-  <section id="personalizado" aria-labelledby="perso-titulo" class:list={['scroll-mt-16', seccion]}>
-    <div class="mx-auto grid max-w-[1240px] items-center gap-[clamp(32px,6vw,96px)] px-4 md:grid-cols-2">
-      <div class="aparece">
-        <p class="antetitulo">Personalizado</p>
-        <h2 id="perso-titulo" class="titulo-seccion">
-          Tu idea, <span class="text-texto-suave">nuestro taller</span>
-        </h2>
-        <ul class="mt-7 mb-8 border-t border-linea">
-          {personalizado.map((p) => (
-            <li class="border-b border-linea py-3.5 text-[0.9375rem] text-texto-suave">
-              <b class="font-semibold text-texto">{p.titulo}</b> {p.texto}
-            </li>
-          ))}
-        </ul>
-        {chatIdea ? (
-          <a href={chatIdea} target="_blank" rel="noopener" class="boton boton-negro">
-            Contar mi idea por WhatsApp{' '}
-            <span aria-hidden="true" class="flecha">
-              →
-            </span>
-          </a>
-        ) : (
-          <a href="/crear" class="boton boton-negro">
-            Crear con mi foto{' '}
-            <span aria-hidden="true" class="flecha">
-              →
-            </span>
-          </a>
-        )}
-      </div>
-      <SubirImagen client:idle />
-    </div>
-  </section>
-
   {/* 5 · Proceso: tres pasos en fila, separados por líneas. */}
   <section id="proceso" aria-labelledby="como" class:list={['border-t border-linea', seccion]}>
     <div class="mx-auto max-w-[1240px] px-4">
       <div class="aparece">
         <p class="antetitulo">Proceso</p>
         <h2 id="como" class="titulo-seccion">
-          Así nace <span class="text-texto-suave">tu cuadro</span>
+          Así nace <span class="text-acento-fuerte">tu cuadro</span>
         </h2>
       </div>
       <ol class="mt-[clamp(44px,5vw,64px)] grid border-t border-linea md:grid-cols-3">
@@ -252,7 +204,7 @@ const titular = [vitrina.titular, vitrina.titularSuave].filter(Boolean).join(' '
       <div class="aparece">
         <p class="antetitulo">Resultados</p>
         <h2 id="clientes-titulo" class="titulo-seccion">
-          Espacios de <span class="text-texto-suave">nuestros clientes</span>
+          Espacios de <span class="text-acento-fuerte">nuestros clientes</span>
         </h2>
         <p class="mt-[18px] max-w-[54ch] text-[1.0625rem] text-texto-suave">
           Este muro se llena con las fotos reales de las historias destacadas «Clientes» y
@@ -362,7 +314,7 @@ const titular = [vitrina.titular, vitrina.titularSuave].filter(Boolean).join(' '
   <section aria-labelledby="cierre" class="px-4 pb-[clamp(48px,6vw,88px)]">
     <div class="noche aparece mx-auto max-w-[1240px] rounded-[24px] px-6 py-[clamp(64px,9vw,120px)] text-center">
       <h2 id="cierre" class="titulo-seccion">
-        ¿Ya tienes <span class="text-texto-suave">la idea?</span>
+        ¿Ya tienes <span class="text-acento-fuerte">la idea?</span>
       </h2>
       <p class="mx-auto mt-4 mb-8 max-w-[44ch] text-texto-suave">
         Cuéntanos qué quieres, en qué espacio va y de qué medida. Medidas de{' '}
