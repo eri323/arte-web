@@ -238,7 +238,7 @@
    todavía está cargando fuentes e hidratando las islas. Sin `to`, termina en su transform final. */
 @keyframes abrir-carta {
   from {
-    transform: translateX(0) translateY(0) rotate(0deg) scale(calc(1 - var(--d) * 0.03));
+    transform: translateX(0) scale(calc(1 - var(--d) * 0.03));
   }
 }
 
@@ -269,12 +269,11 @@
     0 0 28px 6px rgb(255 45 32 / 0.45);
 }
 
-/* El abanico baja un poco hacia la izquierda y sube hacia la derecha, como visto de lado. */
+/* Los cuadros se abren en línea recta hacia los lados, sin arco ni giro. Los de las puntas se ven
+   un poco más pequeños, como si estuvieran detrás. */
 .carta {
   z-index: var(--z);
-  transform: translateX(calc(var(--i) * var(--sep)))
-    translateY(calc(var(--i2) * 5px - var(--i) * 6px)) rotate(calc(var(--i) * 4deg))
-    scale(calc(1 - var(--d) * 0.03));
+  transform: translateX(calc(var(--i) * var(--sep))) scale(calc(1 - var(--d) * 0.03));
 }
 
 /* Burbujas de chat sobre el abanico: el pedido se conversa por WhatsApp. */
@@ -526,7 +525,7 @@
 }
 .burbuja-der {
   right: calc(50% - var(--sep) * 3 - var(--cw) * 0.6);
-  top: calc(var(--cw) * -0.14);
+  top: calc(var(--cw) * 0.06);
 }
 @media (min-width: 640px) {
   .burbuja-izq {

@@ -116,7 +116,7 @@ const titular = [vitrina.titular, vitrina.titularSuave].filter(Boolean).join(' '
 
     <div class="relative z-10 mx-auto -mt-1 max-w-[1240px] [--cw:clamp(104px,31vw,150px)] [--sep:calc(var(--cw)*0.5)] sm:-mt-3 sm:[--cw:clamp(118px,13vw,192px)] sm:[--sep:calc(var(--cw)*0.62)]">
       <ul
-        class="abanico relative mt-[clamp(20px,3vw,36px)] h-[calc(var(--cw)*1.75)]"
+        class="abanico relative mt-[clamp(20px,3vw,36px)] h-[calc(var(--cw)*1.55)]"
         aria-label="Diseños de referencia"
       >
         {abanico.map(({ diseno, i, d, z }) => (
@@ -125,7 +125,7 @@ const titular = [vitrina.titular, vitrina.titularSuave].filter(Boolean).join(' '
               'carta absolute top-[6%] left-1/2 -ml-[calc(var(--cw)/2)] w-(--cw)',
               d > 2 && 'max-sm:hidden',
             ]}
-            style={`--i:${i};--i2:${i * i};--d:${d};--z:${z}`}
+            style={`--i:${i};--d:${d};--z:${z}`}
           >
             <a href="#pared" data-diseno={diseno.id} class="block focus-visible:outline-none">
               <span class="alza sombra-cuadro block aspect-[3/4] overflow-hidden rounded-[14px]">
