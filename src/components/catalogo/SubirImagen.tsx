@@ -56,7 +56,7 @@ export default function SubirImagen() {
         onDragOver={(e) => e.preventDefault()}
         onDragLeave={() => setEncima(false)}
         onDrop={alSoltar}
-        className={`group relative grid aspect-[4/3] cursor-pointer place-items-center border border-dashed p-6 text-center transition-colors duration-[350ms] focus-within:border-texto hover:border-texto ${
+        className={`group relative grid aspect-[4/3] cursor-pointer place-items-center rounded-[16px] border border-dashed p-6 text-center transition-colors duration-[350ms] focus-within:border-texto hover:border-texto ${
           encima ? 'border-texto bg-white' : 'border-texto/35 bg-[#fbfaf7]'
         }`}
       >

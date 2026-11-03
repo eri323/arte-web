@@ -22,13 +22,6 @@ const porArea = [...negocio.medidas].sort((a, b) => a.anchoCm * a.altoCm - b.anc
 const menor = porArea[0];
 const mayor = porArea[porArea.length - 1];
 
-const confianza = [
-  '100% personalizable',
-  'MDF y acrílico',
-  'Hecho a mano',
-  'Envíos a todo Colombia',
-];
-
 const personalizado = [
   {
     titulo: 'Cualquier imagen:',
@@ -93,21 +86,71 @@ const titular = [vitrina.titular, vitrina.titularSuave].filter(Boolean).join(' '
 ---
 
 <Base title="Cuadros en MDF y acrílico" description={`${titular} ${vitrina.bajada}`}>
-  {/* 1 · Portada: titular centrado y, debajo, el abanico de cuadros. */}
+  {/* 1 · Portada: los cuadros mandan. Titular moderado arriba, el abanico montado sobre él y,
+       debajo, una frase corta con los dos botones. */}
   <section
     aria-labelledby="portada-titulo"
-    class="overflow-hidden pt-[clamp(44px,5vw,72px)] pb-[clamp(56px,6vw,88px)]"
+    class="overflow-hidden pt-[clamp(48px,7vw,104px)] pb-[clamp(64px,8vw,112px)]"
   >
-    <div class="mx-auto flex max-w-[1240px] flex-col items-center px-4 text-center">
-      <p class="antetitulo entra">Cuadros en MDF y acrílico</p>
-      <h1 id="portada-titulo" class="texto-cartel entra max-w-[20ch]" style="--i: 1">
-        {vitrina.titular}{' '}
-        {vitrina.titularSuave && <span class="text-texto-suave">{vitrina.titularSuave}</span>}
-      </h1>
-      <p class="entra mt-4 mb-7 max-w-[44ch] text-texto-suave" style="--i: 2">
-        {vitrina.bajada}
+    <h1
+      id="portada-titulo"
+      class="texto-cartel entra relative z-0 mx-auto max-w-[15ch] px-4 text-center"
+    >
+      {vitrina.titular}
+      {vitrina.titularSuave && (
+        <>
+          <br class="max-sm:hidden" /> {vitrina.titularSuave}
+        </>
+      )}
+    </h1>
+
+    <div class="relative z-10 mx-auto -mt-1 max-w-[1240px] [--cw:clamp(104px,31vw,150px)] [--sep:calc(var(--cw)*0.5)] sm:-mt-3 sm:[--cw:clamp(118px,13vw,192px)] sm:[--sep:calc(var(--cw)*0.62)]">
+      <ul
+        class="abanico relative mt-[clamp(20px,3vw,36px)] h-[calc(var(--cw)*1.75)]"
+        aria-label="Diseños de referencia"
+      >
+        {abanico.map(({ diseno, i, d, z }) => (
+          <li
+            class:list={[
+              'carta absolute top-[6%] left-1/2 -ml-[calc(var(--cw)/2)] w-(--cw)',
+              d > 2 && 'max-sm:hidden',
+            ]}
+            style={`--i:${i};--i2:${i * i};--d:${d};--z:${z};transition-delay:${d * 60}ms`}
+          >
+            <a href="#pared" data-diseno={diseno.id} class="block focus-visible:outline-none">
+              <span class="alza sombra-cuadro block aspect-[3/4] overflow-hidden rounded-[14px]">
+                <ImagenDiseno diseno={diseno} decorativa />
+                <span class="sr-only">Ver {diseno.nombre} en mi pared</span>
+              </span>
+              <span
+                aria-hidden="true"
+                class="tip font-editorial absolute inset-x-0 -bottom-8 text-center text-[0.9375rem] text-texto-suave"
+              >
+                {diseno.nombre}
+              </span>
+            </a>
+          </li>
+        ))}
+      </ul>
+      {/* Lo que se habla por WhatsApp, flotando sobre los cuadros. Decorativo. */}
+      <p aria-hidden="true" class="burbuja burbuja-izq bg-[#e3b54a]">
+        ¿Me lo haces en 60×80?
       </p>
-      <div class="entra flex flex-wrap justify-center gap-3" style="--i: 3">
+      <p
+        aria-hidden="true"
+        class="burbuja burbuja-der bg-led max-sm:hidden"
+        style="--retraso: 1350ms"
+      >
+        ¡Claro! Y en acrílico.
+      </p>
+    </div>
+
+    <div
+      class="entra mx-auto mt-[clamp(32px,4vw,52px)] flex max-w-[46ch] flex-col items-center px-4 text-center"
+      style="--i: 6"
+    >
+      <p class="text-[0.9375rem] leading-relaxed text-texto-suave">{vitrina.bajada}</p>
+      <div class="mt-6 flex w-full flex-col gap-2.5 sm:w-auto sm:flex-row sm:justify-center">
         <a href="#catalogo" class="boton boton-negro">
           Explorar diseños{' '}
           <span aria-hidden="true" class="flecha">
@@ -119,50 +162,6 @@ const titular = [vitrina.titular, vitrina.titularSuave].filter(Boolean).join(' '
         </a>
       </div>
     </div>
-
-    <ul
-      class="abanico relative mx-auto mt-[clamp(36px,4.5vw,60px)] h-[calc(var(--cw)*1.8)] max-w-[1240px] [--cw:clamp(96px,30vw,150px)] [--sep:calc(var(--cw)*0.5)] sm:[--cw:clamp(112px,13.2vw,204px)] sm:[--sep:calc(var(--cw)*0.6)]"
-      aria-label="Diseños de referencia"
-    >
-      {abanico.map(({ diseno, i, d, z }) => (
-        <li
-          class:list={[
-            'carta absolute top-[4%] left-1/2 -ml-[calc(var(--cw)/2)] w-(--cw)',
-            d > 2 && 'max-sm:hidden',
-          ]}
-          style={`--i:${i};--i2:${i * i};--d:${d};--z:${z};transition-delay:${d * 60}ms`}
-        >
-          <a href="#pared" data-diseno={diseno.id} class="block focus-visible:outline-none">
-            <span class="alza sombra-cuadro block aspect-[3/4]">
-              <ImagenDiseno diseno={diseno} decorativa />
-              <span class="sr-only">Ver {diseno.nombre} en mi pared</span>
-            </span>
-            <span
-              aria-hidden="true"
-              class="tip absolute -bottom-[34px] inset-x-0 text-center text-[0.8125rem] text-texto-suave"
-            >
-              {diseno.nombre}
-            </span>
-          </a>
-        </li>
-      ))}
-    </ul>
-
-    <ul
-      style="--i: 9"
-      class="entra mt-[clamp(26px,3vw,40px)] flex flex-wrap justify-center gap-y-1.5 px-4 text-[0.8125rem] text-texto-suave"
-    >
-      {confianza.map((c, k) => (
-        <li>
-          {k > 0 && (
-            <span aria-hidden="true" class="mx-2 text-linea-fuerte sm:mx-3.5">
-              ·
-            </span>
-          )}
-          {c}
-        </li>
-      ))}
-    </ul>
   </section>
 
   {/* 2 y 3 · Inspiración con filtros y la pared a escala (una isla: comparten el diseño elegido). */}
@@ -204,7 +203,7 @@ const titular = [vitrina.titular, vitrina.titularSuave].filter(Boolean).join(' '
   </section>
 
   {/* 5 · Proceso: tres pasos en fila, separados por líneas. */}
-  <section id="proceso" aria-labelledby="como" class:list={['noche', seccion]}>
+  <section id="proceso" aria-labelledby="como" class:list={['border-t border-linea', seccion]}>
     <div class="mx-auto max-w-[1240px] px-4">
       <div class="aparece">
         <p class="antetitulo">Proceso</p>
@@ -218,12 +217,12 @@ const titular = [vitrina.titular, vitrina.titularSuave].filter(Boolean).join(' '
             style={`--i:${i}`}
             class="aparece border-b border-linea py-[26px] md:border-b-0 md:py-0 md:pt-7 md:pr-7 md:[&+&]:border-l md:[&+&]:pl-7"
           >
-            <span aria-hidden="true" class="font-display text-[15px] tracking-[0.06em] text-acento">
+            <span aria-hidden="true" class="font-editorial text-lg text-acento-fuerte">
               {String(i + 1).padStart(2, '0')}
             </span>
-            <h3 class="font-display mt-3.5 mb-2.5 text-[26px]">{paso.titulo}</h3>
+            <h3 class="font-display mt-2 mb-2 text-2xl">{paso.titulo}</h3>
             <p class="max-w-[34ch] text-[0.9375rem] text-texto-suave">{paso.texto}</p>
-            <div class="mt-6 grid aspect-[4/3] place-items-center border border-dashed border-linea-fuerte p-3.5 text-center text-[0.8125rem] text-texto-suave">
+            <div class="mt-6 grid aspect-[4/3] place-items-center rounded-[14px] border border-dashed border-linea-fuerte p-3.5 text-center text-[0.8125rem] text-texto-suave">
               {paso.hueco}
             </div>
           </li>
@@ -259,7 +258,7 @@ const titular = [vitrina.titular, vitrina.titularSuave].filter(Boolean).join(' '
           <li
             style={`--i:${i}`}
             class:list={[
-              'aparece grid place-items-center border border-dashed border-linea-fuerte p-3 text-center text-[0.8125rem] text-texto-suave',
+              'aparece grid place-items-center rounded-[14px] border border-dashed border-linea-fuerte p-3 text-center text-[0.8125rem] text-texto-suave',
               i === 0 ? 'col-span-2 row-span-2 aspect-square md:aspect-auto' : 'aspect-square',
             ]}
           >
@@ -277,7 +276,10 @@ const titular = [vitrina.titular, vitrina.titularSuave].filter(Boolean).join(' '
       <h2 id="pagos" class="titulo-seccion">
         Pagas {abono}% y {100 - abono}%
       </h2>
-      <div class="aparece mt-10 flex min-h-28 border border-linea-fuerte" role="list">
+      <div
+        class="aparece mt-10 flex min-h-28 overflow-hidden rounded-[14px] border border-linea-fuerte"
+        role="list"
+      >
         <div
           role="listitem"
           class="flex flex-col justify-between bg-texto p-4 text-fondo sm:p-6"
@@ -341,13 +343,13 @@ const titular = [vitrina.titular, vitrina.titularSuave].filter(Boolean).join(' '
     </div>
   </section>
 
-  {/* 9 · Cierre: una pregunta y el botón dorado. */}
-  <section aria-labelledby="cierre" class:list={['noche text-center', seccion]}>
-    <div class="aparece mx-auto max-w-[1240px] px-4">
-      <h2 id="cierre" class="font-display text-[clamp(2.25rem,4.6vw,3.75rem)]">
+  {/* 9 · Cierre: un bloque negro dentro de la página, con el botón dorado. */}
+  <section aria-labelledby="cierre" class="px-4 pb-[clamp(48px,6vw,88px)]">
+    <div class="noche aparece mx-auto max-w-[1240px] rounded-[24px] px-6 py-[clamp(64px,9vw,120px)] text-center">
+      <h2 id="cierre" class="titulo-seccion">
         ¿Ya tienes <span class="text-texto-suave">la idea?</span>
       </h2>
-      <p class="mx-auto mt-[18px] mb-8 max-w-[44ch] text-texto-suave">
+      <p class="mx-auto mt-4 mb-8 max-w-[44ch] text-texto-suave">
         Cuéntanos qué quieres, en qué espacio va y de qué medida. Medidas de{' '}
         {menor && etiquetaMedida(menor)} a {mayor && etiquetaMedida(mayor)} cm, en MDF o acrílico.
       </p>

@@ -282,7 +282,7 @@ function Tarjeta({
       style={{ '--i': orden } as CSSProperties}
       className="aparece group flex flex-col gap-3.5"
     >
-      <div className="relative aspect-[3/4] overflow-hidden bg-superficie shadow-[0_16px_26px_-18px_rgb(11_10_9/.55)]">
+      <div className="relative aspect-[3/4] overflow-hidden rounded-[12px] bg-superficie shadow-[0_1px_2px_rgb(11_10_9/.1),0_14px_28px_-16px_rgb(11_10_9/.35)] transition-[transform,box-shadow] duration-300 ease-(--ease-out) group-hover:-translate-y-1 group-hover:shadow-[0_2px_4px_rgb(11_10_9/.1),0_26px_44px_-18px_rgb(11_10_9/.45)]">
         <div
           className={`absolute inset-0 transition-[transform,opacity,filter] duration-[1000ms,160ms,160ms] ease-(--ease-out) group-hover:scale-[1.04] ${cambiando ? 'opacity-40 blur-[3px]' : ''}`}
         >
@@ -301,12 +301,8 @@ function Tarjeta({
       </div>
       <div className="flex flex-col items-start gap-2 sm:flex-row sm:justify-between sm:gap-3">
         <div className="min-w-0">
-          <p className="mb-1 text-xs tracking-[0.08em] text-texto-suave uppercase">
-            Referencia · {diseno.categoria}
-          </p>
-          <h3 className="font-display text-[1.0625rem] leading-tight sm:text-xl">
-            {diseno.nombre}
-          </h3>
+          <h3 className="font-editorial text-lg leading-tight sm:text-xl">{diseno.nombre}</h3>
+          <p className="mt-0.5 text-xs text-texto-suave">Referencia · {diseno.categoria}</p>
         </div>
         {!diseno.foto && (
           <Muestras
@@ -340,7 +336,7 @@ function Invitacion({
   return (
     <li
       hidden={oculta}
-      className={`col-span-2 flex flex-col justify-between gap-7 p-[clamp(28px,3.4vw,48px)] ${
+      className={`col-span-2 flex flex-col justify-between gap-7 rounded-[16px] p-[clamp(28px,3.4vw,48px)] ${
         oscura ? 'noche' : 'border border-linea bg-fondo'
       }`}
     >
@@ -714,9 +710,9 @@ export default function Vitrina() {
         <div className="mx-auto max-w-[1240px] px-4">
           <div className="aparece grid items-end gap-x-[clamp(20px,5vw,80px)] gap-y-4 lg:grid-cols-2">
             <div>
-              <p className="antetitulo">Inspiración para tus espacios</p>
+              <p className="antetitulo">Nuestros cuadros más pedidos</p>
               <h2 id="catalogo-titulo" className="titulo-seccion">
-                Lo que más nos piden, <span className="text-texto-suave">a tu manera</span>
+                Encuentra inspiración <span className="text-texto-suave">para tu espacio</span>
               </h2>
             </div>
             <p className="max-w-[54ch] text-[1.0625rem] text-texto-suave">
@@ -734,7 +730,7 @@ export default function Vitrina() {
               >
                 <span
                   aria-hidden="true"
-                  className="font-display text-[22px] leading-none text-acento-fuerte"
+                  className="font-editorial text-[22px] leading-none text-acento-fuerte"
                 >
                   {i + 1}
                 </span>
@@ -818,9 +814,9 @@ export default function Vitrina() {
       <section
         id="pared"
         aria-labelledby="pared-titulo"
-        className="noche scroll-mt-16 py-[clamp(80px,10vw,136px)]"
+        className="scroll-mt-16 px-4 pb-[clamp(80px,10vw,136px)]"
       >
-        <div className="mx-auto max-w-[1240px] px-4">
+        <div className="noche mx-auto max-w-[1240px] rounded-[24px] px-4 py-[clamp(48px,7vw,96px)] sm:px-[clamp(24px,4vw,56px)]">
           <div className="aparece">
             <p className="antetitulo">Ver en tu pared</p>
             <h2 id="pared-titulo" className="titulo-seccion">
@@ -828,11 +824,11 @@ export default function Vitrina() {
             </h2>
           </div>
 
-          <div className="relative mt-[clamp(36px,4vw,52px)]">
+          <div className="relative mt-[clamp(32px,4vw,48px)] overflow-hidden rounded-[16px]">
             <div
               ref={escena}
               style={estiloEscena}
-              className="relative aspect-[4/5] overflow-hidden [--H:300] [--W:240] [--cx:50%] [--u:calc(100cqw/var(--W))] [container-type:inline-size] [background:radial-gradient(ellipse_34%_52%_at_var(--cx)_30%,rgb(255_226_180/.12),transparent_70%),#15120f] sm:aspect-video sm:[--H:225] sm:[--W:400] xl:aspect-[16/10] xl:[--H:250] xl:[--cx:35%]"
+              className="relative aspect-[4/5] overflow-hidden [--H:300] [--W:240] [--cx:50%] [--u:calc(100cqw/var(--W))] [container-type:inline-size] [background:radial-gradient(ellipse_34%_52%_at_var(--cx)_30%,rgb(255_226_180/.12),transparent_70%),#15120f] sm:aspect-video sm:[--H:225] sm:[--W:400] xl:aspect-[3/2] xl:[--H:267] xl:[--cx:35%]"
             >
               {/* Luz roja del LED sobre la pared. */}
               <div

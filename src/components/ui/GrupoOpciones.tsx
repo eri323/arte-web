@@ -41,7 +41,7 @@ export default function GrupoOpciones<T extends string>({
         {leyenda}
       </legend>
       <div
-        className={`grid ${columnas} ${seg ? 'gap-px border border-linea-fuerte bg-linea-fuerte' : 'gap-2'}`}
+        className={`grid ${columnas} ${seg ? 'gap-px overflow-hidden rounded-[10px] border border-linea-fuerte bg-linea-fuerte' : 'gap-2'}`}
       >
         {opciones.map((o) => (
           <label key={o.valor} className="presionable relative cursor-pointer">
@@ -58,7 +58,7 @@ export default function GrupoOpciones<T extends string>({
                 {o.etiqueta}
               </span>
             ) : (
-              <span className="flex h-full min-h-11 flex-col justify-center rounded-[2px] border border-linea-fuerte px-3 py-2 transition-colors duration-300 hover:border-texto peer-checked:border-texto peer-checked:bg-superficie peer-checked:shadow-[inset_0_0_0_1px_var(--color-texto)] peer-focus-visible:outline peer-focus-visible:outline-1 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-texto">
+              <span className="flex h-full min-h-11 flex-col justify-center rounded-[10px] border border-linea-fuerte px-3 py-2 transition-colors duration-300 hover:border-texto peer-checked:border-texto peer-checked:bg-superficie peer-checked:shadow-[inset_0_0_0_1px_var(--color-texto)] peer-focus-visible:outline peer-focus-visible:outline-1 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-texto">
                 <span className="font-medium">{o.etiqueta}</span>
                 {o.detalle && <span className="text-sm text-texto-suave">{o.detalle}</span>}
               </span>

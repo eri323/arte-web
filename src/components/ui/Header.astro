@@ -4,7 +4,7 @@ import ContadorCarrito from '../pedido/ContadorCarrito';
 
 // Enlaces grises con una raya de 1 px que crece al pasar el cursor.
 const claseEnlace =
-  'flex min-h-11 items-center px-2 text-sm whitespace-nowrap text-texto-suave transition-[color,background-size] duration-300 hover:text-texto [background:linear-gradient(var(--color-texto),var(--color-texto))_no-repeat_8px_calc(50%+0.8em)/0_1px] hover:[background-size:calc(100%-16px)_1px]';
+  'flex min-h-11 items-center px-2 text-[0.8125rem] whitespace-nowrap text-texto-suave transition-[color,background-size] duration-300 hover:text-texto [background:linear-gradient(var(--color-texto),var(--color-texto))_no-repeat_8px_calc(50%+0.8em)/0_1px] hover:[background-size:calc(100%-16px)_1px]';
 
 const enlaces = [
   { href: '/#catalogo', texto: 'Inspiración' },
@@ -23,9 +23,9 @@ const enlaces = [
       <span
         aria-hidden="true"
         data-logo
-        class="size-[30px] shrink-0 rounded-full [background:repeating-conic-gradient(var(--color-acento)_0_8deg,var(--color-texto)_8deg_20deg)]"
+        class="size-[26px] shrink-0 rounded-full [background:repeating-conic-gradient(var(--color-acento)_0_8deg,var(--color-texto)_8deg_20deg)]"
       ></span>
-      <span class="font-display text-base font-semibold tracking-[0.1em] whitespace-nowrap uppercase sm:text-[1.1875rem] sm:tracking-[0.16em]">
+      <span class="text-[0.9375rem] font-semibold tracking-[0.14em] whitespace-nowrap uppercase sm:text-base">
         {negocio.marca.nombre}
       </span>
     </a>

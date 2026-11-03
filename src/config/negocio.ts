@@ -99,14 +99,14 @@ export const negocio: Negocio = {
     nombre: 'Midas Atelier',
     eslogan: 'Cuadros en MDF y acrílico · Envíos a todo Colombia',
     prefijoPedido: 'MA',
-    // Galería clara: papel cálido, tinta y el oro del logo (ver DESIGN.md). Contraste verificado:
-    // texto sobre fondo 18:1, texto suave 5.2:1, acentoFuerte (oro para texto pequeño) 5.4:1 y el
-    // oro contra la pared 3.2:1. En las bandas oscuras se usa el oro claro del logo (#e3b54a).
+    // Tienda de arte: fondo gris neutro para que manden los cuadros, tinta como color principal
+    // y el oro del logo para los acentos (ver DESIGN.md). Contraste verificado: texto 17,6:1,
+    // texto suave 6:1, acentoFuerte (oro para texto pequeño) 5,4:1 y el oro contra el fondo 3,2:1.
     colores: {
-      fondo: '#f4f1eb',
-      superficie: '#eae5dc',
+      fondo: '#f2f2f0',
+      superficie: '#e7e7e3',
       texto: '#0b0a09',
-      textoSuave: '#6b645c',
+      textoSuave: '#5c5b57',
       acento: '#b07d1f',
       acentoFuerte: '#7d5d1b',
       sobreAcento: '#0b0a09',
