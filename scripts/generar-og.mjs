@@ -20,7 +20,7 @@ const marca = {
 const paginas = [
   {
     archivo: 'inicio.png',
-    titulo: 'Decora tus espacios con estilo',
+    titulo: 'Cuadros que se roban el cuarto',
     sub: 'MDF y acrílico · Envíos a todo Colombia',
   },
   {

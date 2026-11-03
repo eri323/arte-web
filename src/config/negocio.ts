@@ -67,11 +67,7 @@ export interface Negocio {
    * se muestra arte generado en SVG.
    */
   vitrina: {
-    /** Línea pequeña encima del titular. */
-    antetitulo: string;
     titular: string;
-    /** Final del titular, resaltado con el color de firma. */
-    resaltado?: string;
     bajada: string;
     fotoPortada?: FotoVitrina;
     /** Una foto por cuadro de la pared de galería, en el mismo orden. */
@@ -118,11 +114,9 @@ export const negocio: Negocio = {
     },
   },
   vitrina: {
-    antetitulo: 'Hechos en MDF y acrílico',
-    titular: 'Decora tus espacios',
-    resaltado: 'con estilo',
+    titular: 'Cuadros que se roban el cuarto.',
     bajada:
-      'Cuadros que convierten un cuarto en tu espacio. Elige un diseño del catálogo o trae el tuyo, y míralo en tu pared antes de pedir.',
+      'En MDF o acrílico, hechos a mano en el taller. Escoge un diseño del catálogo o trae tu foto, y míralo colgado en tu pared antes de pedir.',
   },
   // SUPUESTO: diseños, nombres y categorías de ejemplo, con arte generado en SVG. El taller pone las
   // fotos reales de su catálogo en `foto`. El precio es el de la medida elegida (no hay recargo por

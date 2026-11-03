@@ -33,7 +33,7 @@ export default function TablaPrecios() {
                 {etiquetaMedida(m)}
               </th>
               <td className="px-4 py-3 whitespace-nowrap">{formatearPesos(m.precio)}</td>
-              <td className="px-4 py-3">{describirPromocion(m.promocion) || '—'}</td>
+              <td className="px-4 py-3">{describirPromocion(m.promocion) || 'Sin promoción'}</td>
             </tr>
           ))}
         </tbody>

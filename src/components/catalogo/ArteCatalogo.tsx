@@ -35,7 +35,7 @@ const ESTILOS: Record<string, Estilo> = {
     fg: '#F3ECE0',
     ac: '#E7B94C',
     lineas: ['HAZLO', 'AUNQUE', 'NADIE', 'MIRE'],
-    s: '— MIDAS ATELIER',
+    s: 'MIDAS ATELIER',
   },
   'chicle-pop': { d: 'pop', bg: '#7fd7e8', dot: '#3aa9c4', fg: '#ff5fa2', ac: '#fff', t: 'POP!' },
   'boom-comic': {

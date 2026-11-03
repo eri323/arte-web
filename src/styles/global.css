@@ -24,7 +24,6 @@
   /* La tira LED del cuarto: solo luz y decoración, nunca texto pequeño. No se edita en el panel. */
   --color-led: #ff2d20;
   --ease-expo: cubic-bezier(0.16, 1, 0.3, 1);
-  --ease-rebote: cubic-bezier(0.34, 1.35, 0.64, 1);
 }
 
 @layer base {
@@ -39,17 +38,6 @@
     font-family: var(--font-sans);
     font-size: 1.0625rem;
     line-height: 1.55;
-  }
-  /* Grano de película encima de todo: el cuarto oscuro no es un negro plano. */
-  body::after {
-    content: '';
-    position: fixed;
-    inset: 0;
-    z-index: 80;
-    pointer-events: none;
-    opacity: 0.06;
-    mix-blend-mode: screen;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   }
   :focus-visible {
     outline: 2px solid var(--color-acento);
@@ -82,39 +70,8 @@
   font-weight: 900;
   text-transform: uppercase;
   line-height: 0.9;
-  font-size: clamp(3.6rem, 11vw, 10.5rem);
+  font-size: clamp(3.4rem, 8.6vw, 7.75rem);
   text-wrap: balance;
-}
-
-/* Título resaltado con el color de firma (degradado de metal dorado). */
-@utility texto-oro {
-  background: linear-gradient(
-    180deg,
-    var(--color-acento-hover),
-    var(--color-acento) 55%,
-    color-mix(in srgb, var(--color-acento) 75%, #000)
-  );
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-}
-
-/* La línea pequeña encima de cada título: mayúscula espaciada con un trazo del color de firma. */
-@utility antetitulo {
-  display: flex;
-  align-items: center;
-  gap: 0.625rem;
-  font-size: 0.75rem;
-  font-weight: 800;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: var(--color-acento-fuerte);
-  &::before {
-    content: '';
-    width: 22px;
-    height: 2px;
-    background: currentColor;
-  }
 }
 
 /* Medidas y datos pequeños: tabulares, para que las cifras no bailen. */
@@ -129,16 +86,15 @@
 /* Un cuadro colgado: sombra dura de afiche y el resplandor del cuarto. */
 @utility sombra-cuadro {
   box-shadow:
-    5px 5px 0 #000,
-    0 0 0 1px rgb(255 255 255 / 0.07),
-    0 22px 30px -14px rgb(0 0 0 / 0.8);
+    0 2px 3px rgb(6 4 3 / 0.55),
+    0 22px 32px -12px rgb(6 4 3 / 0.9);
 }
 
 @utility sombra-acrilico {
   box-shadow:
-    5px 5px 0 rgb(210 235 240 / 0.4),
-    0 0 0 1px rgb(255 255 255 / 0.3),
-    0 24px 36px -14px rgb(0 0 0 / 0.85);
+    0 0 0 1px rgb(240 236 228 / 0.25),
+    0 3px 4px rgb(6 4 3 / 0.6),
+    0 26px 38px -12px rgb(6 4 3 / 0.95);
 }
 
 /* Botón principal: pastilla de 48 px. */
@@ -162,16 +118,12 @@
   }
 }
 
-/* El botón dorado: brilla un poco y sube al pasar el cursor. */
+/* El botón dorado: plano; con el cursor pasa al oro claro. */
 @utility boton-oro {
   background-color: var(--color-acento);
   color: var(--color-sobre-acento);
-  box-shadow:
-    0 0 0 1px color-mix(in srgb, var(--color-acento-hover) 50%, transparent),
-    0 10px 30px -8px color-mix(in srgb, var(--color-acento) 60%, transparent);
   &:hover {
     background-color: var(--color-acento-hover);
-    transform: translateY(-2px);
   }
 }
 
@@ -200,18 +152,12 @@
   }
 }
 
-/* ---------- Portada: rayos que giran y el abanico de cuadros ---------- */
+/* ---------- Portada: el abanico de cuadros y la tira LED ---------- */
 
 @property --abre {
   syntax: '<number>';
   inherits: true;
   initial-value: 1;
-}
-
-@keyframes gira {
-  to {
-    rotate: 360deg;
-  }
 }
 
 @keyframes abrir-abanico {
@@ -234,24 +180,21 @@
   }
 }
 
-.rayos {
-  background: repeating-conic-gradient(var(--color-acento) 0 5deg, transparent 5deg 15deg);
-  mask: radial-gradient(circle, #000 20%, transparent 68%);
-}
-
-.abanico {
-  --sep: min(9.6vw, 134px);
-  --cw: clamp(84px, 13vw, 170px);
+/* Una tira LED de verdad: la línea encendida y la luz que tira hacia la pared. */
+.tira-led {
+  box-shadow:
+    0 0 6px 1px rgb(255 45 32 / 0.9),
+    0 0 28px 6px rgb(255 45 32 / 0.45);
 }
 
 .carta {
   z-index: var(--z);
   transform: translateX(calc(var(--i) * var(--sep) * var(--abre)))
-    translateY(calc(var(--i2) * 6px * var(--abre))) rotate(calc(var(--i) * 7deg * var(--abre)));
+    translateY(calc(var(--i2) * 5px * var(--abre))) rotate(calc(var(--i) * 6deg * var(--abre)));
 }
 
 .carta .alza {
-  transition: transform 350ms cubic-bezier(0.34, 1.5, 0.64, 1);
+  transition: transform 300ms var(--ease-expo);
 }
 
 .carta:hover,
@@ -261,7 +204,7 @@
 
 .carta:hover .alza,
 .carta:focus-visible .alza {
-  transform: translateY(-26px) rotate(calc(var(--i) * -4deg)) scale(1.07);
+  transform: translateY(-18px) rotate(calc(var(--i) * -3deg));
 }
 
 .carta .tip {
@@ -275,17 +218,11 @@
 }
 
 @media (prefers-reduced-motion: no-preference) {
-  .rayos {
-    animation: gira 90s linear infinite;
-  }
   .abanico {
-    animation: abrir-abanico 900ms var(--ease-rebote) 250ms both;
-  }
-  .abanico:hover {
-    --abre: 1.1;
+    animation: abrir-abanico 1100ms var(--ease-expo) 200ms both;
   }
   .carta {
-    transition: transform 850ms var(--ease-rebote);
+    transition: transform 700ms var(--ease-expo);
   }
   .entra-subiendo {
     animation: subir 800ms var(--ease-expo) both;

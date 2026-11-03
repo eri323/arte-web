@@ -195,7 +195,7 @@ function Tarjeta({
 }) {
   const marco = useRef<HTMLDivElement>(null);
 
-  // Brillo que sigue al cursor y un leve giro 3D, como un acrílico en la mano.
+  // Brillo que sigue al cursor, como la luz sobre un acrílico.
   function mover(e: EventoPuntero<HTMLElement>) {
     const m = marco.current;
     if (!m || e.pointerType !== 'mouse') return;
@@ -204,13 +204,9 @@ function Tarjeta({
     const y = Math.min(Math.max((e.clientY - r.top) / r.height, 0), 1);
     m.style.setProperty('--mx', `${x * 100}%`);
     m.style.setProperty('--my', `${y * 100}%`);
-    if (!reduceMovimiento()) {
-      m.style.setProperty('--ry', `${(x - 0.5) * 12}deg`);
-      m.style.setProperty('--rx', `${(0.5 - y) * 9}deg`);
-    }
   }
   function salir() {
-    for (const v of ['--mx', '--my', '--rx', '--ry']) marco.current?.style.removeProperty(v);
+    for (const v of ['--mx', '--my']) marco.current?.style.removeProperty(v);
   }
 
   return (
@@ -220,10 +216,7 @@ function Tarjeta({
       onPointerMove={mover}
       onPointerLeave={salir}
     >
-      <div
-        ref={marco}
-        className="sombra-cuadro relative aspect-[3/4] transition-transform duration-200 ease-out [transform:perspective(900px)_rotateY(var(--ry,0deg))_rotateX(var(--rx,0deg))]"
-      >
+      <div ref={marco} className="sombra-cuadro relative aspect-[3/4]">
         <ImagenDiseno diseno={diseno} />
         <span
           aria-hidden="true"
@@ -372,14 +365,13 @@ export default function Vitrina() {
         <div className="mx-auto max-w-6xl px-4">
           <div className="flex flex-wrap items-end justify-between gap-6">
             <div>
-              <p className="antetitulo mb-4">Catálogo</p>
-              <h2 id="catalogo-titulo" className="font-display text-[clamp(2.75rem,7vw,5.75rem)]">
-                Elige tu <span className="text-acento-fuerte">próximo</span> cuadro
+              <h2 id="catalogo-titulo" className="font-display text-[clamp(2.5rem,6vw,4.75rem)]">
+                {catalogo.length} diseños listos para colgar
               </h2>
             </div>
             <p className="max-w-[52ch] text-texto-suave">
-              Pasa el mouse para ver el brillo del acrílico. Toca «Ver en mi pared» y lo cuelgas en
-              un cuarto a escala real.
+              Toca «Ver en mi pared» y lo cuelgas en un cuarto, una sala o un estudio, a escala
+              real.
             </p>
           </div>
 
@@ -425,9 +417,8 @@ export default function Vitrina() {
         className="scroll-mt-16 py-[clamp(4rem,9vw,7.5rem)]"
       >
         <div className="mx-auto max-w-6xl px-4">
-          <p className="antetitulo mb-4">Ver en tu pared</p>
-          <h2 id="pared-titulo" className="font-display text-[clamp(2.5rem,5vw,4.5rem)]">
-            Míralo <span className="text-acento-fuerte">antes</span> de pedir
+          <h2 id="pared-titulo" className="font-display text-[clamp(2.5rem,6vw,4.75rem)]">
+            Cuélgalo antes de pedirlo
           </h2>
           <p className="mt-3 max-w-[52ch] text-texto-suave">
             {mueble.referencia} Todo está a escala real.

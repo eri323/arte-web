@@ -1,0 +1,70 @@
+---
+// Un cuadro del catálogo colgado en un cuarto generado: pared, mueble y, si quiere, tira LED.
+// Mientras el taller no tenga fotos de clientes, estos montajes muestran cómo queda un cuadro
+// colgado, sin usar fotos de terceros.
+import type { DisenoCatalogo } from '../../config/negocio';
+import { ImagenDiseno } from './Vitrina';
+
+interface Props {
+  diseno: DisenoCatalogo;
+  /** Texto del pie: medida, acabado y espacio. */
+  pie: string;
+  mueble: 'cama' | 'sofa' | 'escritorio';
+  pared: string;
+  led?: boolean;
+  /** Ancho del cuadro en % del montaje. */
+  anchoCuadro?: number;
+  class?: string;
+}
+
+const { diseno, pie, mueble, pared, led = false, anchoCuadro = 30, class: clase } = Astro.props;
+---
+
+<figure class:list={['flex flex-col gap-3', clase]}>
+  <div
+    class="relative min-h-56 flex-1 overflow-hidden rounded-sm"
+    style={{ backgroundColor: pared }}
+    aria-hidden="true"
+  >
+    {led && (
+      <div class="absolute inset-0 bg-[radial-gradient(ellipse_55%_30%_at_50%_56%,rgb(255_45_32/.32),transparent_70%)]" />
+    )}
+    <div
+      class="sombra-cuadro absolute top-[10%] left-1/2 aspect-[3/4] -translate-x-1/2"
+      style={{ width: `${anchoCuadro}%` }}
+    >
+      <ImagenDiseno diseno={diseno} decorativa />
+    </div>
+    {mueble === 'cama' && (
+      <>
+        <div class="absolute bottom-[10%] left-[18%] h-[34%] w-[64%] rounded-t-md bg-[#2a2320]" />
+        {led && (
+          <div class="absolute bottom-[44%] left-[18%] h-[3px] w-[64%] bg-led shadow-[0_0_18px_4px_rgb(255_45_32/.7)]" />
+        )}
+        <div class="absolute bottom-[10%] left-[16%] h-[16%] w-[68%] rounded-t-md bg-[#3b3530]" />
+      </>
+    )}
+    {mueble === 'sofa' && (
+      <>
+        <div class="absolute bottom-[10%] left-[14%] h-[26%] w-[72%] rounded-t-2xl bg-[#2c2724]" />
+        <div class="absolute bottom-[10%] left-[11%] h-[18%] w-[9%] rounded-t-xl bg-[#221d1a]" />
+        <div class="absolute right-[11%] bottom-[10%] h-[18%] w-[9%] rounded-t-xl bg-[#221d1a]" />
+      </>
+    )}
+    {mueble === 'escritorio' && (
+      <>
+        <div class="absolute bottom-[38%] left-[16%] h-[3%] w-[68%] bg-[#2b2522]" />
+        {led && (
+          <div class="absolute bottom-[37%] left-[16%] h-[2px] w-[68%] bg-led shadow-[0_0_14px_3px_rgb(255_45_32/.7)]" />
+        )}
+        <div class="absolute bottom-[10%] left-[19%] h-[28%] w-[2%] bg-[#1b1715]" />
+        <div class="absolute right-[19%] bottom-[10%] h-[28%] w-[2%] bg-[#1b1715]" />
+        <div class="absolute bottom-[41%] left-[40%] h-[16%] w-[20%] rounded-sm border-2 border-[#2b2522] bg-[#0c0b0a]" />
+      </>
+    )}
+    <div class="absolute inset-x-0 bottom-0 h-[10%] bg-[#141110]"></div>
+  </div>
+  <figcaption class="text-sm text-texto-suave">
+    <span class="font-bold text-texto">{diseno.nombre}</span> · {pie}
+  </figcaption>
+</figure>
