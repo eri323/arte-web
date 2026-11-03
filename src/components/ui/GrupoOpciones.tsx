@@ -44,7 +44,7 @@ export default function GrupoOpciones<T extends string>({
         className={`grid ${columnas} ${seg ? 'gap-px border border-linea-fuerte bg-linea-fuerte' : 'gap-2'}`}
       >
         {opciones.map((o) => (
-          <label key={o.valor} className="relative cursor-pointer">
+          <label key={o.valor} className="presionable relative cursor-pointer">
             <input
               type="radio"
               name={nombre}

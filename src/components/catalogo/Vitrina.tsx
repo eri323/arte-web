@@ -1,5 +1,5 @@
 import { useStore } from '@nanostores/react';
-import { Fragment, useEffect, useRef, useState, type CSSProperties } from 'react';
+import { Fragment, useEffect, useLayoutEffect, useRef, useState, type CSSProperties } from 'react';
 import { negocio, type DisenoCatalogo, type MaterialId } from '../../config/negocio';
 import { etiquetaMedida, formatearPesos } from '../../lib/formato';
 import { describirPromocion } from '../../lib/precios';
@@ -145,6 +145,24 @@ function columpiar(el: HTMLElement | null, amplitud: number) {
   requestAnimationFrame(paso);
 }
 
+/**
+ * La imagen del cuadro «se revela» al cambiar de diseño o de color: arranca desenfocada y se
+ * enfoca. El desenfoque une el estado viejo y el nuevo, así no se ve un salto entre dos imágenes.
+ */
+function revelar(el: HTMLElement | null) {
+  if (!el || typeof el.animate !== 'function') return;
+  const quieto = reduceMovimiento();
+  el.animate(
+    quieto
+      ? [{ opacity: 0.6 }, { opacity: 1 }]
+      : [
+          { opacity: 0.5, filter: 'blur(6px)', transform: 'scale(0.985)' },
+          { opacity: 1, filter: 'blur(0)', transform: 'none' },
+        ],
+    { duration: quieto ? 150 : 420, easing: 'cubic-bezier(0.23, 1, 0.32, 1)' },
+  );
+}
+
 /** La cifra del precio corre del valor anterior al nuevo. */
 function usePrecioAnimado(valor: number): number {
   const [mostrado, setMostrado] = useState(valor);
@@ -218,7 +236,7 @@ function Muestras({
           title={v.nombre}
           aria-pressed={valor === v.id}
           onClick={() => onCambio(v.id)}
-          className="group/m grid size-8 place-items-center"
+          className="group/m presionable grid size-8 place-items-center"
         >
           <span
             aria-hidden="true"
@@ -234,10 +252,13 @@ function Muestras({
 function Tarjeta({
   diseno,
   oculta,
+  orden,
   onVer,
 }: {
   diseno: DisenoCatalogo;
   oculta: boolean;
+  /** Posición en la fila, para que aparezcan en cascada. */
+  orden: number;
   onVer: (variante: VarianteId) => void;
 }) {
   const [variante, setVariante] = useState<VarianteId>('orig');
@@ -246,19 +267,24 @@ function Tarjeta({
   function cambiar(v: VarianteId) {
     if (v === variante) return;
     if (reduceMovimiento()) return setVariante(v);
-    // Fundido corto: se apaga, cambia el color y vuelve.
+    // Se desenfoca, cambia el color y se vuelve a enfocar: se lee como un solo cuadro que cambia.
     setCambiando(true);
     setTimeout(() => {
       setVariante(v);
       setCambiando(false);
-    }, 180);
+    }, 160);
   }
 
   return (
-    <li hidden={oculta} className="group flex flex-col gap-3.5">
+    <li
+      hidden={oculta}
+      data-tarjeta
+      style={{ '--i': orden } as CSSProperties}
+      className="aparece group flex flex-col gap-3.5"
+    >
       <div className="relative aspect-[3/4] overflow-hidden bg-superficie shadow-[0_16px_26px_-18px_rgb(11_10_9/.55)]">
         <div
-          className={`absolute inset-0 transition-[transform,opacity] duration-[1000ms,400ms] ease-(--ease-suave) group-hover:scale-[1.04] ${cambiando ? 'opacity-0' : ''}`}
+          className={`absolute inset-0 transition-[transform,opacity,filter] duration-[1000ms,160ms,160ms] ease-(--ease-out) group-hover:scale-[1.04] ${cambiando ? 'opacity-40 blur-[3px]' : ''}`}
         >
           <ImagenDiseno diseno={diseno} variante={variante} />
         </div>
@@ -268,7 +294,7 @@ function Tarjeta({
           tabIndex={-1}
           aria-hidden="true"
           onClick={() => onVer(variante)}
-          className="absolute inset-x-0 bottom-0 hidden translate-y-full bg-[rgb(11_10_9/.9)] p-3 text-[0.8125rem] font-semibold tracking-[0.04em] text-[#fbfaf7] transition-transform duration-[450ms] ease-(--ease-suave) group-hover:translate-y-0 hover:bg-[#0b0a09] sm:block"
+          className="absolute inset-x-0 bottom-0 hidden translate-y-full bg-[rgb(11_10_9/.9)] p-3 text-[0.8125rem] font-semibold tracking-[0.04em] text-[#fbfaf7] transition-transform duration-300 ease-(--ease-out) group-hover:translate-y-0 hover:bg-[#0b0a09] sm:block"
         >
           Ver en mi pared
         </button>
@@ -351,6 +377,73 @@ export default function Vitrina() {
   const [agregado, setAgregado] = useState<string | null>(null);
   const colgado = useRef<HTMLDivElement>(null);
   const escena = useRef<HTMLDivElement>(null);
+  const imagenColgada = useRef<HTMLDivElement>(null);
+  const filtros = useRef<HTMLDivElement>(null);
+  const raya = useRef<HTMLSpanElement>(null);
+  const grilla = useRef<HTMLUListElement>(null);
+  const primeraVez = useRef(true);
+  const [recienAgregado, setRecienAgregado] = useState(false);
+
+  // La raya de los filtros se mueve (no aparece y desaparece): se ve de dónde viene y a dónde va.
+  useLayoutEffect(() => {
+    const grupo = filtros.current;
+    const r = raya.current;
+    if (!grupo || !r) return;
+    const colocar = (animar: boolean) => {
+      const activo = grupo.querySelector<HTMLElement>(
+        `[data-categoria="${CSS.escape(categoria)}"]`,
+      );
+      if (!activo) return;
+      r.style.transition =
+        animar && !reduceMovimiento() ? 'transform 350ms cubic-bezier(0.77, 0, 0.175, 1)' : 'none';
+      r.style.transform = `translateX(${activo.offsetLeft}px) scaleX(${activo.offsetWidth})`;
+    };
+    colocar(!primeraVez.current);
+    const alCambiarTamano = () => colocar(false);
+    window.addEventListener('resize', alCambiarTamano);
+    return () => window.removeEventListener('resize', alCambiarTamano);
+  }, [categoria]);
+
+  // Al filtrar, las tarjetas que quedan se reacomodan en cascada en vez de saltar.
+  useEffect(() => {
+    if (primeraVez.current) return;
+    const visibles = grilla.current?.querySelectorAll<HTMLElement>('[data-tarjeta]:not([hidden])');
+    const quieto = reduceMovimiento();
+    visibles?.forEach((el, k) => {
+      if (typeof el.animate !== 'function') return;
+      el.animate(
+        quieto
+          ? [{ opacity: 0 }, { opacity: 1 }]
+          : [
+              { opacity: 0, transform: 'translateY(10px)' },
+              { opacity: 1, transform: 'none' },
+            ],
+        {
+          duration: quieto ? 150 : 380,
+          delay: quieto ? 0 : Math.min(k, 8) * 40,
+          easing: 'cubic-bezier(0.23, 1, 0.32, 1)',
+          fill: 'backwards',
+        },
+      );
+    });
+  }, [categoria]);
+
+  // Cada vez que cambia lo que cuelga en la pared (diseño, color o imagen propia), se revela.
+  useEffect(() => {
+    if (primeraVez.current) return;
+    revelar(imagenColgada.current);
+  }, [disenoId, variante, propia?.url]);
+
+  useEffect(() => {
+    primeraVez.current = false;
+  }, []);
+
+  // «Agregado» se queda un momento en el botón y vuelve a «Agregar al pedido».
+  useEffect(() => {
+    if (!recienAgregado) return;
+    const t = setTimeout(() => setRecienAgregado(false), 1600);
+    return () => clearTimeout(t);
+  }, [recienAgregado]);
 
   const diseno = catalogo.find((d) => d.id === disenoId) ?? catalogo[0];
   const medida = medidas.find((m) => m.id === medidaId) ?? medidas[0]!;
@@ -445,6 +538,7 @@ export default function Vitrina() {
       ...(variante === 'orig' ? {} : { variante }),
     });
     setAgregado(`${diseno.nombre}${color} en ${etiquetaMedida(medida)} cm, ${nombreMaterial}`);
+    setRecienAgregado(true);
   }
 
   if (!diseno) return null;
@@ -565,8 +659,29 @@ export default function Vitrina() {
         </>
       ) : (
         <>
-          <button type="button" onClick={agregar} className="boton boton-oro w-full">
-            Agregar al pedido
+          {/* Las dos etiquetas ocupan la misma celda y se cruzan con un desenfoque corto. */}
+          <button
+            type="button"
+            onClick={agregar}
+            aria-label={recienAgregado ? 'Agregado al pedido' : 'Agregar al pedido'}
+            className="boton boton-oro grid w-full"
+          >
+            <span
+              aria-hidden="true"
+              className={`[grid-area:1/1] transition-[opacity,filter,transform] duration-200 ease-(--ease-out) ${
+                recienAgregado ? 'translate-y-1 opacity-0 blur-[2px]' : ''
+              }`}
+            >
+              Agregar al pedido
+            </span>
+            <span
+              aria-hidden="true"
+              className={`[grid-area:1/1] transition-[opacity,filter,transform] duration-200 ease-(--ease-out) ${
+                recienAgregado ? '' : '-translate-y-1 opacity-0 blur-[2px]'
+              }`}
+            >
+              Agregado ✓
+            </span>
           </button>
           <div aria-live="polite" className="-mt-2 text-sm empty:hidden">
             {agregado && (
@@ -610,11 +725,12 @@ export default function Vitrina() {
             </p>
           </div>
 
-          <ol className="aparece mt-[clamp(44px,5vw,64px)] grid border-t border-linea md:grid-cols-3">
+          <ol className="mt-[clamp(44px,5vw,64px)] grid border-t border-linea md:grid-cols-3">
             {MODOS.map((m, i) => (
               <li
                 key={m.titulo}
-                className="flex items-baseline gap-4 border-b border-linea py-[18px] md:border-b-0 md:py-0 md:pt-[22px] md:pr-6 md:pb-1 md:[&+&]:border-l md:[&+&]:pl-6"
+                style={{ '--i': i } as CSSProperties}
+                className="aparece flex items-baseline gap-4 border-b border-linea py-[18px] md:border-b-0 md:py-0 md:pt-[22px] md:pr-6 md:pb-1 md:[&+&]:border-l md:[&+&]:pl-6"
               >
                 <span
                   aria-hidden="true"
@@ -632,33 +748,45 @@ export default function Vitrina() {
 
           <div className="mt-[clamp(52px,6vw,72px)] flex items-center justify-between gap-3.5 border-b border-linea">
             <div
+              ref={filtros}
               role="group"
               aria-label="Filtrar por estilo"
-              className="-mb-px flex gap-x-5 overflow-x-auto [scrollbar-width:none] sm:flex-wrap sm:gap-x-[26px] [&::-webkit-scrollbar]:hidden"
+              className="relative -mb-px flex gap-x-5 overflow-x-auto [scrollbar-width:none] sm:flex-wrap sm:gap-x-[26px] [&::-webkit-scrollbar]:hidden"
             >
               {categorias.map((c) => (
                 <button
                   key={c}
                   type="button"
+                  data-categoria={c}
                   aria-pressed={categoria === c}
                   onClick={() => setCategoria(c)}
-                  className="relative min-h-11 shrink-0 text-sm text-texto-suave transition-colors duration-300 after:absolute after:inset-x-0 after:bottom-0 after:h-px after:origin-left after:scale-x-0 after:bg-texto after:transition-transform after:duration-[400ms] hover:text-texto aria-pressed:text-texto aria-pressed:after:scale-x-100"
+                  className="min-h-11 shrink-0 text-sm text-texto-suave transition-colors duration-200 hover:text-texto aria-pressed:text-texto"
                 >
                   {c}
                 </button>
               ))}
+              {/* Una sola raya que se desliza hasta el filtro elegido. */}
+              <span
+                ref={raya}
+                aria-hidden="true"
+                className="pointer-events-none absolute bottom-0 left-0 h-px w-px origin-left bg-texto"
+              />
             </div>
             <p className="hidden shrink-0 text-[0.8125rem] text-texto-suave md:block">
               Toca los círculos para ver la misma idea en otros colores
             </p>
           </div>
 
-          <ul className="mt-9 grid grid-flow-dense grid-cols-2 gap-x-3.5 gap-y-8 sm:grid-cols-3 sm:gap-x-[clamp(16px,2vw,28px)] sm:gap-y-[clamp(36px,4vw,56px)] lg:grid-cols-4">
+          <ul
+            ref={grilla}
+            className="mt-9 grid grid-flow-dense grid-cols-2 gap-x-3.5 gap-y-8 sm:grid-cols-3 sm:gap-x-[clamp(16px,2vw,28px)] sm:gap-y-[clamp(36px,4vw,56px)] lg:grid-cols-4"
+          >
             {catalogo.map((d, i) => (
               <Fragment key={d.id}>
                 <Tarjeta
                   diseno={d}
                   oculta={categoria !== 'Todos' && d.categoria !== categoria}
+                  orden={i % 4}
                   onVer={(v) => elegir(d.id, v)}
                 />
                 {i === 4 && (
@@ -806,15 +934,17 @@ export default function Vitrina() {
                         boxShadow: `0 0 ${cm(14)} ${cm(5)} rgb(255 45 32 / .45)`,
                       }}
                     />
-                    {propia ? (
-                      <img
-                        src={propia.url}
-                        alt="Tu imagen colgada en la pared"
-                        className="block size-full object-cover"
-                      />
-                    ) : (
-                      <ImagenDiseno diseno={diseno} variante={variante} />
-                    )}
+                    <div ref={imagenColgada} className="size-full">
+                      {propia ? (
+                        <img
+                          src={propia.url}
+                          alt="Tu imagen colgada en la pared"
+                          className="block size-full object-cover"
+                        />
+                      ) : (
+                        <ImagenDiseno diseno={diseno} variante={variante} />
+                      )}
+                    </div>
                     <span
                       aria-hidden="true"
                       className={`pointer-events-none absolute inset-0 mix-blend-screen transition-opacity duration-500 [background:linear-gradient(115deg,transparent_38%,rgb(255_255_255/.22)_48%,transparent_58%)] ${

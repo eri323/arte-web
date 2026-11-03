@@ -38,6 +38,10 @@ const variablesMarca = Object.entries(negocio.marca.colores)
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <meta name="theme-color" content={negocio.marca.colores.fondo} />
     <style set:html={`:root { ${variablesMarca} }`}></style>
+    <!-- Con JS las secciones esperan a entrar en pantalla para aparecer; sin JS se ven quietas. -->
+    <script is:inline>
+      document.documentElement.classList.add('js');
+    </script>
     <!-- Colores elegidos en el panel del taller: se aplican antes de pintar para que no parpadee. -->
     <script is:inline define:vars={{ clave: CLAVE_COLORES }}>
       try {
@@ -62,5 +66,25 @@ const variablesMarca = Object.entries(negocio.marca.colores)
       <slot />
     </main>
     <Footer />
+    <script>
+      // Cada .aparece se marca .visto la primera vez que entra en pantalla (una sola vez).
+      const marcar = (el: Element) => el.classList.add('visto');
+      const piezas = document.querySelectorAll('.aparece');
+      if ('IntersectionObserver' in window) {
+        const io = new IntersectionObserver(
+          (entradas) => {
+            for (const e of entradas) {
+              if (!e.isIntersecting) continue;
+              marcar(e.target);
+              io.unobserve(e.target);
+            }
+          },
+          { rootMargin: '0px 0px -8% 0px', threshold: 0.12 },
+        );
+        piezas.forEach((el) => io.observe(el));
+      } else {
+        piezas.forEach(marcar);
+      }
+    </script>
   </body>
 </html>

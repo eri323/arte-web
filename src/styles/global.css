@@ -30,6 +30,9 @@
   --color-led: #ff2d20;
   --ease-expo: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-suave: cubic-bezier(0.22, 0.61, 0.36, 1);
+  /* Curvas fuertes: ease-out para lo que entra o responde, ease-in-out para lo que se desplaza. */
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
 }
 
 @layer base {
@@ -152,18 +155,30 @@
   white-space: nowrap;
   text-decoration: none;
   transition:
-    background-color 300ms var(--ease-suave),
-    color 300ms var(--ease-suave),
-    border-color 300ms var(--ease-suave);
+    background-color 200ms ease,
+    color 200ms ease,
+    border-color 200ms ease,
+    transform 160ms var(--ease-out);
+  /* Al presionar se hunde un poco: la interfaz confirma que oyó el toque. */
   &:active {
-    transform: translateY(1px);
+    transform: scale(0.97);
   }
   & .flecha {
     display: inline-block;
-    transition: transform 350ms var(--ease-suave);
+    transition: transform 250ms var(--ease-out);
   }
-  &:hover .flecha {
-    transform: translateX(4px);
+  @media (hover: hover) and (pointer: fine) {
+    &:hover .flecha {
+      transform: translateX(4px);
+    }
+  }
+}
+
+/* Cualquier otra cosa que se toca (segmentos, círculos de color, filtros) responde igual. */
+@utility presionable {
+  transition: transform 160ms var(--ease-out);
+  &:active {
+    transform: scale(0.97);
   }
 }
 
@@ -231,10 +246,10 @@
   }
 }
 
-@keyframes aparecer {
+@keyframes entrar {
   from {
     opacity: 0;
-    transform: translateY(16px);
+    transform: translateY(12px);
   }
 }
 
@@ -254,46 +269,88 @@
 
 .carta .alza {
   transition:
-    transform 500ms var(--ease-suave),
-    box-shadow 500ms var(--ease-suave);
+    transform 300ms var(--ease-out),
+    box-shadow 300ms var(--ease-out);
 }
 
-.carta:hover,
+.carta .tip {
+  opacity: 0;
+  transition: opacity 200ms ease;
+}
+
+/* Con el dedo no hay hover: un toque ya lleva a la pared. El hover solo con mouse. */
 .carta:focus-within {
   z-index: 30;
 }
-
-.carta:hover .alza,
 .carta:focus-within .alza {
   transform: translateY(-12px) scale(1.03);
   box-shadow:
     3px 3px 0 #1c1815,
     0 30px 40px -18px rgb(11 10 9 / 0.55);
 }
-
-.carta .tip {
-  opacity: 0;
-  transition: opacity 350ms var(--ease-suave);
-}
-
-.carta:hover .tip,
 .carta:focus-within .tip {
   opacity: 1;
 }
+@media (hover: hover) and (pointer: fine) {
+  .carta:hover {
+    z-index: 30;
+  }
+  .carta:hover .alza {
+    transform: translateY(-12px) scale(1.03);
+    box-shadow:
+      3px 3px 0 #1c1815,
+      0 30px 40px -18px rgb(11 10 9 / 0.55);
+  }
+  .carta:hover .tip {
+    opacity: 1;
+  }
+}
 
 @media (prefers-reduced-motion: no-preference) {
+  /* Entrada de la portada en cascada: antetítulo, titular, bajada, botones y luego el abanico.
+     Es de marketing y se ve una vez, así que puede ser más lenta que la interfaz. */
+  .entra {
+    animation: entrar 800ms var(--ease-out) both;
+    animation-delay: calc(var(--i, 0) * 70ms);
+  }
   .abanico {
-    animation: abrir-abanico 1200ms var(--ease-suave) 200ms both;
+    animation: abrir-abanico 1300ms var(--ease-out) 380ms both;
   }
-  .carta {
-    transition: transform 1200ms var(--ease-suave);
+
+  /* Las secciones aparecen una vez al entrar en pantalla (Base.astro pone .visto con un
+     IntersectionObserver). Solo con JS: sin él, todo se ve quieto desde el principio. */
+  .js .aparece {
+    opacity: 0;
+    transform: translateY(16px);
+    transition:
+      opacity 700ms var(--ease-out),
+      transform 700ms var(--ease-out);
+    transition-delay: calc(var(--i, 0) * 60ms);
   }
-  /* Las secciones aparecen una vez al entrar en pantalla donde el navegador lo soporta. */
-  @supports (animation-timeline: view()) {
-    .aparece {
-      animation: aparecer linear both;
-      animation-timeline: view();
-      animation-range: entry 0% entry 35%;
+  .js .aparece.visto {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Preguntas frecuentes: la respuesta se despliega en vez de saltar (donde el navegador lo soporta). */
+@supports selector(::details-content) {
+  :root {
+    interpolate-size: allow-keywords;
+  }
+  details::details-content {
+    block-size: 0;
+    overflow: clip;
+    transition:
+      block-size 300ms var(--ease-out),
+      content-visibility 300ms allow-discrete;
+  }
+  details[open]::details-content {
+    block-size: auto;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    details::details-content {
+      transition: none;
     }
   }
 }

@@ -99,13 +99,15 @@ const titular = [vitrina.titular, vitrina.titularSuave].filter(Boolean).join(' '
     class="overflow-hidden pt-[clamp(44px,5vw,72px)] pb-[clamp(56px,6vw,88px)]"
   >
     <div class="mx-auto flex max-w-[1240px] flex-col items-center px-4 text-center">
-      <p class="antetitulo">Cuadros en MDF y acrílico</p>
-      <h1 id="portada-titulo" class="texto-cartel max-w-[20ch]">
+      <p class="antetitulo entra">Cuadros en MDF y acrílico</p>
+      <h1 id="portada-titulo" class="texto-cartel entra max-w-[20ch]" style="--i: 1">
         {vitrina.titular}{' '}
         {vitrina.titularSuave && <span class="text-texto-suave">{vitrina.titularSuave}</span>}
       </h1>
-      <p class="mt-4 mb-7 max-w-[44ch] text-texto-suave">{vitrina.bajada}</p>
-      <div class="flex flex-wrap justify-center gap-3">
+      <p class="entra mt-4 mb-7 max-w-[44ch] text-texto-suave" style="--i: 2">
+        {vitrina.bajada}
+      </p>
+      <div class="entra flex flex-wrap justify-center gap-3" style="--i: 3">
         <a href="#catalogo" class="boton boton-negro">
           Explorar diseños{' '}
           <span aria-hidden="true" class="flecha">
@@ -146,7 +148,10 @@ const titular = [vitrina.titular, vitrina.titularSuave].filter(Boolean).join(' '
       ))}
     </ul>
 
-    <ul class="mt-[clamp(26px,3vw,40px)] flex flex-wrap justify-center gap-y-1.5 px-4 text-[0.8125rem] text-texto-suave">
+    <ul
+      style="--i: 9"
+      class="entra mt-[clamp(26px,3vw,40px)] flex flex-wrap justify-center gap-y-1.5 px-4 text-[0.8125rem] text-texto-suave"
+    >
       {confianza.map((c, k) => (
         <li>
           {k > 0 && (
@@ -209,7 +214,10 @@ const titular = [vitrina.titular, vitrina.titularSuave].filter(Boolean).join(' '
       </div>
       <ol class="mt-[clamp(44px,5vw,64px)] grid border-t border-linea md:grid-cols-3">
         {pasos.map((paso, i) => (
-          <li class="aparece border-b border-linea py-[26px] md:border-b-0 md:py-0 md:pt-7 md:pr-7 md:[&+&]:border-l md:[&+&]:pl-7">
+          <li
+            style={`--i:${i}`}
+            class="aparece border-b border-linea py-[26px] md:border-b-0 md:py-0 md:pt-7 md:pr-7 md:[&+&]:border-l md:[&+&]:pl-7"
+          >
             <span aria-hidden="true" class="font-display text-[15px] tracking-[0.06em] text-acento">
               {String(i + 1).padStart(2, '0')}
             </span>
@@ -249,8 +257,9 @@ const titular = [vitrina.titular, vitrina.titularSuave].filter(Boolean).join(' '
           'Foto de cliente',
         ].map((texto, i) => (
           <li
+            style={`--i:${i}`}
             class:list={[
-              'grid place-items-center border border-dashed border-linea-fuerte p-3 text-center text-[0.8125rem] text-texto-suave',
+              'aparece grid place-items-center border border-dashed border-linea-fuerte p-3 text-center text-[0.8125rem] text-texto-suave',
               i === 0 ? 'col-span-2 row-span-2 aspect-square md:aspect-auto' : 'aspect-square',
             ]}
           >
