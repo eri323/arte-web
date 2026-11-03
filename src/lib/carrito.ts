@@ -12,6 +12,8 @@ export interface ItemCarrito {
   dimensiones: Dimensiones;
   dpi: number;
   calidad: Calidad;
+  /** Diseño del catálogo (sin foto propia). En ese caso `archivo` es el nombre del diseño. */
+  disenoId?: string;
 }
 
 const esObjeto = (x: unknown): x is Record<string, unknown> => typeof x === 'object' && x !== null;
@@ -35,7 +37,8 @@ function esItemValido(x: unknown, idsMedidas: string[]): x is ItemCarrito {
     esNumero(dimensiones.alto) &&
     typeof x.archivo === 'string' &&
     esNumero(x.dpi) &&
-    (x.calidad === 'buena' || x.calidad === 'regular' || x.calidad === 'baja')
+    (x.calidad === 'buena' || x.calidad === 'regular' || x.calidad === 'baja') &&
+    (x.disenoId === undefined || typeof x.disenoId === 'string')
   );
 }
 

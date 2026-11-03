@@ -16,6 +16,8 @@ Que el cliente pase de «me gustó ese cuadro en Instagram» a «ya pedí el mí
 
 ## Brand Personality
 
+> Rama `feat/midas-atelier` (3-nov-2026): la marca es **Midas Atelier** y la estética pasa a «cuarto oscuro con LED» (ver DESIGN.md). Lo de abajo describe la demo original de Áurea Estudio; las anti-referencias de «negro con dorado» no aplican a esta propuesta, porque es la identidad real del taller.
+
 **Estudio de afiches de barrio.** Hecho a mano, con calle, sin pose.
 
 - Voz: directa, cercana, de tú, frases cortas. Habla como el muchacho del taller, no como una agencia.

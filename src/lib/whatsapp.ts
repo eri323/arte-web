@@ -13,6 +13,8 @@ export interface ItemMensaje {
   cantidad: number;
   archivo: string;
   calidad: Calidad;
+  /** Diseño del catálogo: no hay foto que adjuntar y `archivo` es el nombre del diseño. */
+  disenoId?: string;
 }
 
 export interface DatosMensaje {
@@ -38,12 +40,16 @@ function lineasItems(datos: DatosMensaje, modo: Modo, limite = datos.items.lengt
     if (modo === 'detallado') {
       return [
         `${i + 1}. ${etiqueta} ${item.orientacion} · ${material} · x${item.cantidad}`,
-        `   Foto: ${item.archivo} · calidad ${item.calidad}`,
+        item.disenoId
+          ? `   Diseño del catálogo: ${item.archivo}`
+          : `   Foto: ${item.archivo} · calidad ${item.calidad}`,
       ];
     }
     const o = item.orientacion === 'horizontal' ? 'H' : 'V';
     return [
-      `${i + 1}. ${etiqueta} ${o} ${material} x${item.cantidad} · ${recortar(item.archivo, 24)} (${item.calidad})`,
+      item.disenoId
+        ? `${i + 1}. ${etiqueta} ${o} ${material} x${item.cantidad} · Diseño ${recortar(item.archivo, 24)}`
+        : `${i + 1}. ${etiqueta} ${o} ${material} x${item.cantidad} · ${recortar(item.archivo, 24)} (${item.calidad})`,
     ];
   });
   const faltantes = datos.items.length - limite;
@@ -80,9 +86,9 @@ function armar(datos: DatosMensaje, modo: Modo, limite?: number): string {
     ...(cliente.celular ? [`Celular: ${recortar(cliente.celular, 20)}`] : []),
     ...(cliente.nota ? [`Nota: ${recortar(cliente.nota, 200)}`] : []),
     `Envío: ${negocio.envio.texto}`,
-    '',
-    // Fase 1: las imágenes no salen del navegador, así que se mandan aparte.
-    'Adjunto mis fotos en este chat.',
+    // Fase 1: las imágenes no salen del navegador, así que se mandan aparte. Los diseños del
+    // catálogo ya los tiene el taller.
+    ...(datos.items.some((i) => !i.disenoId) ? ['', 'Adjunto mis fotos en este chat.'] : []),
   ];
   return partes.join('\n');
 }

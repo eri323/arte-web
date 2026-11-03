@@ -9,17 +9,18 @@ const carpeta = join(dirname(fileURLToPath(import.meta.url)), '..', 'public', 'o
 
 // Copiado de src/config/negocio.ts para no compilar TypeScript aquí.
 const marca = {
-  nombre: 'Áurea Estudio',
-  acento: '#ca3517',
-  fondo: '#f4efe7',
-  texto: '#231814',
-  cinta: '#e7d2a0',
+  nombre: 'Midas Atelier',
+  acento: '#e7b94c',
+  fondo: '#0b0a09',
+  texto: '#f3ece0',
+  textoSuave: '#a39a8e',
+  led: '#ff2d20',
 };
 
 const paginas = [
   {
     archivo: 'inicio.png',
-    titulo: 'Tus fotos, convertidas en cuadros',
+    titulo: 'Decora tus espacios con estilo',
     sub: 'MDF y acrílico · Envíos a todo Colombia',
   },
   {
@@ -57,28 +58,46 @@ function lineas(texto, max = 18) {
 
 const escapar = (t) => t.replace(/&/g, '&amp;').replace(/</g, '&lt;');
 
+// Rayos del sol del logo: 18 cuñas doradas alrededor del centro del cuadro.
+const rayos = Array.from({ length: 18 }, (_, k) => {
+  const p = (g) => {
+    const a = (g * Math.PI) / 180;
+    return `${(150 + Math.cos(a) * 400).toFixed(1)},${(185 + Math.sin(a) * 400).toFixed(1)}`;
+  };
+  return `<polygon points="150,185 ${p(k * 20)} ${p(k * 20 + 10)}" fill="${marca.acento}"/>`;
+}).join('');
+
 function svg({ titulo, sub }) {
   return `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630">
-  <rect width="1200" height="630" fill="${marca.acento}"/>
-  <g transform="rotate(2 940 295)">
-    <rect x="800" y="100" width="280" height="390" fill="#0f3b4c" stroke="${marca.texto}" stroke-width="10"/>
-    ${[180, 240, 300, 360, 420]
-      .map(
-        (y, i) =>
-          `<path d="M805 ${y} Q 872 ${y - 36} 940 ${y} T 1075 ${y}" fill="none" stroke="${['#7fc8c2', '#5aa9b0', '#3d8a9b', '#2a6d82', '#1d566b'][i]}" stroke-width="18"/>`,
-      )
-      .join('')}
+  <defs>
+    <radialGradient id="led" cx="0.85" cy="0" r="0.7">
+      <stop offset="0" stop-color="${marca.led}" stop-opacity="0.45"/>
+      <stop offset="1" stop-color="${marca.led}" stop-opacity="0"/>
+    </radialGradient>
+    <clipPath id="c"><rect width="300" height="400"/></clipPath>
+  </defs>
+  <rect width="1200" height="630" fill="${marca.fondo}"/>
+  <rect width="1200" height="630" fill="url(#led)"/>
+  <g transform="translate(830 110) rotate(3 150 200)">
+    <rect x="-14" y="-14" width="328" height="428" fill="${marca.led}" opacity="0.25"/>
+    <rect x="8" y="8" width="300" height="400" fill="#000"/>
+    <g clip-path="url(#c)">
+      <rect width="300" height="400" fill="#0d0b09"/>
+      ${rayos}
+      <circle cx="150" cy="185" r="62" fill="#0d0b09"/>
+      <text x="150" y="212" text-anchor="middle" font-family="Impact, Arial Black, sans-serif" font-size="76" fill="${marca.acento}">444</text>
+    </g>
   </g>
-  <rect x="895" y="82" width="90" height="30" fill="${marca.cinta}" transform="rotate(-3 940 97)"/>
-  <text x="90" y="140" font-family="Arial Black, Arial, sans-serif" font-weight="900" font-size="34" fill="${marca.fondo}">${escapar(marca.nombre)}</text>
+  <circle cx="112" cy="128" r="20" fill="${marca.acento}"/>
+  <text x="146" y="140" font-family="Impact, Arial Black, sans-serif" font-size="34" letter-spacing="3" fill="${marca.texto}">${escapar(marca.nombre.toUpperCase())}</text>
   ${lineas(titulo)
     .map(
       (l, i) =>
-        `<text x="90" y="${260 + i * 72}" font-family="Arial Black, Arial, sans-serif" font-size="64" font-weight="900" fill="${marca.fondo}">${escapar(l)}</text>`,
+        `<text x="90" y="${270 + i * 80}" font-family="Impact, Arial Black, sans-serif" font-size="78" fill="${i === lineas(titulo).length - 1 ? marca.acento : marca.texto}">${escapar(l.toUpperCase())}</text>`,
     )
     .join('')}
-  <text x="90" y="${260 + lineas(titulo).length * 72 + 10}" font-family="Arial, sans-serif" font-size="30" fill="${marca.fondo}">${escapar(sub)}</text>
-  <text x="90" y="560" font-family="Arial, sans-serif" font-size="22" fill="${marca.fondo}">Demo · marca ficticia</text>
+  <text x="90" y="${270 + lineas(titulo).length * 80 + 6}" font-family="Arial, sans-serif" font-size="30" fill="${marca.textoSuave}">${escapar(sub)}</text>
+  <text x="90" y="560" font-family="Arial, sans-serif" font-size="22" fill="${marca.textoSuave}">Instagram @midasatelier444</text>
 </svg>`;
 }
 

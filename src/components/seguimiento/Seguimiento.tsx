@@ -185,10 +185,7 @@ export default function Seguimiento() {
             className="h-11 rounded-lg border border-linea-fuerte bg-transparent px-3 uppercase placeholder:normal-case"
           />
         </label>
-        <button
-          type="submit"
-          className="inline-flex min-h-11 items-center justify-center rounded-sm bg-acento px-6 font-medium text-sobre-acento hover:bg-acento-hover"
-        >
+        <button type="submit" className="boton boton-oro">
           Buscar
         </button>
       </form>

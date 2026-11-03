@@ -28,7 +28,7 @@ for (const ruta of paginas) {
       await expect(page.locator('meta[name="description"]')).toHaveAttribute('content', /.{40,}/);
       await expect(page.locator('meta[property="og:title"]')).toHaveAttribute(
         'content',
-        /Áurea Estudio/,
+        /Midas Atelier/,
       );
       await expect(page.locator('meta[property="og:description"]')).toHaveAttribute(
         'content',
@@ -43,7 +43,7 @@ for (const ruta of paginas) {
 
     test('el footer dice que es una demo', async ({ page }) => {
       await irA(page, ruta);
-      await expect(page.getByText('Demo · marca ficticia')).toBeVisible();
+      await expect(page.getByText('Demo · propuesta web')).toBeVisible();
     });
   });
 }

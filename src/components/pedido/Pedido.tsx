@@ -1,6 +1,7 @@
 import { useStore } from '@nanostores/react';
 import { useEffect, useMemo, useState, type FormEvent } from 'react';
 import { negocio } from '../../config/negocio';
+import ArteCatalogo from '../catalogo/ArteCatalogo';
 import { obtenerAlmacen } from '../../lib/almacen';
 import { etiquetaMedida, formatearPesos } from '../../lib/formato';
 import { crearPedido, siguienteNumero, type Cliente } from '../../lib/pedidos';
@@ -21,6 +22,18 @@ const AVISO_DEMO = 'En la versión real esto abre el WhatsApp del taller.';
 function Miniatura({ item }: { item: ItemCarrito }) {
   const [src, setSrc] = useState<string | null | undefined>(undefined);
   useEffect(() => setSrc(leerMiniatura(item.id)), [item.id]);
+  if (item.disenoId) {
+    const diseno = negocio.catalogo.find((d) => d.id === item.disenoId);
+    return (
+      <div className="h-20 w-15 shrink-0 overflow-hidden rounded-sm">
+        {diseno?.foto ? (
+          <img src={diseno.foto.src} alt={diseno.foto.alt} className="size-full object-cover" />
+        ) : (
+          <ArteCatalogo disenoId={item.disenoId} titulo={`Diseño ${item.archivo}`} />
+        )}
+      </div>
+    );
+  }
   if (src === undefined) return <div className="size-20 shrink-0 rounded bg-texto/5" />;
   if (!src) {
     return (
@@ -64,7 +77,7 @@ export default function Pedido() {
   }, []);
 
   useEffect(() => {
-    setMiniaturasPerdidas(carrito.some((i) => !leerMiniatura(i.id)));
+    setMiniaturasPerdidas(carrito.some((i) => !i.disenoId && !leerMiniatura(i.id)));
   }, [carrito]);
 
   const desglose = useMemo(
@@ -107,7 +120,7 @@ export default function Pedido() {
         ...(cliente.nota?.trim() ? { nota: cliente.nota.trim() } : {}),
       },
       items: carrito.map(
-        ({ medidaId, orientacion, material, cantidad, archivo, calidad, dpi }) => ({
+        ({ medidaId, orientacion, material, cantidad, archivo, calidad, dpi, disenoId }) => ({
           medidaId,
           orientacion,
           material,
@@ -115,6 +128,7 @@ export default function Pedido() {
           archivo,
           calidad,
           dpi,
+          ...(disenoId ? { disenoId } : {}),
         }),
       ),
       total: desglose.total,
@@ -151,7 +165,7 @@ export default function Pedido() {
           )}
           <a
             href={`/seguimiento?numero=${encodeURIComponent(confirmado.numero)}`}
-            className="mt-4 inline-flex min-h-11 items-center rounded-sm bg-acento px-6 font-medium text-sobre-acento hover:bg-acento-hover"
+            className="mt-4 inline-flex min-h-11 items-center boton boton-oro"
           >
             Ver el seguimiento
           </a>
@@ -168,10 +182,7 @@ export default function Pedido() {
     return (
       <div className="rounded-lg border border-linea p-6 text-center">
         <p>Tu pedido está vacío.</p>
-        <a
-          href="/crear"
-          className="mt-4 inline-flex min-h-11 items-center rounded-sm bg-acento px-6 font-medium text-sobre-acento hover:bg-acento-hover"
-        >
+        <a href="/crear" className="mt-4 inline-flex min-h-11 items-center boton boton-oro">
           Crear mi cuadro
         </a>
       </div>
@@ -203,7 +214,9 @@ export default function Pedido() {
                       {etiqueta} · {item.orientacion} · {nombreMaterial(item.material)}
                     </p>
                     <p className="truncate text-sm text-texto-suave">
-                      {item.archivo} · calidad {item.calidad}
+                      {item.disenoId
+                        ? `Diseño del catálogo: ${item.archivo}`
+                        : `${item.archivo} · calidad ${item.calidad}`}
                     </p>
                     <div className="mt-2 flex items-center gap-2">
                       <button
@@ -271,7 +284,7 @@ export default function Pedido() {
                     <span>{formatearPesos(l.subtotal)}</span>
                   </div>
                   {l.descuento > 0 && (
-                    <div className="flex justify-between gap-4 text-emerald-800">
+                    <div className="flex justify-between gap-4 text-acento-fuerte">
                       <span>Descuento {l.medidaId.replace('x', '×')}</span>
                       <span>−{formatearPesos(l.descuento)}</span>
                     </div>
@@ -352,7 +365,7 @@ export default function Pedido() {
           <button
             type="submit"
             disabled={!numero}
-            className="inline-flex min-h-11 items-center justify-center rounded-sm bg-acento px-6 font-medium text-sobre-acento hover:bg-acento-hover disabled:opacity-50"
+            className="inline-flex min-h-11 items-center justify-center boton boton-oro disabled:opacity-50"
           >
             Pedir por WhatsApp
           </button>

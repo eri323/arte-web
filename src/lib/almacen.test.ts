@@ -33,38 +33,38 @@ describe('crearAlmacenLocal', () => {
 
   it('la primera vez carga los pedidos demo', async () => {
     const lista = await almacen().listar();
-    expect(lista.map((p) => p.numero).sort()).toEqual(['AE-1040', 'AE-1041', 'AE-1042']);
+    expect(lista.map((p) => p.numero).sort()).toEqual(['MA-1040', 'MA-1041', 'MA-1042']);
   });
 
   it('obtiene por número sin importar mayúsculas ni espacios', async () => {
-    expect((await almacen().obtener(' ae-1041 '))?.estado).toBe('listo');
-    expect(await almacen().obtener('AE-9999')).toBeNull();
+    expect((await almacen().obtener(' ma-1041 '))?.estado).toBe('listo');
+    expect(await almacen().obtener('MA-9999')).toBeNull();
   });
 
   it('guarda un pedido nuevo y lo actualiza sin duplicar', async () => {
     const a = almacen();
-    await a.guardar(nuevo('AE-1043'));
-    await a.guardar({ ...nuevo('AE-1043'), total: 70000 });
+    await a.guardar(nuevo('MA-1043'));
+    await a.guardar({ ...nuevo('MA-1043'), total: 70000 });
     const lista = await a.listar();
-    expect(lista.filter((p) => p.numero === 'AE-1043')).toHaveLength(1);
-    expect((await a.obtener('AE-1043'))?.total).toBe(70000);
+    expect(lista.filter((p) => p.numero === 'MA-1043')).toHaveLength(1);
+    expect((await a.obtener('MA-1043'))?.total).toBe(70000);
   });
 
   it('persiste entre instancias', async () => {
-    await almacen().guardar(nuevo('AE-1043'));
-    expect(await almacen().obtener('AE-1043')).not.toBeNull();
+    await almacen().guardar(nuevo('MA-1043'));
+    expect(await almacen().obtener('MA-1043')).not.toBeNull();
   });
 
   it('lista los más nuevos primero', async () => {
-    await almacen().guardar(nuevo('AE-1043'));
-    expect((await almacen().listar())[0].numero).toBe('AE-1043');
+    await almacen().guardar(nuevo('MA-1043'));
+    expect((await almacen().listar())[0].numero).toBe('MA-1043');
   });
 
   it('restaurarDemo borra los pedidos del cliente', async () => {
     const a = almacen();
-    await a.guardar(nuevo('AE-1043'));
+    await a.guardar(nuevo('MA-1043'));
     await a.restaurarDemo();
-    expect(await a.obtener('AE-1043')).toBeNull();
+    expect(await a.obtener('MA-1043')).toBeNull();
     expect(await a.listar()).toHaveLength(3);
   });
 
@@ -81,19 +81,19 @@ describe('pedidos dañados en localStorage', () => {
       'arte-web:pedidos',
       JSON.stringify([
         {
-          numero: 'AE-1050',
+          numero: 'MA-1050',
           cliente: { nombre: 'Ana', ciudad: 'Cali' },
           items: [],
           total: 60000,
           estado: 'listo',
         },
-        { numero: 'AE-1051', estado: 'inventado', total: 1 },
+        { numero: 'MA-1051', estado: 'inventado', total: 1 },
         { total: 5 },
         'basura',
       ]),
     );
     const lista = await crearAlmacenLocal(memoria, { ahora: () => AHORA }).listar();
-    expect(lista.map((p) => p.numero)).toEqual(['AE-1050']);
+    expect(lista.map((p) => p.numero)).toEqual(['MA-1050']);
     expect(lista[0]).toMatchObject({ pagos: [], notas: [], historial: [] });
   });
 });

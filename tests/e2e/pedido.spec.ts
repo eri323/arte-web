@@ -30,7 +30,7 @@ test.describe('pedido', () => {
     await page.getByLabel(/Nota para el taller/).fill('Para regalo & con tarjeta');
 
     const mensaje = page.getByTestId('mensaje');
-    await expect(mensaje).toContainText('Pedido: AE-1043');
+    await expect(mensaje).toContainText('Pedido: MA-1043');
     await expect(mensaje).toContainText('30×40 vertical · MDF · x3');
     await expect(mensaje).toContainText('Sofía Peña');
     await expect(mensaje).toContainText('Adjunto mis fotos en este chat');
@@ -45,13 +45,13 @@ test.describe('pedido', () => {
 
     await page.getByRole('button', { name: 'Pedir por WhatsApp' }).click();
     await expect(
-      page.getByRole('heading', { name: 'Tu pedido AE-1043 quedó registrado' }),
+      page.getByRole('heading', { name: 'Tu pedido MA-1043 quedó registrado' }),
     ).toBeVisible();
     await expect(page.getByTestId('contador-carrito')).toHaveCount(0);
 
     const guardado = await page.evaluate(() =>
       JSON.parse(localStorage.getItem('arte-web:pedidos') ?? '[]').find(
-        (p: { numero: string }) => p.numero === 'AE-1043',
+        (p: { numero: string }) => p.numero === 'MA-1043',
       ),
     );
     expect(guardado).toMatchObject({
@@ -61,7 +61,7 @@ test.describe('pedido', () => {
     });
 
     await page.getByRole('link', { name: 'Ver el seguimiento' }).click();
-    await expect(page).toHaveURL(/seguimiento\?numero=AE-1043/);
+    await expect(page).toHaveURL(/seguimiento\?numero=MA-1043/);
   });
 
   test('pide los datos obligatorios antes de registrar', async ({ page }) => {
@@ -116,13 +116,13 @@ test('un pedido dañado no tumba el panel ni el seguimiento', async ({ page }) =
     localStorage.setItem(
       'arte-web:pedidos',
       JSON.stringify([
-        { numero: 'AE-1050', total: 60000, estado: 'listo', cliente: { nombre: 'Ana' } },
-        { numero: 'AE-1051' },
+        { numero: 'MA-1050', total: 60000, estado: 'listo', cliente: { nombre: 'Ana' } },
+        { numero: 'MA-1051' },
       ]),
     );
   });
   await irA(page, '/taller');
-  await expect(page.getByRole('button', { name: /AE-1050/ })).toBeVisible();
-  await irA(page, '/seguimiento?numero=AE-1050');
-  await expect(page.getByRole('heading', { name: 'Pedido AE-1050' })).toBeVisible();
+  await expect(page.getByRole('button', { name: /MA-1050/ })).toBeVisible();
+  await irA(page, '/seguimiento?numero=MA-1050');
+  await expect(page.getByRole('heading', { name: 'Pedido MA-1050' })).toBeVisible();
 });

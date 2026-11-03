@@ -42,8 +42,16 @@ export interface ColoresMarca {
   /** Bordes y divisores. */
   linea: string;
   lineaFuerte: string;
-  /** Solo decoración (la cinta de enmarcar). Nunca lleva texto. */
+  /** Solo decoración (la cinta de enmarcar, brillos). Nunca lleva texto. */
   cinta: string;
+}
+
+/** Un diseño listo del catálogo del taller. Sin `foto` se pinta el arte generado de ese `id`. */
+export interface DisenoCatalogo {
+  id: string;
+  nombre: string;
+  categoria: string;
+  foto?: FotoVitrina;
 }
 
 export interface FotoVitrina {
@@ -59,12 +67,19 @@ export interface Negocio {
    * se muestra arte generado en SVG.
    */
   vitrina: {
+    /** Línea pequeña encima del titular. */
+    antetitulo: string;
     titular: string;
+    /** Final del titular, resaltado con el color de firma. */
+    resaltado?: string;
     bajada: string;
     fotoPortada?: FotoVitrina;
     /** Una foto por cuadro de la pared de galería, en el mismo orden. */
     galeria?: FotoVitrina[];
   };
+  /** Diseños listos para pedir sin foto propia. Vacío = solo cuadros personalizados. */
+  catalogo: DisenoCatalogo[];
+  redes: { instagram?: string };
   medidas: Medida[];
   materiales: Material[];
   orientaciones: Orientacion[];
@@ -83,30 +98,50 @@ export interface Negocio {
 // SUPUESTO: la orientación horizontal invierte ancho y alto y cuesta lo mismo.
 export const negocio: Negocio = {
   marca: {
-    nombre: 'Áurea Estudio',
-    eslogan: 'Tus fotos, convertidas en cuadros',
-    prefijoPedido: 'AE',
-    // Paleta «estudio de afiches de barrio» (ver DESIGN.md). Contraste verificado: texto sobre fondo
-    // 15.2:1, textoSuave sobre superficie 6.3:1, fondo sobre acento 4.6:1, acentoFuerte sobre fondo 6.5:1.
+    nombre: 'Midas Atelier',
+    eslogan: 'Cuadros en MDF y acrílico · Envíos a todo Colombia',
+    prefijoPedido: 'MA',
+    // Paleta «cuarto oscuro con LED» (ver DESIGN.md). Contraste verificado: texto sobre fondo
+    // 16.8:1, textoSuave sobre superficie 6.7:1, sobreAcento sobre acento 10.8:1.
     colores: {
-      fondo: '#f4efe7',
-      superficie: '#ebe1d5',
-      texto: '#231814',
-      textoSuave: '#5c4c45',
-      acento: '#ca3517',
-      acentoFuerte: '#a52110',
-      sobreAcento: '#f4efe7',
-      acentoHover: '#a52110',
-      linea: '#23181426',
-      lineaFuerte: '#23181440',
-      cinta: '#e7d2a0',
+      fondo: '#0b0a09',
+      superficie: '#15120f',
+      texto: '#f3ece0',
+      textoSuave: '#a39a8e',
+      acento: '#e7b94c',
+      acentoFuerte: '#e7b94c',
+      sobreAcento: '#0b0a09',
+      acentoHover: '#f6d88b',
+      linea: '#f3ece01f',
+      lineaFuerte: '#f3ece040',
+      cinta: '#f6d88b',
     },
   },
-  // SUPUESTO: textos de ejemplo de la marca ficticia; el taller real pone los suyos y sus fotos.
   vitrina: {
-    titular: 'Tu foto, en tu pared.',
-    bajada: 'Cuadros en MDF y acrílico, a tu medida. Envíos a todo Colombia.',
+    antetitulo: 'Hechos en MDF y acrílico',
+    titular: 'Decora tus espacios',
+    resaltado: 'con estilo',
+    bajada:
+      'Cuadros que convierten un cuarto en tu espacio. Elige un diseño del catálogo o trae el tuyo, y míralo en tu pared antes de pedir.',
   },
+  // SUPUESTO: diseños, nombres y categorías de ejemplo, con arte generado en SVG. El taller pone las
+  // fotos reales de su catálogo en `foto`. El precio es el de la medida elegida (no hay recargo por
+  // diseño).
+  catalogo: [
+    { id: 'cuatro-cuatros', nombre: 'Cuatro Cuatros', categoria: 'Lujo' },
+    { id: 'verde-billete', nombre: 'Verde Billete', categoria: 'Lujo' },
+    { id: 'no-pares', nombre: 'No Pares', categoria: 'Motivación' },
+    { id: 'disciplina', nombre: 'Disciplina', categoria: 'Motivación' },
+    { id: 'chicle-pop', nombre: 'Chicle Pop', categoria: 'Pop art' },
+    { id: 'boom-comic', nombre: 'Boom Cómic', categoria: 'Pop art' },
+    { id: 'escena-final', nombre: 'Escena Final', categoria: 'Cine' },
+    { id: 'sala-oscura', nombre: 'Sala Oscura', categoria: 'Cine' },
+    { id: 'riff-pesado', nombre: 'Riff Pesado', categoria: 'Música' },
+    { id: 'lado-a', nombre: 'Lado A', categoria: 'Música' },
+    { id: 'ronin', nombre: 'Ronin', categoria: 'Anime' },
+    { id: 'sakura', nombre: 'Sakura', categoria: 'Anime' },
+  ],
+  redes: { instagram: 'midasatelier444' },
   medidas: [
     {
       id: '20x27',

@@ -33,26 +33,26 @@ function Sofa() {
   const respaldoAlto = s.alto - ESCENA.sofa.asientoCm + 10;
   return (
     <g aria-hidden="true">
-      <rect x={s.x + 10} y={s.y} width={s.ancho - 20} height={respaldoAlto} rx={6} fill="#7a6a5c" />
+      <rect x={s.x + 10} y={s.y} width={s.ancho - 20} height={respaldoAlto} rx={6} fill="#2c2724" />
       <rect
         x={s.x + 14}
         y={s.y + respaldoAlto - 12}
         width={s.ancho - 28}
         height={22}
         rx={4}
-        fill="#8b7a6a"
+        fill="#3b3632"
       />
-      <rect x={s.x} y={s.y + 20} width={20} height={s.alto - 30} rx={6} fill="#6c5d50" />
+      <rect x={s.x} y={s.y + 20} width={20} height={s.alto - 30} rx={6} fill="#272220" />
       <rect
         x={s.x + s.ancho - 20}
         y={s.y + 20}
         width={20}
         height={s.alto - 30}
         rx={6}
-        fill="#6c5d50"
+        fill="#272220"
       />
-      <rect x={s.x + 6} y={s.y + s.alto - 10} width={4} height={10} fill="#3b322b" />
-      <rect x={s.x + s.ancho - 10} y={s.y + s.alto - 10} width={4} height={10} fill="#3b322b" />
+      <rect x={s.x + 6} y={s.y + s.alto - 10} width={4} height={10} fill="#0f0d0c" />
+      <rect x={s.x + s.ancho - 10} y={s.y + s.alto - 10} width={4} height={10} fill="#0f0d0c" />
     </g>
   );
 }
@@ -72,12 +72,12 @@ export default function EscenaPared({ cuadro, contornos = [], titulo }: Props) {
     >
       <defs>
         <linearGradient id={`${id}-pared`} x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stopColor="#ebe4d8" />
-          <stop offset="1" stopColor="#ddd3c4" />
+          <stop offset="0" stopColor="#1b1714" />
+          <stop offset="1" stopColor="#0e0c0a" />
         </linearGradient>
         <linearGradient id={`${id}-relleno`} x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0" stopColor="#e7d2a0" />
-          <stop offset="1" stopColor="#ca3517" />
+          <stop offset="0" stopColor="#f6d88b" />
+          <stop offset="1" stopColor="#ff2d20" />
         </linearGradient>
         <linearGradient id={`${id}-brillo`} x1="0" y1="0" x2="1" y2="1">
           <stop offset="0" stopColor="#ffffff" stopOpacity="0.45" />
@@ -90,13 +90,13 @@ export default function EscenaPared({ cuadro, contornos = [], titulo }: Props) {
             dy={acrilico ? 2 : 1}
             stdDeviation={acrilico ? 2.5 : 1.5}
             floodColor="#000"
-            floodOpacity={acrilico ? 0.4 : 0.25}
+            floodOpacity={acrilico ? 0.7 : 0.55}
           />
         </filter>
       </defs>
 
       <rect width={ESCENA.anchoCm} height={ESCENA.altoCm} fill={`url(#${id}-pared)`} />
-      <rect y={ESCENA.altoCm - 4} width={ESCENA.anchoCm} height={4} fill="#b9ab97" />
+      <rect y={ESCENA.altoCm - 4} width={ESCENA.anchoCm} height={4} fill="#221d19" />
       <Sofa />
 
       {contornos.map((c) => {
@@ -109,7 +109,7 @@ export default function EscenaPared({ cuadro, contornos = [], titulo }: Props) {
               width={rc.ancho}
               height={rc.alto}
               fill="none"
-              stroke="#5b4a33"
+              stroke="#e7b94c"
               strokeWidth={0.8}
               strokeDasharray="3 2"
             />
@@ -117,8 +117,8 @@ export default function EscenaPared({ cuadro, contornos = [], titulo }: Props) {
               x={rc.x + 1.5}
               y={rc.y + 5}
               fontSize={5}
-              fill="#3b322b"
-              fontFamily="Inter Variable, sans-serif"
+              fill="#f6d88b"
+              style={{ fontFamily: 'var(--font-sans)', fontWeight: 700 }}
             >
               {c.etiqueta}
             </text>
@@ -135,7 +135,7 @@ export default function EscenaPared({ cuadro, contornos = [], titulo }: Props) {
               y={r.y - 0.3}
               width={r.ancho + 0.6}
               height={r.alto + 0.6}
-              fill="#2a2420"
+              fill="#000000"
             />
           )}
           <svg

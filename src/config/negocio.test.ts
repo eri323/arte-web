@@ -39,8 +39,8 @@ describe('negocio', () => {
   });
 
   it('trae los valores por defecto de la sección 6', () => {
-    expect(negocio.marca.nombre).toBe('Áurea Estudio');
-    expect(negocio.marca.prefijoPedido).toBe('AE');
+    expect(negocio.marca.nombre).toBe('Midas Atelier');
+    expect(negocio.marca.prefijoPedido).toBe('MA');
     expect(negocio.orientaciones).toEqual(['vertical', 'horizontal']);
     expect(negocio.resolucion).toEqual({ buena: 150, regular: 100 });
     expect(negocio.archivo).toEqual({

@@ -1,8 +1,8 @@
 # arte-web
 
-Plataforma demo para talleres que imprimen **cuadros personalizados en MDF o acrílico** a partir de la foto del cliente. Usa una marca ficticia, **Áurea Estudio**.
+Plataforma demo para talleres que imprimen **cuadros personalizados en MDF o acrílico** a partir de la foto del cliente. En la rama `feat/midas-atelier` está montada como propuesta para **Midas Atelier** (Instagram [@midasatelier444](https://www.instagram.com/midasatelier444/)), con catálogo de diseños y pared con LED.
 
-> Demo · marca ficticia. No representa a ningún negocio real.
+> Demo · propuesta web. Los diseños, categorías y textos del catálogo son de ejemplo.
 
 ## Qué resuelve
 
@@ -41,8 +41,8 @@ Lighthouse móvil (build local): `/` 99 y `/formatos` 97 en rendimiento, y 100 e
 ## Probar la demo
 
 1. En `/crear`, sube una foto, elige 30×40 y cantidad 2: verás «Agrega 1 más de 30×40 y pagas $ 40.000 c/u».
-2. Agrega al pedido y en `/pedido` llena tus datos. Con `whatsapp.numero` vacío (modo demo) no se abre ningún chat: verás el mensaje que le llegaría al taller y tu número de pedido (`AE-1043`, `AE-1044`…).
-3. En `/seguimiento` busca ese número, o los de ejemplo `AE-1040`, `AE-1041` y `AE-1042`.
+2. Agrega al pedido y en `/pedido` llena tus datos. Con `whatsapp.numero` vacío (modo demo) no se abre ningún chat: verás el mensaje que le llegaría al taller y tu número de pedido (`MA-1043`, `MA-1044`…).
+3. En `/seguimiento` busca ese número, o los de ejemplo `MA-1040`, `MA-1041` y `MA-1042`.
 4. En `/taller` cambia el estado, registra pagos o deja una nota, y vuelve al seguimiento para verlo. «Restaurar datos de ejemplo» deja todo como al principio.
 
 Los pedidos y los precios editados viven en el `localStorage` de tu navegador: otra persona, u otro navegador, no los ve.
@@ -85,7 +85,7 @@ Todo lo que cambia de un taller a otro está en **un solo archivo**: [`src/confi
 
 | Campo                   | Qué cambiar                                                                                                                                                                 |
 | ----------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `marca`                 | Nombre, eslogan, prefijo de pedido (`AE` → `AE-1042`) y colores. Los colores se vuelven variables CSS y clases de Tailwind (`bg-fondo`, `bg-acento`, `text-acento-fuerte`…) |
+| `marca`                 | Nombre, eslogan, prefijo de pedido (`MA` → `MA-1042`) y colores. Los colores se vuelven variables CSS y clases de Tailwind (`bg-fondo`, `bg-acento`, `text-acento-fuerte`…) |
 | `vitrina`               | Frase y bajada de la portada, y fotos propias del taller (`fotoPortada`, `galeria`) en `public/`. Sin fotos se muestra arte generado                                        |
 | `medidas`               | Medidas en cm (en vertical), precio en pesos enteros y promoción opcional                                                                                                   |
 | `materiales`            | Nombre, descripción y recargo de cada material                                                                                                                              |
@@ -124,7 +124,7 @@ Están marcados en el código con `// SUPUESTO:`. Los principales:
 - Los pedidos se guardan en `localStorage`, así que solo se ven **en el mismo navegador** donde se hicieron.
 - El pedido solo avanza al estado siguiente. Confirmar el abono exige el 50 % pagado, marcar el saldo exige el total pagado y enviar exige transportadora y guía. En el panel, un toque registra el pago que falta y avanza.
 - «Agrega N más…» se muestra siempre que falte al menos una unidad para la promoción.
-- Los pedidos del cliente se numeran desde `AE-1043`, después de los tres de ejemplo.
+- Los pedidos del cliente se numeran desde `MA-1043`, después de los tres de ejemplo.
 - Se puede agregar un cuadro con calidad baja: el aviso se muestra y la calidad viaja en el mensaje para que el taller decida.
 - El dominio en `astro.config.mjs` (`site`) es el de la demo publicada (`arte-web-tau.vercel.app`). Para un taller real se cambia por el suyo.
 

@@ -8,12 +8,11 @@ const variable = (page: Page, nombre: string) =>
     nombre,
   );
 
-const fondoPortada = (page: Page) =>
-  page.evaluate(
-    () =>
-      getComputedStyle(document.querySelector('section[aria-labelledby="portada-titulo"]')!)
-        .backgroundColor,
-  );
+// El botón principal de la portada va en el color de firma.
+const botonPortada = (page: Page) =>
+  page
+    .getByRole('link', { name: 'Ver catálogo' })
+    .evaluate((el) => getComputedStyle(el).backgroundColor);
 
 test.describe('colores de la marca', () => {
   test('una paleta del panel cambia todo el sitio y se puede volver a la original', async ({
@@ -28,7 +27,7 @@ test.describe('colores de la marca', () => {
     expect(await variable(page, '--marca-acento')).toBe('#2445c2');
 
     await irA(page, '/');
-    expect(await fondoPortada(page)).toBe('rgb(36, 69, 194)');
+    expect(await botonPortada(page)).toBe('rgb(36, 69, 194)');
     const graves = (await new AxeBuilder({ page }).analyze()).violations.filter(
       (v) => v.impact === 'serious' || v.impact === 'critical',
     );
@@ -36,9 +35,9 @@ test.describe('colores de la marca', () => {
 
     await irA(page, '/taller');
     await page.getByRole('button', { name: 'Volver a los colores originales' }).click();
-    expect(await variable(page, '--marca-acento')).toBe('#ca3517');
+    expect(await variable(page, '--marca-acento')).toBe('#e7b94c');
     await irA(page, '/');
-    expect(await fondoPortada(page)).toBe('rgb(202, 53, 23)');
+    expect(await botonPortada(page)).toBe('rgb(231, 185, 76)');
   });
 
   test('una combinación ilegible avisa y no se guarda', async ({ page }) => {

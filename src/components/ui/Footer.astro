@@ -1,18 +1,33 @@
 ---
 import { negocio } from '../../config/negocio';
+
+const { instagram } = negocio.redes;
 ---
 
 <footer class="border-t border-linea">
-  <div class="mx-auto flex max-w-6xl flex-col gap-2 px-4 py-8 text-sm text-texto-suave sm:flex-row sm:items-end sm:justify-between">
+  <div class="mx-auto flex max-w-6xl flex-col gap-3 px-4 py-7 text-sm text-texto-suave sm:flex-row sm:items-end sm:justify-between">
     <div>
-      <p class="font-display text-2xl text-texto">{negocio.marca.nombre}</p>
+      <p class="font-display text-2xl tracking-[0.06em] text-texto">{negocio.marca.nombre}</p>
       <p class="mt-1">{negocio.marca.eslogan}</p>
+      {instagram && (
+        <p class="mt-1">
+          Instagram{' '}
+          <a
+            href={`https://www.instagram.com/${instagram}/`}
+            target="_blank"
+            rel="noopener"
+            class="font-semibold text-texto underline underline-offset-4"
+          >
+            @{instagram}
+          </a>
+        </p>
+      )}
     </div>
     <div class="flex flex-col gap-1 sm:items-end">
       <a href="/taller#colores" class="font-semibold text-texto underline underline-offset-4">
         Prueba otros colores de marca
       </a>
-      <p class="lapiz">Demo · marca ficticia</p>
+      <p class="lapiz">Demo · propuesta web</p>
     </div>
   </div>
 </footer>

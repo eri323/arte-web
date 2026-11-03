@@ -3,16 +3,28 @@ import { negocio } from '../../config/negocio';
 import ContadorCarrito from '../pedido/ContadorCarrito';
 
 const claseEnlace =
-  'flex min-h-11 items-center px-2 text-[0.9375rem] font-medium whitespace-nowrap text-texto underline-offset-[6px] decoration-2 hover:underline hover:decoration-acento';
+  'flex min-h-11 items-center px-2 text-sm font-semibold whitespace-nowrap text-texto-suave hover:text-texto';
 ---
 
-<header class="border-b border-linea bg-fondo">
-  <div class="mx-auto flex max-w-6xl flex-col px-4 sm:min-h-14 sm:flex-row sm:items-center sm:justify-between">
-    <a href="/" class="font-display flex min-h-11 items-center text-xl tracking-tight">
-      {negocio.marca.nombre}
+<header class="relative z-50 sm:sticky sm:top-0 border-b border-linea bg-fondo/80 backdrop-blur-md">
+  <div class="mx-auto flex max-w-6xl flex-col px-4 sm:min-h-16 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
+    <a href="/" class="flex min-h-12 items-center gap-3 text-texto">
+      {/* El sol de rayos del logo, dibujado con CSS. */}
+      <span
+        aria-hidden="true"
+        class="size-[34px] shrink-0 rounded-full [background:repeating-conic-gradient(var(--color-acento)_0_8deg,#0d0b09_8deg_20deg)] shadow-[0_0_0_2px_var(--color-fondo),0_0_0_3px_color-mix(in_srgb,var(--color-acento)_50%,transparent)]"
+      ></span>
+      <span class="font-display text-xl tracking-[0.08em] whitespace-nowrap sm:text-[1.375rem]">
+        {negocio.marca.nombre}
+      </span>
     </a>
     <nav aria-label="Principal" class="-mx-2 overflow-x-auto">
-      <ul class="flex">
+      <ul class="flex items-center">
+        <li>
+          <a href="/#catalogo" class={claseEnlace}>
+            Catálogo
+          </a>
+        </li>
         <li>
           <a href="/formatos" class={claseEnlace}>
             Formatos

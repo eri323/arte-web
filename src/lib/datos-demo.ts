@@ -16,7 +16,7 @@ function enDias(ahora: Date, dias: number): string {
 export function crearPedidosDemo(ahora: Date): Pedido[] {
   return [
     {
-      numero: 'AE-1040',
+      numero: 'MA-1040',
       cliente: { nombre: 'Laura Gómez', ciudad: 'Medellín' },
       items: [
         {
@@ -41,7 +41,7 @@ export function crearPedidosDemo(ahora: Date): Pedido[] {
       notas: [{ fecha: haceDias(ahora, 1), texto: 'Tu cuadro entra a impresión mañana' }],
     },
     {
-      numero: 'AE-1041',
+      numero: 'MA-1041',
       cliente: { nombre: 'Andrés Rojas', ciudad: 'Bogotá' },
       items: [
         {
@@ -72,7 +72,7 @@ export function crearPedidosDemo(ahora: Date): Pedido[] {
       ],
     },
     {
-      numero: 'AE-1042',
+      numero: 'MA-1042',
       cliente: { nombre: 'Camila Torres', ciudad: 'Cali' },
       items: [
         {

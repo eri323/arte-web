@@ -1,48 +1,37 @@
 ---
 import Base from '../layouts/Base.astro';
-import Cuadro from '../components/ui/Cuadro.astro';
+import Vitrina, { ImagenDiseno } from '../components/catalogo/Vitrina';
 import { negocio } from '../config/negocio';
-import { etiquetaMedida } from '../lib/formato';
+import { urlWhatsApp } from '../lib/whatsapp';
 
-const { vitrina } = negocio;
+const { vitrina, catalogo } = negocio;
+
+// El abanico de la portada: siete diseños del catálogo, el del centro adelante.
+const abanico = [2, 10, 4, 0, 6, 8, 1]
+  .map((i) => catalogo[i])
+  .filter((d) => d !== undefined)
+  .map((diseno, k, lista) => {
+    const i = k - Math.floor(lista.length / 2);
+    return { diseno, i, z: 10 - Math.abs(i) };
+  });
 
 const pasos = [
   {
-    titulo: 'Sube tu foto',
-    texto: 'Desde el celular. Te decimos si la calidad alcanza para la medida que quieres.',
+    titulo: 'Eliges',
+    texto: 'Un diseño del catálogo o tu propia foto, en la medida y el acabado que quieras.',
+    hueco: 'Video de la historia destacada «Procesos»',
   },
   {
-    titulo: 'Elige medida',
-    texto: 'Recorta, escoge MDF o acrílico y mira cómo queda en una pared a escala.',
+    titulo: 'Lo fabricamos',
+    texto: 'Impresión y corte en MDF o acrílico, a mano y revisado antes de empacar.',
+    hueco: 'Video del taller cortando o puliendo',
   },
   {
-    titulo: 'Recibe tu cuadro',
-    texto: 'Confirmas por WhatsApp, pagas el abono y te lo enviamos a tu ciudad.',
+    titulo: 'Te llega',
+    texto: 'Empacado y enviado a cualquier ciudad de Colombia. Lo coordinas todo por WhatsApp.',
+    hueco: 'Video del empaque o la entrega',
   },
 ];
-
-// Pared de galería: las cuatro medidas más pequeñas, colgadas con el centro a la misma altura
-// (la regla de montaje de las galerías). Ancho y alto en % de la pared, así la escala es real.
-const obras = [
-  { diseno: 'atardecer', titulo: 'Atardecer' },
-  { diseno: 'bloques', titulo: 'Bloques' },
-  { diseno: 'montanas', titulo: 'Cordillera' },
-  { diseno: 'hojas', titulo: 'Monte' },
-] as const;
-const SEPARACION_CM = 10;
-const pequenas = [...negocio.medidas]
-  .sort((a, b) => a.anchoCm * a.altoCm - b.anchoCm * b.altoCm)
-  .slice(0, obras.length);
-// Orden para que la composición respire: mediana, pequeña, la más grande, chica-mediana.
-const orden = [2, 0, 3, 1].filter((i) => i < pequenas.length).map((i) => pequenas[i]!);
-const anchoPared = orden.reduce((s, m) => s + m.anchoCm, 0) + SEPARACION_CM * (orden.length - 1);
-const altoMax = Math.max(...orden.map((m) => m.altoCm));
-const pared = orden.map((m, i) => ({
-  medida: m,
-  obra: obras[i]!,
-  foto: vitrina.galeria?.[i],
-  anchoPct: (m.anchoCm / anchoPared) * 100,
-}));
 
 const preguntas = [
   {
@@ -68,215 +57,253 @@ const preguntas = [
 ];
 
 const abono = negocio.pagos.porcentajeAbono;
-const medidaPortada = pequenas[2] ?? negocio.medidas[0]!;
-const materialMdf = negocio.materiales.find((m) => m.id === 'mdf');
-const materialAcrilico = negocio.materiales.find((m) => m.id === 'acrilico');
+// Con número de WhatsApp el cierre abre el chat; en modo demo lleva al configurador.
+const chat = urlWhatsApp(negocio.whatsapp.numero, `Hola ${negocio.marca.nombre}, quiero un cuadro`);
 ---
 
 <Base
-  title="Cuadros personalizados"
-  description={`${negocio.marca.eslogan}. Cuadros en MDF o acrílico a partir de tu foto, con envío a todo Colombia.`}
+  title="Cuadros en MDF y acrílico"
+  description={`${vitrina.titular} ${vitrina.resaltado ?? ''}. Cuadros en MDF o acrílico: elige un diseño del catálogo o trae tu foto, míralo en tu pared y pídelo por WhatsApp.`}
 >
-  {/* 1 · Portada: una pantalla, una frase, un cuadro, un botón. */}
+  {/* 1 · Portada: rayos dorados, luz roja de LED y el abanico de cuadros. */}
   <section
-    class="relative overflow-hidden bg-acento text-sobre-acento"
+    class="relative overflow-hidden pt-[clamp(56px,7vw,96px)] pb-[clamp(40px,6vw,72px)] [background:radial-gradient(ellipse_60%_50%_at_85%_-5%,rgb(255_45_32/.38),transparent_70%),radial-gradient(ellipse_50%_40%_at_0%_100%,color-mix(in_srgb,var(--color-acento)_12%,transparent),transparent_70%),var(--color-fondo)]"
     aria-labelledby="portada-titulo"
   >
-    <div class="mx-auto grid min-h-[calc(100svh-5.75rem)] max-w-6xl content-between gap-8 px-4 pt-8 pb-10 sm:min-h-[calc(100svh-3.5rem)] md:grid-cols-[1.5fr_1fr] md:content-center md:items-center md:gap-12 md:py-16">
-      <h1 id="portada-titulo" class="texto-cartel entra-subiendo md:order-1">
+    <div
+      aria-hidden="true"
+      class="rayos pointer-events-none absolute top-[38%] left-1/2 aspect-square w-[min(1100px,160vw)] -translate-1/2 rounded-full opacity-[.07]"
+    ></div>
+    <div class="relative mx-auto flex max-w-6xl flex-col items-center px-4 text-center">
+      <p class="antetitulo entra-subiendo mb-4">{vitrina.antetitulo}</p>
+      <h1 id="portada-titulo" class="texto-cartel entra-subiendo max-w-[11ch]">
         {vitrina.titular}
+        {vitrina.resaltado && (
+          <>
+            {' '}
+            <span class="texto-oro">{vitrina.resaltado}</span>
+          </>
+        )}
       </h1>
-
-      <div class="justify-self-end md:order-2 md:row-span-2 md:justify-self-center">
-        <div
-          class="entra-colgando w-[min(54vw,22rem)] rotate-2"
-          style="--retraso: 150ms; --giro-inicial: -6deg"
-        >
-          <Cuadro
-            diseno="olas"
-            titulo="Mar de fondo"
-            foto={vitrina.fotoPortada}
-            prioridad
-            aspecto={medidaPortada.anchoCm / medidaPortada.altoCm}
-            cinta
-          />
-        </div>
-        <p class="lapiz mt-4 flex items-center gap-2 text-sobre-acento">
-          <span aria-hidden="true" class="h-px w-6 bg-sobre-acento"></span>
-          {etiquetaMedida(medidaPortada)} · MDF
-        </p>
+      <p
+        class="entra-subiendo mt-6 mb-7 max-w-[44ch] text-[clamp(1rem,1.6vw,1.1875rem)] text-texto-suave"
+        style="--retraso: 120ms"
+      >
+        {vitrina.bajada}
+      </p>
+      <div class="entra-subiendo flex flex-wrap justify-center gap-3" style="--retraso: 200ms">
+        <a href="#catalogo" class="boton boton-oro">
+          Ver catálogo
+        </a>
+        <a href="/crear" class="boton boton-linea">
+          Tengo mi propio diseño
+        </a>
       </div>
+      <ul class="mt-7 flex flex-wrap justify-center gap-x-7 gap-y-2.5 text-[0.8125rem] font-bold tracking-[0.06em] text-texto-suave uppercase">
+        {['MDF y acrílico', 'Envíos a todo Colombia', 'Pedidos por WhatsApp'].map((d) => (
+          <li class="flex items-center gap-2 before:size-1.5 before:rounded-full before:bg-acento">
+            {d}
+          </li>
+        ))}
+      </ul>
 
-      <div class="entra-subiendo md:order-3" style="--retraso: 250ms">
-        <p class="max-w-[28ch] text-lg leading-snug sm:text-xl">{vitrina.bajada}</p>
-        <div class="mt-6 flex flex-wrap items-center gap-x-6 gap-y-2">
-          <a
-            href="/crear"
-            class="boton bg-sobre-acento text-acento hover:outline-2 hover:outline-offset-2 hover:outline-sobre-acento"
+      <ul
+        class="abanico relative mt-[clamp(36px,5vw,56px)] h-[calc(var(--cw)*2)] w-full"
+        aria-label="Diseños destacados"
+      >
+        {abanico.map(({ diseno, i, z }) => (
+          <li
+            class="carta absolute top-[6%] left-1/2 w-(--cw) -ml-[calc(var(--cw)/2)]"
+            style={`--i:${i};--i2:${i * i};--z:${z};transition-delay:${Math.abs(i) * 70}ms`}
           >
-            Crear mi cuadro
-          </a>
-          <a href="/formatos" class="enlace-fuerte text-sobre-acento">
-            Ver medidas y precios
-          </a>
-        </div>
-      </div>
+            <a href="#pared" data-diseno={diseno.id} class="block">
+              <span class="alza sombra-cuadro block aspect-[3/4] shadow-[5px_5px_0_#000,0_0_0_1px_rgb(255_255_255/.08),0_24px_40px_-10px_rgb(255_45_32/.35)]">
+                <ImagenDiseno diseno={diseno} decorativa />
+                <span class="sr-only">Ver {diseno.nombre} en mi pared</span>
+              </span>
+              <span
+                aria-hidden="true"
+                class="tip absolute -bottom-9 left-1/2 -translate-x-1/2 text-xs font-extrabold tracking-[0.06em] whitespace-nowrap text-acento-fuerte uppercase"
+              >
+                {diseno.nombre}
+              </span>
+            </a>
+          </li>
+        ))}
+      </ul>
     </div>
   </section>
 
-  {/* 2 · Así se ven: pared de galería a escala real. */}
-  <section aria-labelledby="galeria" class="py-[clamp(4rem,12vw,8rem)]">
-    <div class="mx-auto max-w-6xl px-4">
-      <div class="flex flex-wrap items-end justify-between gap-x-8 gap-y-3">
-        <h2 id="galeria" class="font-display max-w-[14ch] text-[clamp(2rem,6.5vw,4rem)]">
-          Así se ven en la pared
+  {/* 2 y 3 · Catálogo con filtros y la pared a escala (una sola isla: comparten el diseño elegido). */}
+  <Vitrina client:idle />
+
+  {/* 4 · Personalizado: la foto propia va al configurador, que revisa la calidad. */}
+  <section id="personalizado" aria-labelledby="perso-titulo" class="py-[clamp(4rem,9vw,7.5rem)]">
+    <div class="mx-auto grid max-w-6xl items-center gap-[clamp(28px,5vw,72px)] px-4 md:grid-cols-2">
+      <div>
+        <p class="antetitulo mb-4">Personalizado</p>
+        <h2 id="perso-titulo" class="font-display text-[clamp(2.75rem,7vw,5.75rem)]">
+          Trae tu <span class="text-acento-fuerte">diseño</span> o tu foto
         </h2>
-        <p class="max-w-[38ch] text-texto-suave">
-          Cuatro medidas colgadas juntas, a escala real entre ellas. Arte de ejemplo: el tuyo lleva
-          tu foto.
-        </p>
-      </div>
-
-      <div class="aparece mt-12 rounded-sm bg-superficie px-[4%] pt-[7%] pb-[5%] sm:mt-16">
-        <ul
-          class="flex items-center justify-between"
-          style={{ aspectRatio: `${anchoPared} / ${altoMax}` }}
-        >
-          {pared.map(({ medida, obra, foto, anchoPct }) => (
-            <li class="flex h-full flex-col justify-center" style={{ width: `${anchoPct}%` }}>
-              <Cuadro
-                diseno={obra.diseno}
-                titulo={obra.titulo}
-                foto={foto}
-                aspecto={medida.anchoCm / medida.altoCm}
-                class="w-full"
-              />
+        <ul class="mt-7 mb-8 grid gap-3">
+          {[
+            'Tu artista, tu película, tu carro, tu mascota o tu propia foto.',
+            'Te decimos si la imagen tiene calidad para la medida que quieres.',
+            'Lo hacemos en MDF o acrílico y te lo enviamos a tu ciudad.',
+          ].map((t) => (
+            <li class="flex items-start gap-3 text-texto-suave before:text-acento before:content-['✦']">
+              {t}
             </li>
           ))}
         </ul>
-        <ul class="mt-4 flex justify-between" aria-label="Medidas de los cuadros, en centímetros">
-          {pared.map(({ medida, anchoPct }) => (
-            <li
-              class="lapiz flex h-4 items-center gap-1 border-x border-acento-fuerte/70 text-acento-fuerte"
-              style={{ width: `${anchoPct}%` }}
-            >
-              <span aria-hidden="true" class="h-px flex-1 bg-acento-fuerte/50" />
-              {etiquetaMedida(medida)}
-              <span aria-hidden="true" class="h-px flex-1 bg-acento-fuerte/50" />
-            </li>
-          ))}
-        </ul>
+        <a href="/crear" class="boton boton-oro">
+          Crear con mi foto
+        </a>
       </div>
-
-      <a href="/formatos" class="enlace-fuerte mt-6 text-acento-fuerte">
-        Todas las medidas y precios
+      <a
+        href="/crear"
+        class="grid aspect-[4/3] place-items-center rounded-[20px] border-2 border-dashed border-acento/45 p-6 text-center transition-colors [background:radial-gradient(circle_at_50%_40%,color-mix(in_srgb,var(--color-acento)_10%,transparent),transparent_60%),var(--color-superficie)] hover:border-acento"
+      >
+        <span>
+          <span class="font-display block text-[2.125rem]">Sube tu imagen aquí</span>
+          <span class="mt-2 block text-sm text-texto-suave">
+            La recortas, eliges la medida y la ves en una pared. Tu foto se queda en tu equipo.
+          </span>
+        </span>
       </a>
     </div>
   </section>
 
-  {/* 3 · Cómo funciona: tres pasos, números grandes, sin cajas. */}
-  <section aria-labelledby="como" class="bg-superficie py-[clamp(4rem,12vw,8rem)]">
+  {/* 5 · Proceso: tres pasos con espacio para los videos del taller. */}
+  <section
+    id="proceso"
+    aria-labelledby="como"
+    class="border-y border-linea bg-superficie py-[clamp(4rem,9vw,7.5rem)]"
+  >
     <div class="mx-auto max-w-6xl px-4">
-      <h2 id="como" class="font-display text-[clamp(2rem,6.5vw,4rem)]">
-        Cómo funciona
+      <p class="antetitulo mb-4">Proceso</p>
+      <h2 id="como" class="font-display text-[clamp(2.75rem,7vw,5.75rem)]">
+        Así nace <span class="text-acento-fuerte">tu cuadro</span>
       </h2>
-      <ol class="mt-10 grid gap-x-10 gap-y-10 sm:mt-14 md:grid-cols-3">
+      <ol class="mt-11 grid gap-[clamp(14px,2vw,24px)] md:grid-cols-3">
         {pasos.map((paso, i) => (
-          <li class="aparece border-t-2 border-texto pt-4">
+          <li class="aparece relative overflow-hidden rounded-[18px] border border-linea px-6 pt-7 pb-6 [background:linear-gradient(180deg,color-mix(in_srgb,var(--color-texto)_6%,var(--color-fondo)),var(--color-fondo))] after:absolute after:inset-x-0 after:top-0 after:h-0.5 after:bg-linear-to-r after:from-transparent after:via-led after:to-transparent after:opacity-80">
             <span
               aria-hidden="true"
-              class="font-display block text-[clamp(4rem,14vw,7rem)] text-acento"
+              class="font-display block text-[5.5rem] leading-[.8] text-transparent [-webkit-text-stroke:1.5px_var(--color-acento)]"
             >
-              {i + 1}
+              {String(i + 1).padStart(2, '0')}
             </span>
-            <h3 class="mt-2 text-xl font-bold">{paso.titulo}</h3>
-            <p class="mt-1 max-w-[34ch] text-texto-suave">{paso.texto}</p>
+            <h3 class="font-display mt-4 mb-2.5 text-3xl">{paso.titulo}</h3>
+            <p class="text-[0.9375rem] text-texto-suave">{paso.texto}</p>
+            <div class="mt-5 grid aspect-video place-items-center rounded-xl border border-dashed border-linea p-4 text-center text-[0.8125rem] text-texto-suave md:aspect-[9/12]">
+              {paso.hueco}
+            </div>
           </li>
         ))}
       </ol>
     </div>
   </section>
 
-  {/* 4 · Materiales: la misma obra en MDF y en acrílico, lado a lado. */}
-  <section aria-labelledby="materiales" class="py-[clamp(4rem,12vw,8rem)]">
+  {/* 6 · Clientes: el muro se llena con las fotos reales de cuadros colgados. */}
+  <section id="clientes" aria-labelledby="clientes-titulo" class="py-[clamp(4rem,9vw,7.5rem)]">
     <div class="mx-auto max-w-6xl px-4">
-      <h2 id="materiales" class="font-display text-[clamp(2rem,6.5vw,4rem)]">
-        MDF o acrílico
+      <p class="antetitulo mb-4">Resultados</p>
+      <h2 id="clientes-titulo" class="font-display text-[clamp(2.75rem,7vw,5.75rem)]">
+        Espacios de <span class="text-acento-fuerte">nuestros clientes</span>
       </h2>
-      <p class="mt-3 max-w-[48ch] text-texto-suave">
-        La misma foto, dos acabados. Los dos cuestan lo mismo.
+      <p class="mt-4 max-w-[52ch] text-texto-suave">
+        Las fotos reales de cuadros ya colgados venden más que cualquier diseño. Este muro se llena
+        con las historias destacadas «Clientes» y «Resultados».
       </p>
-      <div class="mt-10 grid grid-cols-2 gap-x-[6%] gap-y-10 sm:mt-14">
-        {[materialMdf, materialAcrilico].map(
-          (m, i) =>
-            m && (
-              <div class="aparece">
-                <div class:list={['mx-auto w-[86%]', i === 0 ? '-rotate-1' : 'rotate-1']}>
-                  <Cuadro diseno="circulos" material={m.id} aspecto={4 / 5} />
-                </div>
-                <h3 class="mt-8 text-xl font-bold sm:text-2xl">{m.nombre}</h3>
-                <p class="mt-1 max-w-[32ch] text-texto-suave">{m.descripcion}</p>
-              </div>
-            ),
-        )}
-      </div>
+      <ul
+        class="mt-10 grid grid-cols-2 gap-3 sm:grid-cols-4"
+        aria-label="Espacios para fotos de clientes"
+      >
+        {[
+          'Foto grande: el mejor resultado (por ejemplo, un cuarto con LED)',
+          'Foto de cliente',
+          'Foto de cliente',
+          'Foto de cliente',
+          'Foto de cliente',
+        ].map((t, i) => (
+          <li
+            class:list={[
+              'grid place-items-center rounded-[14px] border border-dashed border-linea bg-superficie p-3 text-center text-[0.8125rem] text-texto-suave',
+              i === 0 ? 'col-span-2 row-span-2 min-h-56' : 'aspect-square',
+            ]}
+          >
+            {t}
+          </li>
+        ))}
+      </ul>
     </div>
   </section>
 
-  {/* 5 · Pagos y envíos: la barra 50/50 explica el pago sin párrafos. */}
-  <section aria-labelledby="pagos" class="bg-superficie py-[clamp(4rem,12vw,8rem)]">
+  {/* 7 · Pagos y envíos: la barra 50/50 explica el pago sin párrafos. */}
+  <section
+    aria-labelledby="pagos"
+    class="border-y border-linea bg-superficie py-[clamp(4rem,9vw,7.5rem)]"
+  >
     <div class="mx-auto max-w-6xl px-4">
-      <h2 id="pagos" class="font-display text-[clamp(2rem,6.5vw,4rem)]">
+      <p class="antetitulo mb-4">Pagos</p>
+      <h2 id="pagos" class="font-display text-[clamp(2.5rem,6vw,4.5rem)]">
         Pagas {abono}% y {100 - abono}%
       </h2>
-      <div class="aparece mt-10 flex min-h-28 text-base sm:mt-14 sm:text-lg" role="list">
+      <div
+        class="aparece mt-10 flex min-h-28 overflow-hidden rounded-2xl text-base sm:text-lg"
+        role="list"
+      >
         <div
           role="listitem"
           class="flex flex-col justify-between bg-acento p-4 text-sobre-acento sm:p-6"
           style={{ width: `${abono}%` }}
         >
-          <span class="font-display text-3xl sm:text-5xl">{abono}%</span>
-          <span class="mt-3 font-semibold">Para empezar tu cuadro</span>
+          <span class="font-display text-4xl sm:text-6xl">{abono}%</span>
+          <span class="mt-3 font-bold">Para empezar tu cuadro</span>
         </div>
         <div
           role="listitem"
-          class="flex flex-col justify-between border-2 border-texto p-4 sm:p-6"
+          class="flex flex-col justify-between rounded-r-2xl border-2 border-linea-fuerte p-4 sm:p-6"
           style={{ width: `${100 - abono}%` }}
         >
-          <span class="font-display text-3xl sm:text-5xl">{100 - abono}%</span>
-          <span class="mt-3 font-semibold">Cuando esté listo, antes de enviarlo</span>
+          <span class="font-display text-4xl sm:text-6xl">{100 - abono}%</span>
+          <span class="mt-3 font-bold">Cuando esté listo, antes de enviarlo</span>
         </div>
       </div>
       <div class="mt-12 grid gap-8 sm:grid-cols-2">
         <p class="max-w-[42ch] text-texto-suave">
           Cada pago queda registrado y lo ves en el{' '}
-          <a href="/seguimiento" class="font-semibold text-texto underline underline-offset-4">
+          <a
+            href="/seguimiento"
+            class="font-bold text-texto underline decoration-acento underline-offset-4"
+          >
             seguimiento de tu pedido
           </a>
           .
         </p>
         <div>
-          <h3 class="text-xl font-bold">Envíos a todo Colombia</h3>
+          <h3 class="text-xl font-extrabold">Envíos a todo Colombia</h3>
           <p class="mt-1 text-texto-suave">{negocio.envio.texto}.</p>
         </div>
       </div>
     </div>
   </section>
 
-  {/* 6 · Preguntas frecuentes. */}
-  <section aria-labelledby="faq" class="py-[clamp(4rem,12vw,8rem)]">
+  {/* 8 · Preguntas frecuentes. */}
+  <section aria-labelledby="faq" class="py-[clamp(4rem,9vw,7.5rem)]">
     <div class="mx-auto grid max-w-6xl gap-8 px-4 md:grid-cols-[1fr_1.6fr]">
-      <h2 id="faq" class="font-display text-[clamp(2rem,6.5vw,4rem)]">
+      <h2 id="faq" class="font-display text-[clamp(2.5rem,6vw,4.5rem)]">
         Preguntas frecuentes
       </h2>
       <div class="divide-y divide-linea-fuerte border-y border-linea-fuerte">
         {preguntas.map(({ p, r }) => (
           <details class="group">
-            <summary class="flex min-h-14 cursor-pointer list-none items-center justify-between gap-4 py-3 text-lg font-semibold [&::-webkit-details-marker]:hidden">
+            <summary class="flex min-h-14 cursor-pointer list-none items-center justify-between gap-4 py-3 text-lg font-bold [&::-webkit-details-marker]:hidden">
               {p}
               <span
                 aria-hidden="true"
-                class="font-display text-2xl text-acento-fuerte transition-transform duration-300 ease-expo group-open:rotate-45"
+                class="font-display text-3xl text-acento-fuerte transition-transform duration-300 ease-expo group-open:rotate-45"
               >
                 +
               </span>
@@ -288,18 +315,27 @@ const materialAcrilico = negocio.materiales.find((m) => m.id === 'acrilico');
     </div>
   </section>
 
-  {/* 7 · Cierre: vuelve la pared de color. */}
-  <section class="bg-acento text-sobre-acento" aria-labelledby="cierre">
-    <div class="mx-auto max-w-6xl px-4 py-[clamp(4rem,14vw,9rem)]">
-      <h2 id="cierre" class="texto-cartel max-w-[10ch]">
-        ¿Tienes la foto?
+  {/* 9 · Cierre: vuelve la luz roja. */}
+  <section
+    aria-labelledby="cierre"
+    class="overflow-hidden text-center [background:radial-gradient(ellipse_50%_70%_at_50%_110%,rgb(255_45_32/.35),transparent_70%),var(--color-fondo)]"
+  >
+    <div class="mx-auto max-w-6xl px-4 py-[clamp(4rem,12vw,8rem)]">
+      <h2 id="cierre" class="texto-cartel mx-auto max-w-[12ch]">
+        Tu pared <span class="texto-oro">lo merece</span>
       </h2>
-      <a
-        href="/crear"
-        class="boton mt-10 bg-sobre-acento text-acento hover:outline-2 hover:outline-offset-2 hover:outline-sobre-acento"
-      >
-        Crear mi cuadro
-      </a>
+      <p class="mx-auto mt-5 mb-8 max-w-[44ch] text-texto-suave">
+        Cuéntanos qué diseño y qué medida quieres, y lo ponemos en marcha.
+      </p>
+      {chat ? (
+        <a href={chat} target="_blank" rel="noopener" class="boton boton-oro">
+          Escribir por WhatsApp
+        </a>
+      ) : (
+        <a href="/crear" class="boton boton-oro">
+          Crear mi cuadro
+        </a>
+      )}
     </div>
   </section>
 </Base>

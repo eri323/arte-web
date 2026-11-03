@@ -102,3 +102,18 @@ describe('urlWhatsApp', () => {
     expect(urlWhatsApp('+57 300 123 4567', 'a')).toBe('https://wa.me/573001234567?text=a');
   });
 });
+
+describe('diseños del catálogo', () => {
+  it('se nombran como diseño y sin fotos no piden adjuntarlas', () => {
+    const solo = construirMensaje(datos([item({ archivo: 'Ronin', disenoId: 'ronin' })]));
+    expect(solo).toContain('Diseño del catálogo: Ronin');
+    expect(solo).not.toContain('Foto: Ronin');
+    expect(solo).not.toContain('Adjunto mis fotos');
+  });
+
+  it('con una foto propia en el pedido sí se pide adjuntarla', () => {
+    const mixto = construirMensaje(datos([item({ archivo: 'Ronin', disenoId: 'ronin' }), item()]));
+    expect(mixto).toContain('Diseño del catálogo: Ronin');
+    expect(mixto).toContain('Adjunto mis fotos en este chat.');
+  });
+});

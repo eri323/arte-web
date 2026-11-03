@@ -32,6 +32,8 @@ export interface ItemPedido {
   archivo: string;
   calidad: Calidad;
   dpi: number;
+  /** Diseño del catálogo; `archivo` lleva su nombre. */
+  disenoId?: string;
 }
 
 export interface Pago {

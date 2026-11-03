@@ -21,6 +21,11 @@ describe('sanearCarrito', () => {
     expect(sanearCarrito([valido], ids)).toEqual([valido]);
   });
 
+  it('acepta un diseño del catálogo y descarta un disenoId que no es texto', () => {
+    const diseno = { ...valido, archivo: 'Ronin', disenoId: 'ronin' };
+    expect(sanearCarrito([diseno, { ...valido, disenoId: 7 }], ids)).toEqual([diseno]);
+  });
+
   it.each([
     ['medida que ya no existe', { ...valido, medidaId: '120x160' }],
     ['cantidad cero', { ...valido, cantidad: 0 }],
