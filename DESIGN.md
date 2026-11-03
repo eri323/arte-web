@@ -121,7 +121,7 @@ en cada sección: el rojo LED solo vive en la pared y en una burbuja.
 - **Botones**: `boton-negro` (principal), `boton-linea` (gris, secundario), `boton-oro` (pedir). Se hunden a `scale(0.97)` al tocarlos.
 - **Abanico**: baja hacia la izquierda y sube hacia la derecha, como visto de lado. En el celular se ocultan las cartas de las puntas y la burbuja derecha.
 - **Inspiración** (`Vitrina.tsx`): sigue la segunda sección del video del pin. Texto a la izquierda (antetítulo en versalitas, titular en tres líneas con la del medio en oro, que entra palabra por palabra) y, a la derecha, los diseños en escalera que se abren desde un mazo y se salen por el borde. El del frente se describe abajo (nombre, categoría, colores), se cuelga con «Ver en mi pared» y las flechas lo cambian. Globos con el `#estilo` en el primero y el tercero. Filtros debajo de los botones.
-- **Pared**: bloque negro de 24 px de radio. Desde 1280 px, escena 3:2 con el panel encima a la derecha.
+- **Pared**: bloque negro de 24 px de radio, con una cama queen como escala. El cuadro va directo sobre la pared (sin clavo ni cuerda) y gira entre vertical y horizontal. Desde 1280 px, escena 3:2 con el panel encima a la derecha.
 - **Personalizado**, **proceso**, **resultados**: huecos punteados de 14 px de radio con el nombre del material que va ahí.
 
 ## 6. Motion

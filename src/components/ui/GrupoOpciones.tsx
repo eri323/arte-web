@@ -54,7 +54,7 @@ export default function GrupoOpciones<T extends string>({
               className="peer sr-only"
             />
             {seg ? (
-              <span className="flex h-full min-h-11 items-center justify-center bg-fondo px-1.5 text-[0.8125rem] whitespace-nowrap text-texto-suave tabular-nums transition-colors duration-300 hover:text-texto peer-checked:bg-texto peer-checked:text-fondo peer-focus-visible:outline peer-focus-visible:outline-1 peer-focus-visible:-outline-offset-4 peer-focus-visible:outline-current">
+              <span className="flex h-full min-h-11 items-center justify-center bg-fondo px-1.5 text-[0.8125rem] whitespace-nowrap text-texto-suave tabular-nums transition-colors duration-300 hover:text-texto peer-checked:bg-texto peer-checked:text-fondo peer-checked:hover:text-fondo peer-focus-visible:outline peer-focus-visible:outline-1 peer-focus-visible:-outline-offset-4 peer-focus-visible:outline-current">
                 {o.etiqueta}
               </span>
             ) : (

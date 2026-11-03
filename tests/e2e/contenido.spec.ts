@@ -108,6 +108,15 @@ test.describe('catálogo y pared de la portada', () => {
     ).toBeVisible();
   });
 
+  test('la pared gira el cuadro a horizontal y así va al pedido', async ({ page }) => {
+    await irA(page, '/');
+    const pared = page.locator('#pared');
+    await pared.getByText('Horizontal', { exact: true }).click();
+    await expect(pared.getByText(/recorte de referencia/)).toBeVisible();
+    await pared.getByRole('button', { name: 'Agregar al pedido' }).click();
+    await expect(pared.getByText(/en 60×45 cm, horizontal, MDF está en tu pedido/)).toBeVisible();
+  });
+
   test('la imagen que sube el cliente queda colgada en la pared', async ({ page }) => {
     await irA(page, '/');
     await page.getByTestId('subir-imagen').setInputFiles('tests/fixtures/pequena.jpg');
