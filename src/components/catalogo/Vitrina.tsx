@@ -109,6 +109,34 @@ const MUEBLES: Record<Cuarto, Mueble> = {
   },
 };
 
+// SUPUESTO: la pared va siempre de noche (banda oscura con el oro del logo), aunque el resto del
+// sitio sea claro, porque el LED solo se luce a oscuras. Redefine las variables de la marca solo
+// dentro de esta sección.
+const NOCHE: Record<string, string> = {
+  fondo: '#0b0a09',
+  superficie: '#15120f',
+  texto: '#f3ece0',
+  'texto-suave': '#a39a8e',
+  acento: '#e7b94c',
+  'acento-fuerte': '#e7b94c',
+  'sobre-acento': '#0b0a09',
+  'acento-hover': '#f6d88b',
+  linea: '#f3ece01f',
+  'linea-fuerte': '#f3ece040',
+  cinta: '#f6d88b',
+};
+// Las clases de Tailwind leen --marca-* y las utilidades propias (boton-oro…) leen --color-*:
+// se redefinen las dos.
+const PARED_OSCURA = {
+  ...Object.fromEntries(
+    Object.entries(NOCHE).flatMap(([k, v]) => [
+      [`--marca-${k}`, v],
+      [`--color-${k}`, v],
+    ]),
+  ),
+  colorScheme: 'dark',
+} as CSSProperties;
+
 const PISO_CM = 12;
 const cm = (n: number) => `calc(${n} * var(--u))`;
 
@@ -414,11 +442,15 @@ export default function Vitrina() {
       <section
         id="pared"
         aria-labelledby="pared-titulo"
-        className="scroll-mt-16 py-[clamp(4rem,9vw,7.5rem)]"
+        style={PARED_OSCURA}
+        className="scroll-mt-16 bg-fondo py-[clamp(4rem,9vw,7.5rem)] text-texto"
       >
         <div className="mx-auto max-w-6xl px-4">
-          <h2 id="pared-titulo" className="font-display text-[clamp(2.5rem,6vw,4.75rem)]">
-            Cuélgalo antes de pedirlo
+          <p className="mb-4 flex items-center gap-2.5 text-xs font-extrabold tracking-[0.22em] text-acento-fuerte uppercase before:h-0.5 before:w-[22px] before:bg-current">
+            Ver en tu pared
+          </p>
+          <h2 id="pared-titulo" className="font-display text-[clamp(2.5rem,5vw,4.5rem)]">
+            Míralo <span className="text-acento-fuerte">antes</span> de pedir
           </h2>
           <p className="mt-3 max-w-[52ch] text-texto-suave">
             {mueble.referencia} Todo está a escala real.

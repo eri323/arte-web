@@ -35,9 +35,9 @@ test.describe('colores de la marca', () => {
 
     await irA(page, '/taller');
     await page.getByRole('button', { name: 'Volver a los colores originales' }).click();
-    expect(await variable(page, '--marca-acento')).toBe('#e7b94c');
+    expect(await variable(page, '--marca-acento')).toBe('#b07d1f');
     await irA(page, '/');
-    expect(await botonPortada(page)).toBe('rgb(231, 185, 76)');
+    expect(await botonPortada(page)).toBe('rgb(176, 125, 31)');
   });
 
   test('una combinación ilegible avisa y no se guarda', async ({ page }) => {

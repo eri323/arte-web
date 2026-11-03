@@ -2,15 +2,16 @@
 name: Midas Atelier (propuesta web sobre arte-web)
 description: Cuarto oscuro iluminado por LED rojo. El dorado del logo solo en lo que importa.
 colors:
-  negro: '#0b0a09'
-  negro-2: '#15120f'
-  hueso: '#f3ece0'
-  gris: '#a39a8e'
-  oro: '#e7b94c'
-  oro-claro: '#f6d88b'
+  papel: '#f5f1ea'
+  papel-sombra: '#e8e4dd'
+  tinta: '#1a1612'
+  tinta-suave: '#67635e'
+  oro: '#b07d1f'
+  oro-texto: '#835e1b'
+  oro-hover: '#bc9244'
+  noche: '#0b0a09'
+  oro-noche: '#e7b94c'
   led: '#ff2d20'
-  linea: '#f3ece01f'
-  linea-fuerte: '#f3ece040'
 typography:
   display:
     fontFamily: 'Big Shoulders Display Variable, Impact, Arial Narrow, sans-serif'
@@ -59,37 +60,39 @@ Rediseño del 3-nov-2026, a partir de la propuesta `midas-atelier-propuesta.html
 
 ## 1. Overview
 
-**Creative North Star: "El cuarto a las 11 p. m., con la tira LED prendida"**
+**Creative North Star: "Papel claro de día, el cuarto con LED de noche"**
 
-Escena: un muchacho de 22 años en Medellín, en su cuarto con la tira LED roja encendida, abre el link
-de la bio de Instagram en el celular. El fondo oscuro sale de ahí, no de «lujo». Los cuadros son los
-protagonistas y se ven colgados; la tira LED es un objeto literal (una línea encendida que ilumina la
-pared), no una mancha de color de fondo.
+El sitio es claro: papel cálido y tinta, con el oro del logo. La noche aparece donde el producto se
+luce: la pared donde se cuelga el cuadro (`#pared`) es una banda oscura con LED, y los montajes y la
+foto del celular muestran cuartos oscuros. La tira LED de la portada y del cierre es una línea
+encendida, no una mancha de color.
 
-- Tema oscuro (`color-scheme: dark`), sin grano ni texturas decorativas.
-- El oro del logo solo en el logo, los precios, el botón principal y la barra del abono. Los títulos van en hueso.
-- El rojo LED es luz: la tira de la portada y del cierre, el resplandor detrás del cuadro en la pared y los montajes.
+- Tema claro (`color-scheme: light`), sin grano ni texturas decorativas.
+- El oro solo en el logo, los precios, el botón principal y la barra del abono. Los títulos van en tinta.
+- Excepción a propósito: la pared conserva su versión de noche (línea «Ver en tu pared» y «Míralo **antes** de pedir» con la palabra en oro). Fue elección de Erick.
 - Portada asimétrica: titular a la izquierda, cuadros colgados sobre la tira a la derecha.
-- Movimiento con ease-out expo. El único «rebote» es el columpio del cuadro en su clavo (física, no adorno).
+- Movimiento con ease-out expo. El único «rebote» es el columpio del cuadro en su clavo.
 
 ## 2. Colors
 
-Todos salen de `negocio.marca.colores` (variables `--marca-*`), así el panel del taller los puede cambiar.
+Los del sitio salen de `negocio.marca.colores` (variables `--marca-*`), así el panel los puede cambiar.
 
-| Token         | Valor     | Uso                                                   |
-| ------------- | --------- | ----------------------------------------------------- |
-| `fondo`       | `#0b0a09` | Fondo general.                                        |
-| `superficie`  | `#15120f` | Bandas alternas y paneles.                            |
-| `texto`       | `#f3ece0` | Texto y títulos (16,8:1 sobre fondo).                 |
-| `textoSuave`  | `#a39a8e` | Texto secundario (6,7:1 sobre superficie).            |
-| `acento`      | `#e7b94c` | Oro: botón, precios, barra del abono.                 |
-| `acentoHover` | `#f6d88b` | Oro claro: hover del botón.                           |
-| `sobreAcento` | `#0b0a09` | Texto sobre el oro (10,8:1).                          |
-| `cinta`       | `#f6d88b` | Decoración (cotas de medida en la pared).             |
-| `led` (fijo)  | `#ff2d20` | Luz del cuarto. Token de Tailwind `led`, no editable. |
+| Token          | Valor     | Uso                                                  |
+| -------------- | --------- | ---------------------------------------------------- |
+| `fondo`        | `#f5f1ea` | Papel: fondo general.                                |
+| `superficie`   | `#e8e4dd` | Bandas alternas y paneles.                           |
+| `texto`        | `#1a1612` | Tinta (16:1 sobre fondo).                            |
+| `textoSuave`   | `#67635e` | Texto secundario (≥ 4,5:1 sobre fondo y superficie). |
+| `acento`       | `#b07d1f` | Oro: botón, barra del abono (3,2:1 contra el papel). |
+| `acentoFuerte` | `#835e1b` | Oro para texto pequeño: precios, enlaces (5,6:1).    |
+| `sobreAcento`  | `#1a1612` | Texto sobre el oro (5:1).                            |
+| `acentoHover`  | `#bc9244` | Hover del botón.                                     |
+| `led` (fijo)   | `#ff2d20` | Luz del cuarto. Token de Tailwind, no editable.      |
 
-**La regla del oro escaso.** Nada de «una palabra dorada» en cada título. Si el oro aparece, es porque
-se puede tocar (botón) o porque es plata (precio, abono).
+**La pared de noche** (`PARED_OSCURA` en `Vitrina.tsx`) redefine `--marca-*` y `--color-*` solo en esa
+sección: fondo `#0b0a09`, texto `#f3ece0` y oro `#e7b94c`. No cambia con el editor de colores.
+
+**La regla del oro escaso.** Fuera de la pared, nada de «una palabra dorada» por título.
 
 **La regla del LED.** El rojo nunca lleva texto. Es la tira encendida (`.tira-led`) y su luz.
 
@@ -120,6 +123,7 @@ se puede tocar (botón) o porque es plata (precio, abono).
 ## 6. Do's and Don'ts
 
 - **Do** reemplazar los montajes por fotos reales de clientes y el arte del catálogo por fotos (`negocio.catalogo[].foto`).
+- **Do** dejar los cuartos ilustrados de noche: el LED solo se luce a oscuras.
 - **Do** respetar `prefers-reduced-motion`: sin abanico animado ni columpio.
 - **Don't** texto con degradado, antetítulos en mayúscula espaciada sobre cada sección ni «una palabra en oro» por título.
 - **Don't** grano, rayos girando, manchas de luz difusa sin fuente, vidrio esmerilado ni sombras duras de afiche.

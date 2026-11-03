@@ -110,10 +110,10 @@ export interface PaletaDemo {
 // SUPUESTO: paletas de ejemplo para mostrar en la demo cómo cambia la marca; no son de ningún
 // negocio real. La primera es la de negocio.ts.
 export const PALETAS_DEMO: PaletaDemo[] = [
-  { nombre: 'Oro y negro', base: baseDe(negocio.marca.colores) },
+  { nombre: 'Oro', base: baseDe(negocio.marca.colores) },
+  { nombre: 'Oro y negro', base: { acento: '#e7b94c', fondo: '#0b0a09', texto: '#f3ece0' } },
   { nombre: 'Bermellón', base: { acento: '#ca3517', fondo: '#f4efe7', texto: '#231814' } },
   { nombre: 'Cobalto', base: { acento: '#2445c2', fondo: '#f2f0ea', texto: '#141a2e' } },
   { nombre: 'Monte', base: { acento: '#2f6b4f', fondo: '#f1efe6', texto: '#1b2420' } },
-  { nombre: 'Chicle', base: { acento: '#c2185b', fondo: '#fbf1f3', texto: '#2a1220' } },
   { nombre: 'Blanco y negro', base: { acento: '#161616', fondo: '#f5f5f2', texto: '#161616' } },
 ];

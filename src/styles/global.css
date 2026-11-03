@@ -30,7 +30,7 @@
   html {
     -webkit-text-size-adjust: 100%;
     scroll-behavior: smooth;
-    color-scheme: dark;
+    color-scheme: light;
   }
   body {
     background-color: var(--color-fondo);
@@ -40,7 +40,7 @@
     line-height: 1.55;
   }
   :focus-visible {
-    outline: 2px solid var(--color-acento);
+    outline: 2px solid var(--color-acento-fuerte);
     outline-offset: 3px;
   }
   ::selection {

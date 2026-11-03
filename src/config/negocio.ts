@@ -97,20 +97,21 @@ export const negocio: Negocio = {
     nombre: 'Midas Atelier',
     eslogan: 'Cuadros en MDF y acrílico · Envíos a todo Colombia',
     prefijoPedido: 'MA',
-    // Paleta «cuarto oscuro con LED» (ver DESIGN.md). Contraste verificado: texto sobre fondo
-    // 16.8:1, textoSuave sobre superficie 6.7:1, sobreAcento sobre acento 10.8:1.
+    // Paleta clara: papel cálido, tinta y el oro del logo (ver DESIGN.md). Contraste verificado:
+    // texto sobre fondo 16:1, oro contra la pared 3.2:1, texto sobre el oro 5:1 y acentoFuerte
+    // (oro para texto pequeño) 5.6:1.
     colores: {
-      fondo: '#0b0a09',
-      superficie: '#15120f',
-      texto: '#f3ece0',
-      textoSuave: '#a39a8e',
-      acento: '#e7b94c',
-      acentoFuerte: '#e7b94c',
-      sobreAcento: '#0b0a09',
-      acentoHover: '#f6d88b',
-      linea: '#f3ece01f',
-      lineaFuerte: '#f3ece040',
-      cinta: '#f6d88b',
+      fondo: '#f5f1ea',
+      superficie: '#e8e4dd',
+      texto: '#1a1612',
+      textoSuave: '#67635e',
+      acento: '#b07d1f',
+      acentoFuerte: '#835e1b',
+      sobreAcento: '#1a1612',
+      acentoHover: '#bc9244',
+      linea: '#1a161226',
+      lineaFuerte: '#1a161240',
+      cinta: '#e7b94c',
     },
   },
   vitrina: {
