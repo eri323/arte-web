@@ -31,7 +31,8 @@ const enlaces = [
     </a>
     <nav
       aria-label="Principal"
-      class="order-3 -mx-2 w-[calc(100%+1rem)] overflow-x-auto [scrollbar-width:none] lg:order-2 lg:mx-0 lg:ml-auto lg:w-auto"
+      data-nav-desliza
+      class="nav-desliza order-3 -mx-2 w-[calc(100%+1rem)] overflow-x-auto [scrollbar-width:none] lg:order-2 lg:mx-0 lg:ml-auto lg:w-auto"
     >
       <ul class="flex items-center lg:gap-3">
         {enlaces.map((e) => (
@@ -82,6 +83,46 @@ const enlaces = [
     </div>
   </div>
 </header>
+
+<style>
+  /* En el celular los enlaces no caben: el borde que tiene más enlaces escondidos
+     se desvanece para que se note que se puede deslizar. Sin JS queda el del lado derecho. */
+  .nav-desliza {
+    --izq: 0px;
+    --der: 2.5rem;
+    mask-image: linear-gradient(
+      to right,
+      transparent,
+      #000 var(--izq),
+      #000 calc(100% - var(--der)),
+      transparent
+    );
+  }
+  .nav-desliza[data-inicio='false'] {
+    --izq: 2.5rem;
+  }
+  .nav-desliza[data-fin='true'] {
+    --der: 0px;
+  }
+  @media (min-width: 64rem) {
+    .nav-desliza {
+      mask-image: none;
+    }
+  }
+</style>
+
+<script>
+  // Marca si el menú está al inicio o al final del scroll para ajustar el desvanecido.
+  const nav = document.querySelector<HTMLElement>('[data-nav-desliza]');
+  const medirNav = () => {
+    if (!nav) return;
+    nav.dataset.inicio = String(nav.scrollLeft <= 1);
+    nav.dataset.fin = String(nav.scrollLeft + nav.clientWidth >= nav.scrollWidth - 1);
+  };
+  medirNav();
+  nav?.addEventListener('scroll', medirNav, { passive: true });
+  window.addEventListener('resize', medirNav);
+</script>
 
 <script>
   // El botón cambia entre claro y oscuro y recuerda la elección en este navegador.
