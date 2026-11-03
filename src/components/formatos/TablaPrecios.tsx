@@ -26,10 +26,7 @@ export default function TablaPrecios() {
         <tbody>
           {medidas.map((m) => (
             <tr key={m.id} className="border-t border-linea">
-              <th
-                scope="row"
-                className="px-4 py-3 font-display text-lg font-semibold text-acento-fuerte"
-              >
+              <th scope="row" className="px-4 py-3 font-display text-lg">
                 {etiquetaMedida(m)}
               </th>
               <td className="px-4 py-3 whitespace-nowrap">{formatearPesos(m.precio)}</td>

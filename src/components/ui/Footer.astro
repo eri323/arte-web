@@ -2,13 +2,16 @@
 import { negocio } from '../../config/negocio';
 
 const { instagram } = negocio.redes;
+const claseEnlace =
+  'text-texto no-underline [background:linear-gradient(currentColor,currentColor)_no-repeat_0_100%/100%_1px]';
 ---
 
-<footer class="border-t border-linea">
-  <div class="mx-auto flex max-w-6xl flex-col gap-3 px-4 py-7 text-sm text-texto-suave sm:flex-row sm:items-end sm:justify-between">
+<footer class="noche border-t border-linea">
+  <div class="mx-auto flex max-w-[1240px] flex-col gap-3 px-4 py-7 text-[0.8125rem] text-texto-suave sm:flex-row sm:flex-wrap sm:items-end sm:justify-between">
     <div>
-      <p class="font-display text-2xl tracking-[0.06em] text-texto">{negocio.marca.nombre}</p>
-      <p class="mt-1">{negocio.marca.eslogan}</p>
+      <p>
+        {negocio.marca.nombre} · {negocio.marca.eslogan}
+      </p>
       {instagram && (
         <p class="mt-1">
           Instagram{' '}
@@ -16,7 +19,7 @@ const { instagram } = negocio.redes;
             href={`https://www.instagram.com/${instagram}/`}
             target="_blank"
             rel="noopener"
-            class="font-semibold text-texto underline underline-offset-4"
+            class={claseEnlace}
           >
             @{instagram}
           </a>
@@ -24,7 +27,7 @@ const { instagram } = negocio.redes;
       )}
     </div>
     <div class="flex flex-col gap-1 sm:items-end">
-      <a href="/taller#colores" class="font-semibold text-texto underline underline-offset-4">
+      <a href="/taller#colores" class={claseEnlace}>
         Prueba otros colores de marca
       </a>
       <p class="lapiz">Demo · propuesta web</p>

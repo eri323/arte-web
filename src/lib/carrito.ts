@@ -14,6 +14,8 @@ export interface ItemCarrito {
   calidad: Calidad;
   /** Diseño del catálogo (sin foto propia). En ese caso `archivo` es el nombre del diseño. */
   disenoId?: string;
+  /** Variante de color del diseño del catálogo (sin ella, los colores originales). */
+  variante?: string;
 }
 
 const esObjeto = (x: unknown): x is Record<string, unknown> => typeof x === 'object' && x !== null;
@@ -38,7 +40,8 @@ function esItemValido(x: unknown, idsMedidas: string[]): x is ItemCarrito {
     typeof x.archivo === 'string' &&
     esNumero(x.dpi) &&
     (x.calidad === 'buena' || x.calidad === 'regular' || x.calidad === 'baja') &&
-    (x.disenoId === undefined || typeof x.disenoId === 'string')
+    (x.disenoId === undefined || typeof x.disenoId === 'string') &&
+    (x.variante === undefined || typeof x.variante === 'string')
   );
 }
 

@@ -147,7 +147,9 @@ export default function EditorColores() {
 
       <figure aria-label="Vista previa de la marca" className="flex flex-col gap-2">
         <div className="bg-acento p-6 text-sobre-acento">
-          <p className="font-display text-4xl leading-none">{negocio.vitrina.titular}</p>
+          <p className="font-display text-4xl leading-none">
+            {[negocio.vitrina.titular, negocio.vitrina.titularSuave].filter(Boolean).join(' ')}
+          </p>
           <span className="boton mt-6 bg-sobre-acento text-acento">Crear mi cuadro</span>
         </div>
         <div className="border border-linea bg-superficie p-4">

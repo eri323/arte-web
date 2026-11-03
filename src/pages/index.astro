@@ -1,67 +1,60 @@
 ---
 import Base from '../layouts/Base.astro';
-import Montaje from '../components/catalogo/Montaje.astro';
+import SubirImagen from '../components/catalogo/SubirImagen';
 import Vitrina, { ImagenDiseno } from '../components/catalogo/Vitrina';
 import { negocio } from '../config/negocio';
 import { etiquetaMedida } from '../lib/formato';
 import { urlWhatsApp } from '../lib/whatsapp';
 
 const { vitrina, catalogo } = negocio;
-const porId = (id: string) => catalogo.find((d) => d.id === id) ?? catalogo[0];
 
-// El abanico de la portada: siete diseños del catálogo, el del centro adelante.
-const abanico = [2, 10, 4, 0, 6, 8, 1]
+// El abanico de la portada: nueve diseños del catálogo, el del centro adelante. En el celular
+// se ocultan los de las puntas.
+const abanico = [5, 2, 10, 4, 0, 6, 8, 1, 11]
   .map((i) => catalogo[i])
   .filter((d) => d !== undefined)
   .map((diseno, k, lista) => {
     const i = k - Math.floor(lista.length / 2);
-    return { diseno, i, z: 10 - Math.abs(i) };
+    return { diseno, i, d: Math.abs(i), z: 10 - Math.abs(i) };
   });
 
 const porArea = [...negocio.medidas].sort((a, b) => a.anchoCm * a.altoCm - b.anchoCm * b.altoCm);
 const menor = porArea[0];
 const mayor = porArea[porArea.length - 1];
 
-// SUPUESTO: montajes de ejemplo con diseños del catálogo, mientras el taller no tenga fotos de
-// clientes. Paredes y muebles inventados.
-const montajes = [
-  {
-    diseno: porId('no-pares'),
-    pie: '60×80 · acrílico · cuarto con LED',
-    mueble: 'cama',
-    pared: '#1a1513',
-    led: true,
-    anchoCuadro: 22,
-  },
-  {
-    diseno: porId('sakura'),
-    pie: '45×60 · MDF · sala',
-    mueble: 'sofa',
-    pared: '#2b2a26',
-    anchoCuadro: 26,
-  },
-  {
-    diseno: porId('lado-a'),
-    pie: '30×40 · MDF · estudio',
-    mueble: 'escritorio',
-    pared: '#16181a',
-    led: true,
-    anchoCuadro: 22,
-  },
-] as const;
+const confianza = [
+  '100% personalizable',
+  'MDF y acrílico',
+  'Hecho a mano',
+  'Envíos a todo Colombia',
+];
 
+const personalizado = [
+  {
+    titulo: 'Cualquier imagen:',
+    texto: 'tu artista, tu película, tu carro, tu mascota o una foto tuya.',
+  },
+  { titulo: 'Tus colores:', texto: 'lo adaptamos a tu cuarto, tu sala o tu negocio.' },
+  { titulo: 'Te lo mostramos antes:', texto: 'apruebas el diseño y luego lo fabricamos.' },
+];
+
+// SUPUESTO: los huecos de video y de fotos esperan el material del taller (historias destacadas
+// "Procesos", "Clientes" y "Resultados"). No se inventan fotos de clientes.
 const pasos = [
   {
-    titulo: 'Eliges',
-    texto: 'Un diseño del catálogo o tu propia foto, en la medida y el acabado que quieras.',
+    titulo: 'Lo diseñamos',
+    texto: 'Partimos de una referencia o de tu idea, y te mostramos el diseño para aprobarlo.',
+    hueco: 'Video de la historia destacada «Procesos»',
   },
   {
     titulo: 'Lo fabricamos',
     texto: 'Impresión y corte en MDF o acrílico, a mano y revisado antes de empacar.',
+    hueco: 'Video del taller',
   },
   {
     titulo: 'Te llega',
-    texto: 'Empacado y enviado a cualquier ciudad de Colombia. Lo coordinas por WhatsApp.',
+    texto: 'Empacado y enviado a cualquier ciudad de Colombia. Todo coordinado por WhatsApp.',
+    hueco: 'Video del empaque o la entrega',
   },
 ];
 
@@ -89,210 +82,222 @@ const preguntas = [
 ];
 
 const abono = negocio.pagos.porcentajeAbono;
-// Con número de WhatsApp el cierre abre el chat; en modo demo lleva al configurador.
+// Con número de WhatsApp los botones abren el chat; en modo demo llevan al configurador.
+const chatIdea = urlWhatsApp(
+  negocio.whatsapp.numero,
+  `Hola ${negocio.marca.nombre}, quiero un cuadro personalizado`,
+);
 const chat = urlWhatsApp(negocio.whatsapp.numero, `Hola ${negocio.marca.nombre}, quiero un cuadro`);
-const fotoEjemplo = porId('ronin');
-
-const tituloSeccion = 'font-display text-[clamp(2.5rem,6vw,4.75rem)]';
+const seccion = 'py-[clamp(80px,10vw,136px)]';
+const titular = [vitrina.titular, vitrina.titularSuave].filter(Boolean).join(' ');
 ---
 
-<Base title="Cuadros en MDF y acrílico" description={`${vitrina.titular} ${vitrina.bajada}`}>
-  {/* 1 · Portada: el texto a la izquierda y los cuadros colgados sobre una tira LED. */}
-  <section class="relative overflow-hidden" aria-labelledby="portada-titulo">
-    <div class="mx-auto grid max-w-6xl gap-10 px-4 pt-[clamp(40px,7vw,96px)] lg:min-h-[calc(100svh-4rem)] lg:grid-cols-[1fr_1.05fr] lg:items-center lg:gap-6 lg:pb-10">
-      <div>
-        <h1 id="portada-titulo" class="texto-cartel entra-subiendo max-w-[9ch]">
-          {vitrina.titular}
-        </h1>
-        <p
-          class="entra-subiendo mt-6 max-w-[40ch] text-[clamp(1.0625rem,1.6vw,1.25rem)] leading-relaxed text-texto-suave"
-          style="--retraso: 120ms"
-        >
-          {vitrina.bajada}
-        </p>
-        <div
-          class="entra-subiendo mt-8 flex flex-wrap items-center gap-x-6 gap-y-3"
-          style="--retraso: 200ms"
-        >
-          <a href="#catalogo" class="boton boton-oro">
-            Ver catálogo
-          </a>
-          <a href="/crear" class="enlace-fuerte">
-            Tengo mi propia foto
-          </a>
-        </div>
+<Base title="Cuadros en MDF y acrílico" description={`${titular} ${vitrina.bajada}`}>
+  {/* 1 · Portada: titular centrado y, debajo, el abanico de cuadros. */}
+  <section
+    aria-labelledby="portada-titulo"
+    class="overflow-hidden pt-[clamp(44px,5vw,72px)] pb-[clamp(56px,6vw,88px)]"
+  >
+    <div class="mx-auto flex max-w-[1240px] flex-col items-center px-4 text-center">
+      <p class="antetitulo">Cuadros en MDF y acrílico</p>
+      <h1 id="portada-titulo" class="texto-cartel max-w-[20ch]">
+        {vitrina.titular}{' '}
+        {vitrina.titularSuave && <span class="text-texto-suave">{vitrina.titularSuave}</span>}
+      </h1>
+      <p class="mt-4 mb-7 max-w-[44ch] text-texto-suave">{vitrina.bajada}</p>
+      <div class="flex flex-wrap justify-center gap-3">
+        <a href="#catalogo" class="boton boton-negro">
+          Explorar diseños{' '}
+          <span aria-hidden="true" class="flecha">
+            →
+          </span>
+        </a>
+        <a href="#personalizado" class="boton boton-linea">
+          Personalizar mi cuadro
+        </a>
       </div>
+    </div>
 
-      {/* Los cuadros, colgados en la pared; debajo, la tira LED que los ilumina. */}
-      <div class="relative pb-14">
-        <div
-          aria-hidden="true"
-          class="pointer-events-none absolute inset-x-[-20%] bottom-0 h-[70%] bg-[radial-gradient(ellipse_45%_40%_at_50%_88%,rgb(255_45_32/.26),transparent_72%)]"
-        ></div>
-        <ul
-          class="abanico relative h-[calc(var(--cw)*1.9)] w-full [--cw:clamp(84px,23vw,128px)] [--sep:min(9vw,48px)] lg:[--cw:clamp(120px,12vw,170px)] lg:[--sep:min(5vw,70px)]"
-          aria-label="Diseños del catálogo"
+    <ul
+      class="abanico relative mx-auto mt-[clamp(36px,4.5vw,60px)] h-[calc(var(--cw)*1.8)] max-w-[1240px] [--cw:clamp(96px,30vw,150px)] [--sep:calc(var(--cw)*0.5)] sm:[--cw:clamp(112px,13.2vw,204px)] sm:[--sep:calc(var(--cw)*0.6)]"
+      aria-label="Diseños de referencia"
+    >
+      {abanico.map(({ diseno, i, d, z }) => (
+        <li
+          class:list={[
+            'carta absolute top-[4%] left-1/2 -ml-[calc(var(--cw)/2)] w-(--cw)',
+            d > 2 && 'max-sm:hidden',
+          ]}
+          style={`--i:${i};--i2:${i * i};--d:${d};--z:${z};transition-delay:${d * 60}ms`}
         >
-          {abanico.map(({ diseno, i, z }) => (
-            <li
-              class="carta absolute top-[4%] left-1/2 w-(--cw) -ml-[calc(var(--cw)/2)]"
-              style={`--i:${i};--i2:${i * i};--z:${z};transition-delay:${Math.abs(i) * 60}ms`}
+          <a href="#pared" data-diseno={diseno.id} class="block focus-visible:outline-none">
+            <span class="alza sombra-cuadro block aspect-[3/4]">
+              <ImagenDiseno diseno={diseno} decorativa />
+              <span class="sr-only">Ver {diseno.nombre} en mi pared</span>
+            </span>
+            <span
+              aria-hidden="true"
+              class="tip absolute -bottom-[34px] inset-x-0 text-center text-[0.8125rem] text-texto-suave"
             >
-              <a href="#pared" data-diseno={diseno.id} class="block">
-                <span class="alza sombra-cuadro block aspect-[3/4]">
-                  <ImagenDiseno diseno={diseno} decorativa />
-                  <span class="sr-only">Ver {diseno.nombre} en mi pared</span>
-                </span>
-                <span
-                  aria-hidden="true"
-                  class="tip absolute -bottom-8 left-1/2 -translate-x-1/2 text-sm font-bold whitespace-nowrap text-texto"
-                >
-                  {diseno.nombre}
-                </span>
-              </a>
+              {diseno.nombre}
+            </span>
+          </a>
+        </li>
+      ))}
+    </ul>
+
+    <ul class="mt-[clamp(26px,3vw,40px)] flex flex-wrap justify-center gap-y-1.5 px-4 text-[0.8125rem] text-texto-suave">
+      {confianza.map((c, k) => (
+        <li>
+          {k > 0 && (
+            <span aria-hidden="true" class="mx-2 text-linea-fuerte sm:mx-3.5">
+              ·
+            </span>
+          )}
+          {c}
+        </li>
+      ))}
+    </ul>
+  </section>
+
+  {/* 2 y 3 · Inspiración con filtros y la pared a escala (una isla: comparten el diseño elegido). */}
+  <Vitrina client:idle />
+
+  {/* 4 · Personalizado: la imagen del cliente, colgada en la pared en segundos. */}
+  <section id="personalizado" aria-labelledby="perso-titulo" class:list={['scroll-mt-16', seccion]}>
+    <div class="mx-auto grid max-w-[1240px] items-center gap-[clamp(32px,6vw,96px)] px-4 md:grid-cols-2">
+      <div class="aparece">
+        <p class="antetitulo">Personalizado</p>
+        <h2 id="perso-titulo" class="titulo-seccion">
+          Tu idea, <span class="text-texto-suave">nuestro taller</span>
+        </h2>
+        <ul class="mt-7 mb-8 border-t border-linea">
+          {personalizado.map((p) => (
+            <li class="border-b border-linea py-3.5 text-[0.9375rem] text-texto-suave">
+              <b class="font-semibold text-texto">{p.titulo}</b> {p.texto}
             </li>
           ))}
         </ul>
-        <div
-          aria-hidden="true"
-          class="tira-led absolute inset-x-[6%] bottom-6 h-[3px] rounded-full bg-led"
-        ></div>
-      </div>
-    </div>
-  </section>
-
-  {/* 2 y 3 · Catálogo con filtros y la pared a escala (una sola isla: comparten el diseño elegido). */}
-  <Vitrina client:idle />
-
-  {/* 4 · Personalizado: de la foto del celular al cuadro colgado. */}
-  <section id="personalizado" aria-labelledby="perso-titulo" class="py-[clamp(4.5rem,10vw,8rem)]">
-    <div class="mx-auto grid max-w-6xl items-center gap-12 px-4 md:grid-cols-[1fr_1.1fr]">
-      <div>
-        <h2 id="perso-titulo" class={tituloSeccion}>
-          ¿Tienes tu propia foto?
-        </h2>
-        <p class="mt-5 max-w-[46ch] text-texto-suave">
-          Tu artista, tu película, tu carro o tu mascota. La subes, la recortas y te decimos si
-          tiene calidad para la medida que quieres, antes de pedir. La foto no sale de tu celular.
-        </p>
-        <a href="/crear" class="boton boton-oro mt-8">
-          Crear con mi foto
-        </a>
-      </div>
-      {fotoEjemplo && (
-        <div aria-hidden="true" class="grid grid-cols-[0.8fr_auto_1fr] items-center gap-4 sm:gap-6">
-          <div class="rounded-[26px] border-[6px] border-[#26221f] bg-[#26221f] shadow-[0_30px_50px_-20px_#000]">
-            <div class="aspect-[9/17] overflow-hidden rounded-[20px]">
-              <ImagenDiseno diseno={fotoEjemplo} decorativa />
-            </div>
-          </div>
-          <span class="font-display text-4xl text-texto-suave">→</span>
-          <div>
-            <div class="sombra-acrilico relative aspect-[3/4]">
-              <ImagenDiseno diseno={fotoEjemplo} decorativa />
-              <span class="pointer-events-none absolute inset-0 bg-linear-[115deg] from-transparent from-40% via-white/20 via-48% to-transparent to-56%" />
-            </div>
-            <p class="lapiz mt-3 text-texto-suave">60×80 cm · acrílico</p>
-          </div>
-        </div>
-      )}
-    </div>
-  </section>
-
-  {/* 5 · Cómo lo hacemos: tres pasos en fila, sin cajas. */}
-  <section
-    id="proceso"
-    aria-labelledby="como"
-    class="border-t border-linea bg-superficie py-[clamp(4.5rem,10vw,8rem)]"
-  >
-    <div class="mx-auto max-w-6xl px-4">
-      <h2 id="como" class={tituloSeccion}>
-        Así nace tu cuadro
-      </h2>
-      <ol class="mt-12 grid gap-10 md:grid-cols-3 md:gap-8">
-        {pasos.map((paso, i) => (
-          <li class="aparece border-t-2 border-texto pt-5">
-            <span aria-hidden="true" class="font-display block text-6xl text-texto-suave">
-              {i + 1}
+        {chatIdea ? (
+          <a href={chatIdea} target="_blank" rel="noopener" class="boton boton-negro">
+            Contar mi idea por WhatsApp{' '}
+            <span aria-hidden="true" class="flecha">
+              →
             </span>
-            <h3 class="mt-3 text-2xl font-extrabold">{paso.titulo}</h3>
-            <p class="mt-2 max-w-[34ch] text-texto-suave">{paso.texto}</p>
+          </a>
+        ) : (
+          <a href="/crear" class="boton boton-negro">
+            Crear con mi foto{' '}
+            <span aria-hidden="true" class="flecha">
+              →
+            </span>
+          </a>
+        )}
+      </div>
+      <SubirImagen client:idle />
+    </div>
+  </section>
+
+  {/* 5 · Proceso: tres pasos en fila, separados por líneas. */}
+  <section id="proceso" aria-labelledby="como" class:list={['noche', seccion]}>
+    <div class="mx-auto max-w-[1240px] px-4">
+      <div class="aparece">
+        <p class="antetitulo">Proceso</p>
+        <h2 id="como" class="titulo-seccion">
+          Así nace <span class="text-texto-suave">tu cuadro</span>
+        </h2>
+      </div>
+      <ol class="mt-[clamp(44px,5vw,64px)] grid border-t border-linea md:grid-cols-3">
+        {pasos.map((paso, i) => (
+          <li class="aparece border-b border-linea py-[26px] md:border-b-0 md:py-0 md:pt-7 md:pr-7 md:[&+&]:border-l md:[&+&]:pl-7">
+            <span aria-hidden="true" class="font-display text-[15px] tracking-[0.06em] text-acento">
+              {String(i + 1).padStart(2, '0')}
+            </span>
+            <h3 class="font-display mt-3.5 mb-2.5 text-[26px]">{paso.titulo}</h3>
+            <p class="max-w-[34ch] text-[0.9375rem] text-texto-suave">{paso.texto}</p>
+            <div class="mt-6 grid aspect-[4/3] place-items-center border border-dashed border-linea-fuerte p-3.5 text-center text-[0.8125rem] text-texto-suave">
+              {paso.hueco}
+            </div>
           </li>
         ))}
       </ol>
     </div>
   </section>
 
-  {/* 6 · Así quedan: montajes de ejemplo; aquí van las fotos de clientes. */}
-  <section id="clientes" aria-labelledby="clientes-titulo" class="py-[clamp(4.5rem,10vw,8rem)]">
-    <div class="mx-auto max-w-6xl px-4">
-      <div class="flex flex-wrap items-end justify-between gap-x-10 gap-y-4">
-        <h2 id="clientes-titulo" class={tituloSeccion}>
-          Así quedan colgados
+  {/* 6 · Resultados: el muro que se llena con fotos reales de clientes. */}
+  <section id="clientes" aria-labelledby="clientes-titulo" class={seccion}>
+    <div class="mx-auto max-w-[1240px] px-4">
+      <div class="aparece">
+        <p class="antetitulo">Resultados</p>
+        <h2 id="clientes-titulo" class="titulo-seccion">
+          Espacios de <span class="text-texto-suave">nuestros clientes</span>
         </h2>
-        <p class="max-w-[42ch] text-sm text-texto-suave">
-          Montajes de ejemplo con diseños del catálogo. En la versión del taller aquí van las fotos
-          que mandan los clientes.
+        <p class="mt-[18px] max-w-[54ch] text-[1.0625rem] text-texto-suave">
+          Este muro se llena con las fotos reales de las historias destacadas «Clientes» y
+          «Resultados».
         </p>
       </div>
-      <div class="mt-10 grid gap-x-4 gap-y-8 md:grid-cols-[1.4fr_1fr] md:grid-rows-2">
-        {montajes.map((m, i) =>
-          m.diseno ? (
-            <Montaje
-              diseno={m.diseno}
-              pie={m.pie}
-              mueble={m.mueble}
-              pared={m.pared}
-              led={'led' in m ? m.led : false}
-              anchoCuadro={m.anchoCuadro}
-              class={i === 0 ? 'md:row-span-2 md:[&>div]:min-h-[30rem]' : ''}
-            />
-          ) : null,
-        )}
-      </div>
+      <ul
+        class="mt-[clamp(40px,5vw,56px)] grid grid-cols-2 gap-3 md:grid-cols-4"
+        aria-label="Espacios para fotos de clientes"
+      >
+        {[
+          'Foto grande: el mejor resultado, por ejemplo un cuarto con LED',
+          'Foto de cliente',
+          'Foto de cliente',
+          'Foto de cliente',
+          'Foto de cliente',
+        ].map((texto, i) => (
+          <li
+            class:list={[
+              'grid place-items-center border border-dashed border-linea-fuerte p-3 text-center text-[0.8125rem] text-texto-suave',
+              i === 0 ? 'col-span-2 row-span-2 aspect-square md:aspect-auto' : 'aspect-square',
+            ]}
+          >
+            {texto}
+          </li>
+        ))}
+      </ul>
     </div>
   </section>
 
   {/* 7 · Pagos y envíos: la barra 50/50 explica el pago sin párrafos. */}
-  <section
-    aria-labelledby="pagos"
-    class="border-y border-linea bg-superficie py-[clamp(4.5rem,10vw,8rem)]"
-  >
-    <div class="mx-auto max-w-6xl px-4">
-      <h2 id="pagos" class={tituloSeccion}>
+  <section aria-labelledby="pagos" class:list={['border-t border-linea', seccion]}>
+    <div class="mx-auto max-w-[1240px] px-4">
+      <p class="antetitulo">Pagos y envíos</p>
+      <h2 id="pagos" class="titulo-seccion">
         Pagas {abono}% y {100 - abono}%
       </h2>
-      <div class="aparece mt-10 flex min-h-28 text-base sm:text-lg" role="list">
+      <div class="aparece mt-10 flex min-h-28 border border-linea-fuerte" role="list">
         <div
           role="listitem"
-          class="flex flex-col justify-between rounded-l-sm bg-acento p-4 text-sobre-acento sm:p-6"
+          class="flex flex-col justify-between bg-texto p-4 text-fondo sm:p-6"
           style={{ width: `${abono}%` }}
         >
-          <span class="font-display text-4xl sm:text-6xl">{abono}%</span>
-          <span class="mt-3 font-bold">Para empezar tu cuadro</span>
+          <span class="font-display text-4xl tabular-nums sm:text-5xl">{abono}%</span>
+          <span class="mt-3 text-sm font-semibold sm:text-base">Para empezar tu cuadro</span>
         </div>
         <div
           role="listitem"
-          class="flex flex-col justify-between rounded-r-sm border-2 border-linea-fuerte p-4 sm:p-6"
+          class="flex flex-col justify-between p-4 sm:p-6"
           style={{ width: `${100 - abono}%` }}
         >
-          <span class="font-display text-4xl sm:text-6xl">{100 - abono}%</span>
-          <span class="mt-3 font-bold">Cuando esté listo, antes de enviarlo</span>
+          <span class="font-display text-4xl tabular-nums sm:text-5xl">{100 - abono}%</span>
+          <span class="mt-3 text-sm font-semibold sm:text-base">
+            Cuando esté listo, antes de enviarlo
+          </span>
         </div>
       </div>
-      <div class="mt-12 grid gap-8 sm:grid-cols-2">
+      <div class="mt-10 grid gap-8 border-t border-linea pt-8 sm:grid-cols-2">
         <p class="max-w-[42ch] text-texto-suave">
           Cada pago queda registrado y lo ves en el{' '}
-          <a
-            href="/seguimiento"
-            class="font-bold text-texto underline decoration-acento underline-offset-4"
-          >
+          <a href="/seguimiento" class="enlace-fuerte min-h-0 text-base text-texto">
             seguimiento de tu pedido
           </a>
           .
         </p>
         <div>
-          <h3 class="text-xl font-extrabold">Envíos a todo Colombia</h3>
+          <h3 class="font-display text-[1.375rem]">Envíos a todo Colombia</h3>
           <p class="mt-1 text-texto-suave">{negocio.envio.texto}.</p>
         </div>
       </div>
@@ -300,19 +305,22 @@ const tituloSeccion = 'font-display text-[clamp(2.5rem,6vw,4.75rem)]';
   </section>
 
   {/* 8 · Preguntas frecuentes. */}
-  <section aria-labelledby="faq" class="py-[clamp(4.5rem,10vw,8rem)]">
-    <div class="mx-auto grid max-w-6xl gap-8 px-4 md:grid-cols-[1fr_1.6fr]">
-      <h2 id="faq" class={tituloSeccion}>
-        Preguntas frecuentes
-      </h2>
-      <div class="divide-y divide-linea-fuerte border-y border-linea-fuerte">
+  <section aria-labelledby="faq" class:list={['border-t border-linea', seccion]}>
+    <div class="mx-auto grid max-w-[1240px] gap-8 px-4 md:grid-cols-[1fr_1.6fr]">
+      <div>
+        <p class="antetitulo">Dudas</p>
+        <h2 id="faq" class="titulo-seccion">
+          Preguntas frecuentes
+        </h2>
+      </div>
+      <div class="divide-y divide-linea border-y border-linea">
         {preguntas.map(({ p, r }) => (
           <details class="group">
-            <summary class="flex min-h-14 cursor-pointer list-none items-center justify-between gap-4 py-3 text-lg font-bold [&::-webkit-details-marker]:hidden">
+            <summary class="flex min-h-14 cursor-pointer list-none items-center justify-between gap-4 py-3 font-semibold [&::-webkit-details-marker]:hidden">
               {p}
               <span
                 aria-hidden="true"
-                class="font-display text-3xl text-acento-fuerte transition-transform duration-300 ease-expo group-open:rotate-45"
+                class="font-display text-2xl transition-transform duration-300 ease-(--ease-suave) group-open:rotate-45"
               >
                 +
               </span>
@@ -324,33 +332,25 @@ const tituloSeccion = 'font-display text-[clamp(2.5rem,6vw,4.75rem)]';
     </div>
   </section>
 
-  {/* 9 · Cierre: una pregunta, un botón y otra vez la tira LED. */}
-  <section aria-labelledby="cierre" class="relative overflow-hidden">
-    <div class="mx-auto max-w-6xl px-4 pt-[clamp(4rem,12vw,8rem)] pb-[clamp(5rem,13vw,9rem)]">
-      <h2 id="cierre" class="texto-cartel max-w-[10ch]">
-        ¿Cuál va en tu pared?
+  {/* 9 · Cierre: una pregunta y el botón dorado. */}
+  <section aria-labelledby="cierre" class:list={['noche text-center', seccion]}>
+    <div class="aparece mx-auto max-w-[1240px] px-4">
+      <h2 id="cierre" class="font-display text-[clamp(2.25rem,4.6vw,3.75rem)]">
+        ¿Ya tienes <span class="text-texto-suave">la idea?</span>
       </h2>
-      <p class="mt-5 max-w-[44ch] text-texto-suave">
-        Medidas de {menor && etiquetaMedida(menor)} a {mayor && etiquetaMedida(mayor)} cm, en MDF o
-        acrílico, con envío a todo Colombia.
+      <p class="mx-auto mt-[18px] mb-8 max-w-[44ch] text-texto-suave">
+        Cuéntanos qué quieres, en qué espacio va y de qué medida. Medidas de{' '}
+        {menor && etiquetaMedida(menor)} a {mayor && etiquetaMedida(mayor)} cm, en MDF o acrílico.
       </p>
       {chat ? (
-        <a href={chat} target="_blank" rel="noopener" class="boton boton-oro mt-8">
+        <a href={chat} target="_blank" rel="noopener" class="boton boton-oro">
           Escribir por WhatsApp
         </a>
       ) : (
-        <a href="/crear" class="boton boton-oro mt-8">
+        <a href="/crear" class="boton boton-oro">
           Crear mi cuadro
         </a>
       )}
     </div>
-    <div
-      aria-hidden="true"
-      class="pointer-events-none absolute inset-x-0 bottom-0 h-40 bg-[radial-gradient(ellipse_45%_80%_at_50%_100%,rgb(255_45_32/.22),transparent_70%)]"
-    ></div>
-    <div
-      aria-hidden="true"
-      class="tira-led absolute inset-x-[10%] bottom-8 h-[3px] rounded-full bg-led"
-    ></div>
   </section>
 </Base>

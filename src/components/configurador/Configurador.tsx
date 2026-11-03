@@ -328,10 +328,7 @@ export default function Configurador() {
             <span className="text-texto-suave">
               {cantidad} × {etiquetaMedida(medida, orientacion)}
             </span>
-            <span
-              className="font-display text-3xl font-semibold text-acento-fuerte"
-              data-testid="precio"
-            >
+            <span className="font-display text-3xl" data-testid="precio">
               {formatearPesos(linea.total)}
             </span>
           </p>

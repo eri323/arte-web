@@ -57,7 +57,7 @@ function DetallePedido({ pedido }: { pedido: Pedido }) {
   return (
     <article aria-labelledby="titulo-pedido" className="grid gap-6 lg:grid-cols-2">
       <div className="rounded-lg border border-linea bg-superficie p-5">
-        <h2 id="titulo-pedido" className="font-display text-3xl font-semibold text-acento-fuerte">
+        <h2 id="titulo-pedido" className="font-display text-3xl">
           Pedido {pedido.numero}
         </h2>
         <p className="text-texto-suave">
@@ -74,7 +74,7 @@ function DetallePedido({ pedido }: { pedido: Pedido }) {
 
       <div className="flex flex-col gap-6">
         <section className="rounded-lg border border-linea p-5" aria-labelledby="pagos">
-          <h3 id="pagos" className="mb-3 font-display text-2xl font-semibold text-acento-fuerte">
+          <h3 id="pagos" className="mb-3 font-display text-2xl">
             Pagos
           </h3>
           {pedido.pagos.length === 0 ? (
@@ -110,7 +110,7 @@ function DetallePedido({ pedido }: { pedido: Pedido }) {
 
         {pedido.envio && (
           <section className="rounded-lg border border-linea p-5" aria-labelledby="envio">
-            <h3 id="envio" className="mb-2 font-display text-2xl font-semibold text-acento-fuerte">
+            <h3 id="envio" className="mb-2 font-display text-2xl">
               Envío
             </h3>
             <p>Transportadora: {pedido.envio.transportadora}</p>
@@ -121,7 +121,7 @@ function DetallePedido({ pedido }: { pedido: Pedido }) {
         )}
 
         <section className="rounded-lg border border-linea p-5" aria-labelledby="notas">
-          <h3 id="notas" className="mb-2 font-display text-2xl font-semibold text-acento-fuerte">
+          <h3 id="notas" className="mb-2 font-display text-2xl">
             Notas del taller
           </h3>
           {pedido.notas.length === 0 ? (
@@ -185,7 +185,7 @@ export default function Seguimiento() {
             className="h-11 rounded-lg border border-linea-fuerte bg-transparent px-3 uppercase placeholder:normal-case"
           />
         </label>
-        <button type="submit" className="boton boton-oro">
+        <button type="submit" className="boton boton-negro">
           Buscar
         </button>
       </form>

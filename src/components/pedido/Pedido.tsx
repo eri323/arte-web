@@ -1,7 +1,7 @@
 import { useStore } from '@nanostores/react';
 import { useEffect, useMemo, useState, type FormEvent } from 'react';
 import { negocio } from '../../config/negocio';
-import ArteCatalogo from '../catalogo/ArteCatalogo';
+import ArteCatalogo, { VARIANTES, type VarianteId } from '../catalogo/ArteCatalogo';
 import { obtenerAlmacen } from '../../lib/almacen';
 import { etiquetaMedida, formatearPesos } from '../../lib/formato';
 import { crearPedido, siguienteNumero, type Cliente } from '../../lib/pedidos';
@@ -29,7 +29,13 @@ function Miniatura({ item }: { item: ItemCarrito }) {
         {diseno?.foto ? (
           <img src={diseno.foto.src} alt={diseno.foto.alt} className="size-full object-cover" />
         ) : (
-          <ArteCatalogo disenoId={item.disenoId} titulo={`Diseño ${item.archivo}`} />
+          <ArteCatalogo
+            disenoId={item.disenoId}
+            titulo={`Diseño ${item.archivo}`}
+            variante={
+              VARIANTES.some((v) => v.id === item.variante) ? (item.variante as VarianteId) : 'orig'
+            }
+          />
         )}
       </div>
     );
@@ -145,9 +151,7 @@ export default function Pedido() {
     return (
       <div className="flex flex-col gap-6" role="status">
         <div className="rounded-lg border border-acento/50 bg-acento/10 p-5">
-          <h2 className="font-display text-3xl font-semibold text-acento-fuerte">
-            Tu pedido {confirmado.numero} quedó registrado
-          </h2>
+          <h2 className="font-display text-3xl">Tu pedido {confirmado.numero} quedó registrado</h2>
           <p className="mt-2">
             {demo
               ? `${AVISO_DEMO} Aquí puedes ver el mensaje que le llegaría.`
@@ -165,7 +169,7 @@ export default function Pedido() {
           )}
           <a
             href={`/seguimiento?numero=${encodeURIComponent(confirmado.numero)}`}
-            className="mt-4 inline-flex min-h-11 items-center boton boton-oro"
+            className="mt-4 inline-flex min-h-11 items-center boton boton-negro"
           >
             Ver el seguimiento
           </a>
@@ -182,7 +186,7 @@ export default function Pedido() {
     return (
       <div className="rounded-lg border border-linea p-6 text-center">
         <p>Tu pedido está vacío.</p>
-        <a href="/crear" className="mt-4 inline-flex min-h-11 items-center boton boton-oro">
+        <a href="/crear" className="mt-4 inline-flex min-h-11 items-center boton boton-negro">
           Crear mi cuadro
         </a>
       </div>
@@ -193,7 +197,7 @@ export default function Pedido() {
     <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
       <div className="flex flex-col gap-6">
         <section aria-labelledby="cuadros">
-          <h2 id="cuadros" className="mb-3 font-display text-2xl font-semibold text-acento-fuerte">
+          <h2 id="cuadros" className="mb-3 font-display text-2xl">
             Tus cuadros
           </h2>
           {miniaturasPerdidas && (
@@ -268,7 +272,7 @@ export default function Pedido() {
           aria-labelledby="desglose"
           className="rounded-lg border border-linea bg-superficie p-4"
         >
-          <h2 id="desglose" className="mb-3 font-display text-2xl font-semibold text-acento-fuerte">
+          <h2 id="desglose" className="mb-3 font-display text-2xl">
             Desglose
           </h2>
           <div className="flex flex-col gap-1">
@@ -323,7 +327,7 @@ export default function Pedido() {
 
       <div className="flex flex-col gap-6">
         <form onSubmit={pedir} className="flex flex-col gap-4" aria-labelledby="tus-datos">
-          <h2 id="tus-datos" className="font-display text-2xl font-semibold text-acento-fuerte">
+          <h2 id="tus-datos" className="font-display text-2xl">
             Tus datos
           </h2>
           {(
@@ -381,7 +385,7 @@ export default function Pedido() {
 function VistaMensaje({ mensaje }: { mensaje: string }) {
   return (
     <section aria-labelledby="mensaje">
-      <h2 id="mensaje" className="mb-2 font-display text-2xl font-semibold text-acento-fuerte">
+      <h2 id="mensaje" className="mb-2 font-display text-2xl">
         Mensaje para el taller
       </h2>
       <pre

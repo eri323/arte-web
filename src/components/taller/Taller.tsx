@@ -55,7 +55,7 @@ export default function Taller() {
         className="grid gap-6 lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)]"
       >
         <div>
-          <h2 id="pedidos" className="mb-3 font-display text-3xl font-semibold text-acento-fuerte">
+          <h2 id="pedidos" className="mb-3 font-display text-3xl">
             Pedidos
           </h2>
           {pedidos === null ? (
@@ -111,7 +111,7 @@ export default function Taller() {
       </section>
 
       <section aria-labelledby="precios">
-        <h2 id="precios" className="mb-1 font-display text-3xl font-semibold text-acento-fuerte">
+        <h2 id="precios" className="mb-1 font-display text-3xl">
           Precios y promociones
         </h2>
         <p className="mb-4 text-texto-suave">
@@ -121,10 +121,7 @@ export default function Taller() {
       </section>
 
       <section aria-labelledby="colores-titulo" id="colores" className="scroll-mt-6">
-        <h2
-          id="colores-titulo"
-          className="mb-1 font-display text-3xl font-semibold text-acento-fuerte"
-        >
+        <h2 id="colores-titulo" className="mb-1 font-display text-3xl">
           Colores de la marca
         </h2>
         <p className="mb-4 text-texto-suave">

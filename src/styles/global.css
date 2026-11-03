@@ -1,6 +1,9 @@
-/* Big Shoulders Display para gritar (condensada, en mayúsculas) y Manrope para leer. */
+/* Galería contemporánea + tienda de interiores (ver DESIGN.md).
+   Newsreader (serif editorial) para titulares, Libre Franklin para leer y navegar.
+   Big Shoulders Display solo vive dentro del arte generado de los diseños. */
+@import '@fontsource-variable/newsreader/opsz.css';
+@import '@fontsource-variable/libre-franklin';
 @import '@fontsource-variable/big-shoulders-display';
-@import '@fontsource-variable/manrope';
 @import 'tailwindcss';
 
 /* Los valores de --marca-* los declara Base.astro a partir de negocio.ts. */
@@ -16,14 +19,17 @@
   --color-linea: var(--marca-linea);
   --color-linea-fuerte: var(--marca-linea-fuerte);
   --color-cinta: var(--marca-cinta);
-  --font-sans: 'Manrope Variable', system-ui, -apple-system, 'Segoe UI', sans-serif;
-  --font-display: 'Big Shoulders Display Variable', Impact, 'Arial Narrow', sans-serif;
+  --font-sans: 'Libre Franklin Variable', 'Helvetica Neue', Arial, sans-serif;
+  --font-display: 'Newsreader Variable', Georgia, 'Times New Roman', serif;
 }
 
 @theme {
+  /* La letra condensada de los afiches: solo dentro del arte de los diseños. */
+  --font-cartel: 'Big Shoulders Display Variable', Impact, 'Arial Narrow', sans-serif;
   /* La tira LED del cuarto: solo luz y decoración, nunca texto pequeño. No se edita en el panel. */
   --color-led: #ff2d20;
   --ease-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-suave: cubic-bezier(0.22, 0.61, 0.36, 1);
 }
 
 @layer base {
@@ -36,16 +42,17 @@
     background-color: var(--color-fondo);
     color: var(--color-texto);
     font-family: var(--font-sans);
-    font-size: 1.0625rem;
-    line-height: 1.55;
+    font-size: 1rem;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
   }
   :focus-visible {
-    outline: 2px solid var(--color-acento-fuerte);
-    outline-offset: 3px;
+    outline: 1px solid currentColor;
+    outline-offset: 4px;
   }
   ::selection {
-    background-color: var(--color-acento);
-    color: var(--color-sobre-acento);
+    background-color: var(--color-texto);
+    color: var(--color-fondo);
   }
   @media (prefers-reduced-motion: reduce) {
     html {
@@ -54,71 +61,122 @@
   }
 }
 
-/* Títulos de cartel: condensada, negra y en mayúsculas. */
+/* Titulares: serif de contraste medio, peso 500, en minúsculas normales. */
 @utility font-display {
   font-family: var(--font-display);
-  font-weight: 900;
-  text-transform: uppercase;
-  letter-spacing: 0.005em;
-  line-height: 0.9;
+  font-weight: 500;
+  font-optical-sizing: auto;
+  letter-spacing: -0.01em;
+  line-height: 1.08;
   text-wrap: balance;
 }
 
-/* El grito de la portada y del cierre. Una sola vez por pantalla. */
+/* El titular de la portada y del cierre. */
 @utility texto-cartel {
   font-family: var(--font-display);
-  font-weight: 900;
-  text-transform: uppercase;
-  line-height: 0.9;
-  font-size: clamp(3.4rem, 8.6vw, 7.75rem);
+  font-weight: 500;
+  font-optical-sizing: auto;
+  letter-spacing: -0.01em;
+  line-height: 1.08;
+  font-size: clamp(2.125rem, 3.8vw, 3.25rem);
   text-wrap: balance;
+}
+
+/* Títulos de sección. */
+@utility titulo-seccion {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-optical-sizing: auto;
+  letter-spacing: -0.01em;
+  line-height: 1.08;
+  font-size: clamp(2rem, 3.6vw, 3rem);
+  text-wrap: balance;
+}
+
+/* Antetítulo: versalitas espaciadas con una raya delante. */
+@utility antetitulo {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1.125rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--color-texto-suave);
+  &::before {
+    content: '';
+    width: 28px;
+    height: 1px;
+    background: currentColor;
+  }
 }
 
 /* Medidas y datos pequeños: tabulares, para que las cifras no bailen. */
 @utility lapiz {
-  font-weight: 700;
+  font-weight: 600;
   font-size: 0.8125rem;
   letter-spacing: 0.06em;
   line-height: 1.2;
   font-variant-numeric: tabular-nums;
 }
 
-/* Un cuadro colgado: sombra dura de afiche y el resplandor del cuarto. */
+/* Un cuadro físico: canto duro y sombra suave. Las sombras solo van en objetos. */
 @utility sombra-cuadro {
   box-shadow:
-    0 2px 3px rgb(6 4 3 / 0.55),
-    0 22px 32px -12px rgb(6 4 3 / 0.9);
+    3px 3px 0 #1c1815,
+    0 18px 28px -16px rgb(11 10 9 / 0.5);
 }
 
 @utility sombra-acrilico {
   box-shadow:
-    0 0 0 1px rgb(240 236 228 / 0.25),
-    0 3px 4px rgb(6 4 3 / 0.6),
-    0 26px 38px -12px rgb(6 4 3 / 0.95);
+    3px 3px 0 rgb(210 235 240 / 0.4),
+    0 0 0 1px rgb(255 255 255 / 0.25),
+    0 22px 32px -14px rgb(6 4 3 / 0.75);
 }
 
-/* Botón principal: pastilla de 48 px. */
+/* Botón: rectángulo sobrio de 48 px. */
 @utility boton {
+  position: relative;
   display: inline-flex;
   min-height: 3rem;
   align-items: center;
   justify-content: center;
-  gap: 0.625rem;
-  border-radius: 999px;
-  padding-inline: 1.5rem;
-  font-weight: 800;
-  font-size: 0.9375rem;
+  gap: 0.75rem;
+  border: 1px solid transparent;
+  border-radius: 2px;
+  padding: 0.75rem 1.375rem;
+  font-weight: 600;
+  font-size: 0.875rem;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
   text-decoration: none;
   transition:
-    background-color 200ms ease-out,
-    box-shadow 200ms ease-out,
-    transform 200ms ease-out;
+    background-color 300ms var(--ease-suave),
+    color 300ms var(--ease-suave),
+    border-color 300ms var(--ease-suave);
   &:active {
     transform: translateY(1px);
   }
+  & .flecha {
+    display: inline-block;
+    transition: transform 350ms var(--ease-suave);
+  }
+  &:hover .flecha {
+    transform: translateX(4px);
+  }
 }
 
-/* El botón dorado: plano; con el cursor pasa al oro claro. */
+/* La acción principal: relleno de tinta. */
+@utility boton-negro {
+  background-color: var(--color-texto);
+  color: var(--color-fondo);
+  &:hover {
+    background-color: color-mix(in srgb, var(--color-texto) 85%, var(--color-fondo));
+  }
+}
+
+/* El dorado se reserva para pedir. */
 @utility boton-oro {
   background-color: var(--color-acento);
   color: var(--color-sobre-acento);
@@ -127,32 +185,39 @@
   }
 }
 
-/* Botón de contorno, para la acción secundaria. */
+/* Contorno: acción secundaria. Al pasar el cursor se rellena. */
 @utility boton-linea {
   background: transparent;
-  color: var(--color-texto);
-  box-shadow: inset 0 0 0 1.5px var(--color-linea-fuerte);
+  color: inherit;
+  border-color: currentColor;
   &:hover {
-    box-shadow: inset 0 0 0 1.5px var(--color-texto);
+    background-color: var(--color-texto);
+    border-color: var(--color-texto);
+    color: var(--color-fondo);
   }
 }
 
-/* Enlace secundario: subrayado del color de firma, sin caja. */
+/* Enlace de texto: raya de 1 px que se recoge al pasar el cursor. */
 @utility enlace-fuerte {
   display: inline-flex;
   min-height: 2.75rem;
   align-items: center;
-  font-weight: 800;
-  text-decoration-line: underline;
-  text-decoration-color: var(--color-acento);
-  text-decoration-thickness: 2px;
-  text-underline-offset: 6px;
+  gap: 0.5rem;
+  font-weight: 600;
+  font-size: 0.875rem;
+  text-decoration: none;
+  background-image: linear-gradient(currentColor, currentColor);
+  background-size: 100% 1px;
+  background-repeat: no-repeat;
+  background-position: 0 calc(50% + 0.85em);
+  transition: background-size 400ms var(--ease-suave);
   &:hover {
-    text-decoration-thickness: 3px;
+    background-size: 0 1px;
+    background-position: 100% calc(50% + 0.85em);
   }
 }
 
-/* ---------- Portada: el abanico de cuadros y la tira LED ---------- */
+/* ---------- Portada: el abanico de cuadros ---------- */
 
 @property --abre {
   syntax: '<number>';
@@ -162,21 +227,14 @@
 
 @keyframes abrir-abanico {
   from {
-    --abre: 0.1;
-  }
-}
-
-@keyframes subir {
-  from {
-    opacity: 0;
-    transform: translateY(28px);
+    --abre: 0;
   }
 }
 
 @keyframes aparecer {
   from {
     opacity: 0;
-    transform: translateY(32px);
+    transform: translateY(16px);
   }
 }
 
@@ -190,50 +248,86 @@
 .carta {
   z-index: var(--z);
   transform: translateX(calc(var(--i) * var(--sep) * var(--abre)))
-    translateY(calc(var(--i2) * 5px * var(--abre))) rotate(calc(var(--i) * 6deg * var(--abre)));
+    translateY(calc(var(--i2) * 7px * var(--abre))) rotate(calc(var(--i) * 5deg * var(--abre)))
+    scale(calc(1 - var(--d) * 0.035));
 }
 
 .carta .alza {
-  transition: transform 300ms var(--ease-expo);
+  transition:
+    transform 500ms var(--ease-suave),
+    box-shadow 500ms var(--ease-suave);
 }
 
 .carta:hover,
-.carta:focus-visible {
-  z-index: 20;
+.carta:focus-within {
+  z-index: 30;
 }
 
 .carta:hover .alza,
-.carta:focus-visible .alza {
-  transform: translateY(-18px) rotate(calc(var(--i) * -3deg));
+.carta:focus-within .alza {
+  transform: translateY(-12px) scale(1.03);
+  box-shadow:
+    3px 3px 0 #1c1815,
+    0 30px 40px -18px rgb(11 10 9 / 0.55);
 }
 
 .carta .tip {
   opacity: 0;
-  transition: opacity 200ms;
+  transition: opacity 350ms var(--ease-suave);
 }
 
 .carta:hover .tip,
-.carta:focus-visible .tip {
+.carta:focus-within .tip {
   opacity: 1;
 }
 
 @media (prefers-reduced-motion: no-preference) {
   .abanico {
-    animation: abrir-abanico 1100ms var(--ease-expo) 200ms both;
+    animation: abrir-abanico 1200ms var(--ease-suave) 200ms both;
   }
   .carta {
-    transition: transform 700ms var(--ease-expo);
+    transition: transform 1200ms var(--ease-suave);
   }
-  .entra-subiendo {
-    animation: subir 800ms var(--ease-expo) both;
-    animation-delay: var(--retraso, 0ms);
-  }
-  /* Las secciones aparecen al entrar en pantalla donde el navegador lo soporta; si no, quietas. */
+  /* Las secciones aparecen una vez al entrar en pantalla donde el navegador lo soporta. */
   @supports (animation-timeline: view()) {
     .aparece {
       animation: aparecer linear both;
       animation-timeline: view();
-      animation-range: entry 0% entry 40%;
+      animation-range: entry 0% entry 35%;
     }
   }
+}
+
+/* ---------- Bandas de noche ---------- */
+
+/* La pared, el proceso, el cierre y el footer van de noche (tinta con el oro claro del logo),
+   aunque el resto del sitio sea claro: el LED solo se luce a oscuras. Las clases de Tailwind leen
+   --marca-* y las utilidades propias (boton-oro…) leen --color-*, que se resolvió en :root; por
+   eso se redefinen las dos aquí. Contraste: texto 15:1, texto suave 6.9:1, oro 10:1. */
+.noche {
+  --marca-fondo: #0b0a09;
+  --marca-superficie: #151210;
+  --marca-texto: #f3ece0;
+  --marca-texto-suave: #9f978c;
+  --marca-acento: #e3b54a;
+  --marca-acento-fuerte: #e3b54a;
+  --marca-sobre-acento: #0b0a09;
+  --marca-acento-hover: #f1d186;
+  --marca-linea: #f3ece024;
+  --marca-linea-fuerte: #f3ece040;
+  --marca-cinta: #f1d186;
+  --color-fondo: var(--marca-fondo);
+  --color-superficie: var(--marca-superficie);
+  --color-texto: var(--marca-texto);
+  --color-texto-suave: var(--marca-texto-suave);
+  --color-acento: var(--marca-acento);
+  --color-acento-fuerte: var(--marca-acento-fuerte);
+  --color-sobre-acento: var(--marca-sobre-acento);
+  --color-acento-hover: var(--marca-acento-hover);
+  --color-linea: var(--marca-linea);
+  --color-linea-fuerte: var(--marca-linea-fuerte);
+  --color-cinta: var(--marca-cinta);
+  color-scheme: dark;
+  background-color: var(--color-fondo);
+  color: var(--color-texto);
 }

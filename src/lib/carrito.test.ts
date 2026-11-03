@@ -26,6 +26,16 @@ describe('sanearCarrito', () => {
     expect(sanearCarrito([diseno, { ...valido, disenoId: 7 }], ids)).toEqual([diseno]);
   });
 
+  it('acepta la variante de color y descarta una que no es texto', () => {
+    const conColor = {
+      ...valido,
+      archivo: 'Ronin en rojo led',
+      disenoId: 'ronin',
+      variante: 'led',
+    };
+    expect(sanearCarrito([conColor, { ...conColor, variante: 3 }], ids)).toEqual([conColor]);
+  });
+
   it.each([
     ['medida que ya no existe', { ...valido, medidaId: '120x160' }],
     ['cantidad cero', { ...valido, cantidad: 0 }],

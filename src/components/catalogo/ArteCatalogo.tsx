@@ -5,24 +5,110 @@ import { useId, type ReactNode } from 'react';
 // bien en cualquier medida. Un taller real reemplaza esto con las fotos de su catálogo
 // (`negocio.catalogo[].foto`).
 
-const FUENTE = 'var(--font-display)';
+const FUENTE = 'var(--font-cartel)';
 
-type Estilo =
-  | { d: 'sol'; bg: string; fg: string; t: string; s: string }
-  | { d: 'billete'; t: string; s: string }
-  | { d: 'neon'; fg: string; lineas: string[]; s: string; size?: number }
-  | { d: 'tipo'; bg: string; fg: string; ac: string; lineas: string[]; s: string }
-  | { d: 'pop'; bg: string; dot: string; fg: string; ac: string; t: string }
-  | {
-      d: 'sunset';
-      cielo: string[];
-      sol: string;
-      bg: string;
-      fg: string;
-      t: string;
-      s: string;
-    }
-  | { d: 'vinilo'; bg: string; fg: string; ac: string; t: string; s: string };
+/** Colores que una variante puede cambiar en cualquier dibujo. */
+interface Extra {
+  marco?: string;
+  linea?: string;
+  /** Núcleo blanco del neón; `null` lo quita (en fondos claros no se ve). */
+  core?: string | null;
+  sub?: string;
+  surco?: string;
+  borde?: string;
+}
+
+type Estilo = Extra &
+  (
+    | { d: 'sol'; bg: string; fg: string; t: string; s: string }
+    | { d: 'billete'; bg?: string; fg?: string; t: string; s: string }
+    | { d: 'neon'; bg?: string; fg: string; lineas: string[]; s: string; size?: number }
+    | { d: 'tipo'; bg: string; fg: string; ac: string; lineas: string[]; s: string }
+    | { d: 'pop'; bg: string; dot: string; fg: string; ac: string; t: string }
+    | {
+        d: 'sunset';
+        cielo: string[];
+        sol: string;
+        bg: string;
+        fg: string;
+        t: string;
+        s: string;
+      }
+    | { d: 'vinilo'; bg: string; fg: string; ac: string; t: string; s: string }
+  );
+
+export type VarianteId = 'orig' | 'oro' | 'led' | 'bn';
+
+interface Variante {
+  id: VarianteId;
+  nombre: string;
+  colores: Partial<{
+    bg: string;
+    fg: string;
+    ac: string;
+    dot: string;
+    cielo: string[];
+    sol: string;
+  }> &
+    Extra;
+}
+
+// La misma idea en otros colores, para mostrar que todo se adapta al espacio del cliente.
+export const VARIANTES: Variante[] = [
+  { id: 'orig', nombre: 'Original', colores: {} },
+  {
+    id: 'oro',
+    nombre: 'Negro y dorado',
+    colores: {
+      bg: '#0d0b09',
+      fg: '#E7B94C',
+      ac: '#F6D88B',
+      dot: '#2b2110',
+      cielo: ['#14100a', '#4a3714', '#c9952f'],
+      sol: '#F6D88B',
+      marco: '#E7B94C',
+      linea: 'rgba(231,185,76,.25)',
+      borde: '#E7B94C',
+    },
+  },
+  {
+    id: 'led',
+    nombre: 'Rojo LED',
+    colores: {
+      bg: '#110606',
+      fg: '#FF2D20',
+      ac: '#ffd5cf',
+      dot: '#4a100c',
+      cielo: ['#160606', '#6e0d08', '#ff3b2b'],
+      sol: '#ffd5cf',
+      marco: '#FF2D20',
+      linea: 'rgba(255,45,32,.25)',
+      borde: '#FF2D20',
+    },
+  },
+  {
+    id: 'bn',
+    nombre: 'Blanco y negro',
+    colores: {
+      bg: '#f1ece4',
+      fg: '#0b0a09',
+      ac: '#0b0a09',
+      dot: '#cfc8bc',
+      cielo: ['#f4f0ea', '#c9c3b8', '#77726b'],
+      sol: '#ffffff',
+      marco: '#0b0a09',
+      linea: 'rgba(11,10,9,.22)',
+      core: null,
+      sub: 'rgba(0,0,0,.55)',
+      surco: 'rgba(0,0,0,.12)',
+      borde: '#0b0a09',
+    },
+  },
+];
+
+export function nombreVariante(id: VarianteId): string {
+  return VARIANTES.find((v) => v.id === id)?.nombre ?? 'Original';
+}
 
 // SUPUESTO: diseños de ejemplo, inventados para la demo.
 const ESTILOS: Record<string, Estilo> = {
@@ -159,15 +245,20 @@ function dibujar(e: Estilo, id: string): ReactNode {
     case 'billete':
       return (
         <>
-          <rect width="600" height="800" fill="#1f3a2c" />
-          <path d={ANILLOS.join('')} fill="none" stroke="rgba(210,230,200,.22)" strokeWidth="1.2" />
+          <rect width="600" height="800" fill={e.bg ?? '#1f3a2c'} />
+          <path
+            d={ANILLOS.join('')}
+            fill="none"
+            stroke={e.linea ?? 'rgba(210,230,200,.22)'}
+            strokeWidth="1.2"
+          />
           <rect
             x="30"
             y="30"
             width="540"
             height="740"
             fill="none"
-            stroke="#E7B94C"
+            stroke={e.marco ?? '#E7B94C'}
             strokeWidth="6"
           />
           <rect
@@ -176,16 +267,16 @@ function dibujar(e: Estilo, id: string): ReactNode {
             width="508"
             height="708"
             fill="none"
-            stroke="#E7B94C"
+            stroke={e.marco ?? '#E7B94C'}
             strokeWidth="1.5"
           />
-          <Texto y={470} size={230} color="#e9e2c8">
+          <Texto y={470} size={230} color={e.fg ?? '#e9e2c8'}>
             {e.t}
           </Texto>
-          <Texto y={120} size={48} color="#E7B94C">
+          <Texto y={120} size={48} color={e.marco ?? '#E7B94C'}>
             {e.s}
           </Texto>
-          <Texto y={720} size={26} color="#cfd8c4" peso={800}>
+          <Texto y={720} size={26} color={e.fg ?? '#cfd8c4'} peso={800}>
             CUATRO · CUATRO · CUATRO
           </Texto>
         </>
@@ -221,11 +312,11 @@ function dibujar(e: Estilo, id: string): ReactNode {
               <feGaussianBlur stdDeviation="14" />
             </filter>
           </defs>
-          <rect width="600" height="800" fill={`url(#${id}-f)`} />
+          <rect width="600" height="800" fill={e.bg ?? `url(#${id}-f)`} />
           <g filter={`url(#${id}-n)`}>{lineas(e.fg, 10)}</g>
           {lineas(e.fg, 4)}
-          {lineas('#fff', 1.5)}
-          <Texto y={740} size={30} color="rgba(255,255,255,.6)" peso={800}>
+          {e.core !== null && lineas(e.core ?? '#fff', 1.5)}
+          <Texto y={740} size={30} color={e.sub ?? 'rgba(255,255,255,.6)'} peso={800}>
             {e.s}
           </Texto>
         </>
@@ -279,14 +370,21 @@ function dibujar(e: Estilo, id: string): ReactNode {
           {[0, 1, 2, 3].map((i) => (
             <rect key={i} y={i * 198} width="600" height="206" fill={`url(#${id}-p${i})`} />
           ))}
-          <circle cx="320" cy="330" r="190" fill={e.fg} stroke="#111" strokeWidth="10" />
+          <circle
+            cx="320"
+            cy="330"
+            r="190"
+            fill={e.fg}
+            stroke={e.borde ?? '#111'}
+            strokeWidth="10"
+          />
           <circle cx="250" cy="260" r="48" fill="rgba(255,255,255,.55)" />
           <rect
             x="50"
             y="570"
             width="500"
             height="120"
-            fill="#111"
+            fill={e.borde ?? '#111'}
             transform="rotate(-3.4 300 640)"
           />
           <Texto y={665} size={120} color={e.ac}>
@@ -329,7 +427,7 @@ function dibujar(e: Estilo, id: string): ReactNode {
               cy="330"
               r={r}
               fill="none"
-              stroke={r % 12 ? 'rgba(255,255,255,.06)' : 'rgba(255,255,255,.12)'}
+              stroke={e.surco ?? (r % 12 ? 'rgba(255,255,255,.06)' : 'rgba(255,255,255,.12)')}
             />
           ))}
           <circle cx="300" cy="330" r="80" fill={e.ac} />
@@ -350,11 +448,21 @@ interface Props {
   /** Nombre del diseño. Sin él, el arte es decorativo (aria-hidden). */
   titulo?: string;
   className?: string;
+  /** La misma idea en otros colores. */
+  variante?: VarianteId;
 }
 
-export default function ArteCatalogo({ disenoId, titulo, className = '' }: Props) {
+export default function ArteCatalogo({
+  disenoId,
+  titulo,
+  className = '',
+  variante = 'orig',
+}: Props) {
   const id = `arte-${useId().replace(/[^a-zA-Z0-9-]/g, '')}`;
-  const estilo = ESTILOS[disenoId] ?? GENERICO;
+  const base = ESTILOS[disenoId] ?? GENERICO;
+  const colores = VARIANTES.find((v) => v.id === variante)?.colores ?? {};
+  // Cada dibujo toma solo los colores que usa; los demás campos sobran y no estorban.
+  const estilo = { ...base, ...colores } as Estilo;
   return (
     <svg
       viewBox="0 0 600 800"

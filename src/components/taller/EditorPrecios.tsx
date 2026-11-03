@@ -52,10 +52,7 @@ function FilaPrecio({ medida }: { medida: Medida }) {
   return (
     <fieldset className="grid gap-2 rounded-lg border border-linea p-3 sm:grid-cols-[6rem_1fr_1fr_1fr_1fr_auto] sm:items-end">
       <legend className="sr-only">Medida {etiqueta}</legend>
-      <p
-        className="font-display text-xl font-semibold text-acento-fuerte sm:self-center"
-        aria-hidden="true"
-      >
+      <p className="font-display text-xl sm:self-center" aria-hidden="true">
         {etiqueta}
       </p>
       <label className="flex flex-col gap-1">

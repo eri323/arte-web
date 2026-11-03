@@ -68,6 +68,8 @@ export interface Negocio {
    */
   vitrina: {
     titular: string;
+    /** Segunda parte del titular, en gris. */
+    titularSuave?: string;
     bajada: string;
     fotoPortada?: FotoVitrina;
     /** Una foto por cuadro de la pared de galería, en el mismo orden. */
@@ -97,27 +99,28 @@ export const negocio: Negocio = {
     nombre: 'Midas Atelier',
     eslogan: 'Cuadros en MDF y acrílico · Envíos a todo Colombia',
     prefijoPedido: 'MA',
-    // Paleta clara: papel cálido, tinta y el oro del logo (ver DESIGN.md). Contraste verificado:
-    // texto sobre fondo 16:1, oro contra la pared 3.2:1, texto sobre el oro 5:1 y acentoFuerte
-    // (oro para texto pequeño) 5.6:1.
+    // Galería clara: papel cálido, tinta y el oro del logo (ver DESIGN.md). Contraste verificado:
+    // texto sobre fondo 18:1, texto suave 5.2:1, acentoFuerte (oro para texto pequeño) 5.4:1 y el
+    // oro contra la pared 3.2:1. En las bandas oscuras se usa el oro claro del logo (#e3b54a).
     colores: {
-      fondo: '#f5f1ea',
-      superficie: '#e8e4dd',
-      texto: '#1a1612',
-      textoSuave: '#67635e',
+      fondo: '#f4f1eb',
+      superficie: '#eae5dc',
+      texto: '#0b0a09',
+      textoSuave: '#6b645c',
       acento: '#b07d1f',
-      acentoFuerte: '#835e1b',
-      sobreAcento: '#1a1612',
-      acentoHover: '#bc9244',
-      linea: '#1a161226',
-      lineaFuerte: '#1a161240',
-      cinta: '#e7b94c',
+      acentoFuerte: '#7d5d1b',
+      sobreAcento: '#0b0a09',
+      acentoHover: '#c39a4c',
+      linea: '#0b0a0924',
+      lineaFuerte: '#0b0a0940',
+      cinta: '#e3b54a',
     },
   },
   vitrina: {
-    titular: 'Cuadros que se roban el cuarto.',
+    titular: 'Tu espacio,',
+    titularSuave: 'a tu estilo.',
     bajada:
-      'En MDF o acrílico, hechos a mano en el taller. Escoge un diseño del catálogo o trae tu foto, y míralo colgado en tu pared antes de pedir.',
+      'Inspírate con nuestros diseños o crea uno desde cero. Lo hacemos a mano y lo enviamos a todo Colombia.',
   },
   // SUPUESTO: diseños, nombres y categorías de ejemplo, con arte generado en SVG. El taller pone las
   // fotos reales de su catálogo en `foto`. El precio es el de la medida elegida (no hay recargo por

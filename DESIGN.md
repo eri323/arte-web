@@ -1,131 +1,133 @@
 ---
 name: Midas Atelier (propuesta web sobre arte-web)
-description: Cuarto oscuro iluminado por LED rojo. El dorado del logo solo en lo que importa.
+description: Galería contemporánea + tienda de interiores. Tinta y papel; el oro del logo para pedir; el rojo LED solo en la pared.
 colors:
-  papel: '#f5f1ea'
-  papel-sombra: '#e8e4dd'
-  tinta: '#1a1612'
-  tinta-suave: '#67635e'
+  papel: '#f4f1eb'
+  papel-sombra: '#eae5dc'
+  tinta: '#0b0a09'
+  tinta-suave: '#6b645c'
   oro: '#b07d1f'
-  oro-texto: '#835e1b'
-  oro-hover: '#bc9244'
+  oro-texto: '#7d5d1b'
   noche: '#0b0a09'
-  oro-noche: '#e7b94c'
+  oro-noche: '#e3b54a'
+  hueso: '#f3ece0'
   led: '#ff2d20'
 typography:
   display:
-    fontFamily: 'Big Shoulders Display Variable, Impact, Arial Narrow, sans-serif'
-    fontSize: 'clamp(3.6rem, 11vw, 10.5rem)'
-    fontWeight: 900
-    lineHeight: 0.9
-    textTransform: uppercase
+    fontFamily: 'Newsreader Variable, Georgia, serif'
+    fontSize: 'clamp(2.125rem, 3.8vw, 3.25rem)'
+    fontWeight: 500
+    lineHeight: 1.08
   headline:
-    fontFamily: 'Big Shoulders Display Variable, Impact, sans-serif'
-    fontSize: 'clamp(2.75rem, 7vw, 5.75rem)'
-    fontWeight: 900
-    lineHeight: 0.9
-    textTransform: uppercase
+    fontFamily: 'Newsreader Variable, Georgia, serif'
+    fontSize: 'clamp(2rem, 3.6vw, 3rem)'
+    fontWeight: 500
+    lineHeight: 1.08
   body:
-    fontFamily: 'Manrope Variable, system-ui, sans-serif'
-    fontSize: '1.0625rem'
+    fontFamily: 'Libre Franklin Variable, Helvetica Neue, Arial, sans-serif'
+    fontSize: '1rem'
     fontWeight: 400
-    lineHeight: 1.55
+    lineHeight: 1.65
   antetitulo:
-    fontFamily: 'Manrope Variable, system-ui, sans-serif'
+    fontFamily: 'Libre Franklin Variable, sans-serif'
     fontSize: '0.75rem'
-    fontWeight: 800
-    letterSpacing: '0.22em'
+    fontWeight: 600
+    letterSpacing: '0.18em'
     textTransform: uppercase
 rounded:
-  boton: '999px'
-  panel: '16–20px'
+  boton: '2px'
+  panel: '0'
 components:
   button-primary:
-    backgroundColor: '{colors.oro}'
-    textColor: '{colors.negro}'
+    backgroundColor: '{colors.tinta}'
+    textColor: '{colors.papel}'
     rounded: '{rounded.boton}'
     height: '48px'
-  button-primary-hover:
-    backgroundColor: '{colors.oro-claro}'
+  button-pedir:
+    backgroundColor: '{colors.oro-noche}'
+    textColor: '{colors.noche}'
   button-secondary:
     backgroundColor: 'transparent'
-    textColor: '{colors.hueso}'
-    border: 'inset 1.5px {colors.linea-fuerte}'
+    border: '1px currentColor'
 ---
 
 # Design System: Midas Atelier
 
-Rediseño del 3-nov-2026, a partir de la propuesta `midas-atelier-propuesta.html`. Reemplaza el sistema
-«estudio de afiches de barrio» de Áurea Estudio.
+Rediseño del 3-nov-2026 (segunda versión), a partir de `midas-atelier-propuesta.html`. Reemplaza la
+versión de cartel condensado (Big Shoulders + Manrope, botones en pastilla).
 
 ## 1. Overview
 
-**Creative North Star: "Papel claro de día, el cuarto con LED de noche"**
+**Creative North Star: "Una galería que también te cuelga el cuadro"**
 
-El sitio es claro: papel cálido y tinta, con el oro del logo. La noche aparece donde el producto se
-luce: la pared donde se cuelga el cuadro (`#pared`) es una banda oscura con LED, y los montajes y la
-foto del celular muestran cuartos oscuros. La tira LED de la portada y del cierre es una línea
-encendida, no una mancha de color.
+Galería contemporánea con algo de tienda de interiores. La tinta ordena (bloques, botones, texto), el
+oro del logo se reserva para pedir y el rojo LED es solo ambiente de la pared.
 
-- Tema claro (`color-scheme: light`), sin grano ni texturas decorativas.
-- El oro solo en el logo, los precios, el botón principal y la barra del abono. Los títulos van en tinta.
-- Excepción a propósito: la pared conserva su versión de noche (línea «Ver en tu pared» y «Míralo **antes** de pedir» con la palabra en oro). Fue elección de Erick.
-- Portada asimétrica: titular a la izquierda, cuadros colgados sobre la tira a la derecha.
-- Movimiento con ease-out expo. El único «rebote» es el columpio del cuadro en su clavo.
+- Tema claro de papel; bandas de noche en la pared, el proceso, el cierre y el footer (`.noche`).
+- Serif editorial de contraste medio para titulares (voz de galería); sans clásica para leer y navegar.
+- Esquinas rectas (2 px en botones). Líneas de 1 px para ordenar en vez de tarjetas.
+- Sombras solo donde hay un objeto físico: los cuadros.
+- Títulos en dos tonos: la primera parte en tinta y la segunda en `texto-suave` («Tu espacio, _a tu estilo_»).
+- Portada centrada: titular, dos botones y el abanico de nueve cuadros debajo.
+- Movimiento con ease-out suave (`--ease-suave`). El único «rebote» es el columpio del cuadro en su clavo.
 
 ## 2. Colors
 
 Los del sitio salen de `negocio.marca.colores` (variables `--marca-*`), así el panel los puede cambiar.
 
-| Token          | Valor     | Uso                                                  |
-| -------------- | --------- | ---------------------------------------------------- |
-| `fondo`        | `#f5f1ea` | Papel: fondo general.                                |
-| `superficie`   | `#e8e4dd` | Bandas alternas y paneles.                           |
-| `texto`        | `#1a1612` | Tinta (16:1 sobre fondo).                            |
-| `textoSuave`   | `#67635e` | Texto secundario (≥ 4,5:1 sobre fondo y superficie). |
-| `acento`       | `#b07d1f` | Oro: botón, barra del abono (3,2:1 contra el papel). |
-| `acentoFuerte` | `#835e1b` | Oro para texto pequeño: precios, enlaces (5,6:1).    |
-| `sobreAcento`  | `#1a1612` | Texto sobre el oro (5:1).                            |
-| `acentoHover`  | `#bc9244` | Hover del botón.                                     |
-| `led` (fijo)   | `#ff2d20` | Luz del cuarto. Token de Tailwind, no editable.      |
+| Token          | Valor     | Uso                                                                                       |
+| -------------- | --------- | ----------------------------------------------------------------------------------------- |
+| `fondo`        | `#f4f1eb` | Papel: fondo general.                                                                     |
+| `superficie`   | `#eae5dc` | Fondo de las fotos y paneles.                                                             |
+| `texto`        | `#0b0a09` | Tinta: texto, botón principal (18:1 sobre el papel).                                      |
+| `textoSuave`   | `#6b645c` | Texto secundario y la segunda parte de los títulos (5,2:1).                               |
+| `acento`       | `#b07d1f` | Oro del logo sobre el papel (3,2:1). Botones de pedir en el configurador y el pedido.     |
+| `acentoFuerte` | `#7d5d1b` | Oro para texto pequeño: números de los modos (5,4:1). El `#8e6c1e` del HTML no pasaba AA. |
+| `sobreAcento`  | `#0b0a09` | Texto sobre el oro.                                                                       |
+| `acentoHover`  | `#c39a4c` | Hover del botón dorado.                                                                   |
+| `led` (fijo)   | `#ff2d20` | Luz del cuarto. Token de Tailwind, no editable.                                           |
 
-**La pared de noche** (`PARED_OSCURA` en `Vitrina.tsx`) redefine `--marca-*` y `--color-*` solo en esa
-sección: fondo `#0b0a09`, texto `#f3ece0` y oro `#e7b94c`. No cambia con el editor de colores.
+**Las bandas de noche** (clase `.noche` en `global.css`) redefinen `--marca-*` y `--color-*`: fondo
+`#0b0a09`, texto hueso `#f3ece0`, texto suave `#9f978c` (6,9:1) y oro `#e3b54a`. No cambian con el
+editor de colores.
 
-**La regla del oro escaso.** Fuera de la pared, nada de «una palabra dorada» por título.
+**La regla del oro.** El dorado se reserva para pedir: «Agregar al pedido», «Crear desde cero» en la
+tarjeta oscura del catálogo y el botón del cierre. Las demás acciones van en tinta o con contorno.
 
-**La regla del LED.** El rojo nunca lleva texto. Es la tira encendida (`.tira-led`) y su luz.
+**La regla del LED.** El rojo nunca lleva texto. Es la tira encendida y su luz.
 
 ## 3. Typography
 
-- **Display** (`texto-cartel`, Big Shoulders 900, mayúscula, hasta 7,75rem): titular de portada y cierre. Una vez por pantalla, en color sólido.
-- **Headline** (`font-display`, clamp(2.5rem, 6vw, 4.75rem)): títulos de sección. Sin antetítulo encima.
-- **Body** (Manrope 400): párrafos de máximo 40–60ch, en `texto-suave`.
+- **Display** (`texto-cartel`, Newsreader 500): titular de portada.
+- **Headline** (`titulo-seccion`, clamp(2rem, 3.6vw, 3rem)): títulos de sección, con antetítulo encima.
+- **Antetítulo** (`antetitulo`): versalitas espaciadas con una raya de 28 px delante.
+- **Body** (Libre Franklin 400, 16 px, interlineado 1,65): párrafos de 44–54ch en `texto-suave`.
 - **Lápiz** (`lapiz`): medidas y datos pequeños, con cifras tabulares.
+- Big Shoulders (`--font-cartel`) queda solo dentro del arte generado de los diseños.
 
 ## 4. Elevation
 
-- **Cuadro colgado** (`sombra-cuadro`): sombra suave que cae hacia abajo, como con luz de techo.
-- **Acrílico** (`sombra-acrilico`): borde claro de 1px, sombra más marcada y un reflejo diagonal.
-- Interfaz plana: header sólido (sin vidrio), botones sin resplandor.
+- **Cuadro** (`sombra-cuadro`): canto duro de 3 px y sombra suave hacia abajo.
+- **Acrílico** (`sombra-acrilico`): borde claro de 1 px, sombra más marcada y un reflejo diagonal.
+- Interfaz plana: header con fondo de papel al 92% y desenfoque; botones sin sombra.
 
 ## 5. Components
 
-- **Botón principal** (`boton boton-oro`): pastilla dorada de 48 px; hover a oro claro.
-- **Acción secundaria** (`enlace-fuerte`): texto subrayado en oro, sin caja.
-- **Abanico de la portada**: siete diseños del catálogo sobre la tira LED; se abre con `@property --abre`.
-- **Catálogo** (`Vitrina.tsx`): filtros en pastilla (`aria-pressed`), tarjetas 3:4 con brillo que sigue al cursor (sin giro 3D).
-- **Pared** (`Vitrina.tsx`): cuarto, sala o estudio a escala real (1 cm = `100cqw / ancho`), LED encendible, clavo y cuerda.
-- **Personalizado**: la foto en un celular → el mismo cuadro colgado en acrílico. No hay zona falsa de «suelta tu imagen».
-- **Montajes** (`Montaje.astro`): cuadros del catálogo colgados en cuartos generados, mientras no haya fotos de clientes.
-- **Proceso**: tres pasos en fila con una regla arriba y el número en grande. Sin tarjetas.
+- **Botón principal** (`boton boton-negro`): rectángulo de tinta de 48 px; la flecha se corre 4 px al pasar el cursor.
+- **Botón de pedir** (`boton boton-oro`) y **secundario** (`boton boton-linea`, contorno que se rellena).
+- **Enlace** (`enlace-fuerte`): raya de 1 px que se recoge al pasar el cursor.
+- **Abanico de la portada**: nueve diseños; en el celular se ocultan los cuatro de las puntas.
+- **Inspiración** (`Vitrina.tsx`): tres modos (tal cual, adaptado, desde cero), filtros como pestañas con raya, tarjetas 3:4 con círculos para ver la misma idea en cuatro colores (`VARIANTES` en `ArteCatalogo.tsx`) y dos tarjetas de invitación en la grilla.
+- **Pared** (`Vitrina.tsx`): cuarto, sala o estudio a escala real (1 cm = `100cqw / ancho`). Desde 1280 px el panel va encima de la escena, a la derecha; por debajo, debajo de ella. Opciones en segmentos unidos (`GrupoOpciones variante="seg"`).
+- **Personalizado** (`SubirImagen.tsx`): zona punteada para soltar una imagen; se cuelga en la pared (no sale del navegador) y el panel lleva a `/crear` para recortar y revisar calidad.
+- **Proceso y resultados**: huecos punteados con el nombre del video o la foto que va ahí. Esperan el material del taller.
 
 ## 6. Do's and Don'ts
 
-- **Do** reemplazar los montajes por fotos reales de clientes y el arte del catálogo por fotos (`negocio.catalogo[].foto`).
+- **Do** reemplazar los huecos por los videos y fotos reales de las historias destacadas, y el arte del catálogo por fotos (`negocio.catalogo[].foto`).
 - **Do** dejar los cuartos ilustrados de noche: el LED solo se luce a oscuras.
-- **Do** respetar `prefers-reduced-motion`: sin abanico animado ni columpio.
-- **Don't** texto con degradado, antetítulos en mayúscula espaciada sobre cada sección ni «una palabra en oro» por título.
-- **Don't** grano, rayos girando, manchas de luz difusa sin fuente, vidrio esmerilado ni sombras duras de afiche.
-- **Don't** cajas punteadas de «aquí va una foto»: o hay imagen (real o generada), o no hay caja.
+- **Do** respetar `prefers-reduced-motion`: sin abanico animado, sin fundidos ni columpio.
+- **Don't** usar el oro en títulos ni en acciones que no sean pedir.
+- **Don't** tarjetas con borde redondeado y sombra para ordenar contenido: líneas de 1 px.
+- **Don't** texto con degradado, grano ni vidrio esmerilado fuera del header.
 - **Don't** rayas largas (—) en los textos.

@@ -103,9 +103,7 @@ export default function EditorPedido({ pedido, onGuardar }: Props) {
   return (
     <div className="flex flex-col gap-6 rounded-lg border border-acento/40 bg-superficie p-5">
       <div>
-        <h3 className="font-display text-2xl font-semibold text-acento-fuerte">
-          Pedido {pedido.numero}
-        </h3>
+        <h3 className="font-display text-2xl">Pedido {pedido.numero}</h3>
         <p className="text-texto-suave">
           {pedido.cliente.nombre} · {pedido.cliente.ciudad}
           {pedido.cliente.celular && ` · ${pedido.cliente.celular}`}
@@ -144,7 +142,7 @@ export default function EditorPedido({ pedido, onGuardar }: Props) {
             type="button"
             onClick={avanzar}
             disabled={bloqueoEnvio || (motivo !== null && !motivo.ok)}
-            className="boton boton-oro disabled:opacity-50"
+            className="boton boton-negro disabled:opacity-50"
           >
             {textoAvance}
           </button>

@@ -58,7 +58,7 @@ test.describe('catálogo y pared de la portada', () => {
     await expect(catalogo.getByRole('heading', { name: 'Ronin' })).toBeVisible();
     await expect(catalogo.getByRole('heading', { name: 'Chicle Pop' })).toBeHidden();
 
-    await catalogo.getByRole('button', { name: 'Ver Ronin en mi pared' }).click();
+    await catalogo.getByRole('button', { name: /ver Ronin en mi pared/ }).click();
     const pared = page.locator('#pared');
     await expect(pared.getByText('Ronin', { exact: true })).toBeVisible();
     // El precio sale de negocio.ts: 45×60 cuesta $80.000 y 60×80, $130.000.
@@ -79,10 +79,51 @@ test.describe('catálogo y pared de la portada', () => {
     await expect(mensaje).not.toContainText('Adjunto mis fotos');
   });
 
+  test('una tarjeta cambia de color y la pared lo cuelga en ese color', async ({ page }) => {
+    await irA(page, '/');
+    const catalogo = page.locator('#catalogo');
+    const colores = catalogo.getByRole('group', { name: 'Probar Lado A en otros colores' });
+    await colores.getByRole('button', { name: 'Rojo LED' }).click();
+    await expect(colores.getByRole('button', { name: 'Rojo LED' })).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    );
+    await catalogo.getByRole('button', { name: /ver Lado A en mi pared/ }).click();
+    const pared = page.locator('#pared');
+    await expect(
+      pared
+        .getByRole('group', { name: 'Color del diseño' })
+        .getByRole('button', { name: 'Rojo LED' }),
+    ).toHaveAttribute('aria-pressed', 'true');
+    await pared.getByRole('button', { name: 'Agregar al pedido' }).click();
+    await expect(
+      pared.getByText(/Lado A en rojo led en 45×60 cm, MDF está en tu pedido/),
+    ).toBeVisible();
+  });
+
+  test('la imagen que sube el cliente queda colgada en la pared', async ({ page }) => {
+    await irA(page, '/');
+    await page.getByTestId('subir-imagen').setInputFiles('tests/fixtures/pequena.jpg');
+    const pared = page.locator('#pared');
+    await expect(pared.getByRole('img', { name: 'Tu imagen colgada en la pared' })).toBeVisible();
+    await expect(pared.getByText('Personalizado', { exact: true })).toBeVisible();
+    await expect(pared.getByRole('link', { name: 'Seguir con mi foto' })).toHaveAttribute(
+      'href',
+      '/crear',
+    );
+    await pared.getByRole('button', { name: 'Volver a los diseños' }).click();
+    await expect(pared.getByRole('button', { name: 'Agregar al pedido' })).toBeVisible();
+  });
+
   test('un cuadro del abanico de la portada elige el diseño de la pared', async ({ page }) => {
     await irA(page, '/');
-    // Las cartas se montan unas sobre otras; con teclado se llega a cualquiera.
-    await page.getByRole('link', { name: 'Ver Verde Billete en mi pared' }).press('Enter');
-    await expect(page.locator('#pared').getByText('Verde Billete', { exact: true })).toBeVisible();
+    // Las cartas se montan unas sobre otras; con teclado se llega a cualquiera. En el celular las
+    // de las puntas se ocultan, por eso se usa una del centro. Se reintenta porque la isla puede
+    // registrar su escucha de clics un instante después de hidratarse.
+    const pared = page.locator('#pared');
+    await expect(async () => {
+      await page.getByRole('link', { name: 'Ver Chicle Pop en mi pared' }).press('Enter');
+      await expect(pared.getByText('Chicle Pop', { exact: true })).toBeVisible({ timeout: 1000 });
+    }).toPass();
   });
 });
