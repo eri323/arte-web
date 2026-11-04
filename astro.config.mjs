@@ -6,8 +6,9 @@ import react from '@astrojs/react';
 import tailwindcss from '@tailwindcss/vite';
 
 export default defineConfig({
-  // Dominio de la demo publicada. De aquí salen las URL absolutas de og:image; para un taller real va su dominio.
-  site: 'https://arte-web-tau.vercel.app',
+  // Dominio donde está publicada la propuesta de Midas Atelier. De aquí salen las URL absolutas de
+  // og:image: si no coincide con el sitio publicado, la vista previa del link muestra otra marca.
+  site: 'https://midasatelier.netlify.app',
   output: 'static',
   integrations: [react()],
 
