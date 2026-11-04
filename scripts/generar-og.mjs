@@ -17,12 +17,10 @@ const marca = {
   led: '#ff2d20',
 };
 
+// inicio.png NO sale de aquí: es una captura de la portada publicada (1200×630, sin la insignia
+// de Netlify), para que la vista previa del link se vea igual que la página. Si la portada cambia,
+// se vuelve a capturar a mano; este script no la toca.
 const paginas = [
-  {
-    archivo: 'inicio.png',
-    titulo: 'Cuadros que se roban el cuarto',
-    sub: 'MDF y acrílico · Envíos a todo Colombia',
-  },
   {
     archivo: 'formatos.png',
     titulo: 'Medidas y precios',
