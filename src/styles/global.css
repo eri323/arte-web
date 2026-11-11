@@ -1,8 +1,8 @@
 /* RaceTrack Posters (ver DESIGN.md). La página se arma como uno de sus pósters: letras condensadas
    enormes que se desvanecen detrás del carro, pared gris clara, marcos negros y una fila de datos
-   como la ficha técnica. Big Shoulders para los titulares; Inter Tight para todo lo demás. */
+   como la ficha técnica. Saira Condensed para los titulares; Inter Tight para todo lo demás. */
 @import '@fontsource-variable/inter-tight';
-@import '@fontsource-variable/big-shoulders-display';
+@import '@fontsource/saira-condensed/800.css';
 @import 'tailwindcss';
 
 /* Los valores de --marca-* los declara Base.astro a partir de negocio.ts. */
@@ -19,7 +19,7 @@
   --color-linea-fuerte: var(--marca-linea-fuerte);
   --color-cinta: var(--marca-cinta);
   --font-sans: 'Inter Tight Variable', 'Helvetica Neue', Arial, sans-serif;
-  --font-display: 'Big Shoulders Display Variable', Impact, 'Arial Narrow', sans-serif;
+  --font-display: 'Saira Condensed', Impact, 'Arial Narrow', sans-serif;
 }
 
 @theme {
@@ -233,11 +233,11 @@
    desvanecen hacia abajo, donde se les montan los cuadros. */
 .letras-poster {
   font-family: var(--font-display);
-  font-weight: 900;
+  font-weight: 800;
   text-transform: uppercase;
-  line-height: 0.8;
+  line-height: 0.84;
   letter-spacing: -0.01em;
-  font-size: clamp(5rem, 25.5vw, 27rem);
+  font-size: clamp(4.25rem, 22vw, 23.5rem);
   white-space: nowrap;
   color: transparent;
   background: linear-gradient(
