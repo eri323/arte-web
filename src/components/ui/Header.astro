@@ -4,13 +4,12 @@ import ContadorCarrito from '../pedido/ContadorCarrito';
 
 // Enlaces grises con una raya de 1 px que crece al pasar el cursor.
 const claseEnlace =
-  'flex min-h-11 items-center px-2 text-[0.8125rem] whitespace-nowrap text-texto-suave transition-[color,background-size] duration-300 hover:text-texto [background:linear-gradient(var(--color-acento),var(--color-acento))_no-repeat_8px_calc(50%+0.8em)/0_2px] hover:[background-size:calc(100%-16px)_2px]';
+  'flex min-h-11 items-center px-2 text-sm font-medium whitespace-nowrap text-texto-suave transition-[color,background-size] duration-300 hover:text-texto [background:linear-gradient(var(--color-acento),var(--color-acento))_no-repeat_8px_calc(50%+0.8em)/0_2px] hover:[background-size:calc(100%-16px)_2px]';
 
 const enlaces = [
-  { href: '/#catalogo', texto: 'Inspiración' },
-  { href: '/#pared', texto: 'Ver en tu pared' },
-  { href: '/formatos', texto: 'Formatos' },
-  { href: '/crear', texto: 'Sube tus fotos' },
+  { href: '/#catalogo', texto: 'Catálogo' },
+  { href: '/crear', texto: 'Personalizados' },
+  { href: '/formatos', texto: 'Medidas y precios' },
   { href: '/seguimiento', texto: 'Seguimiento' },
 ];
 ---
@@ -19,15 +18,15 @@ const enlaces = [
   {/* En el celular: logo y pedido arriba, enlaces debajo con scroll lateral. */}
   <div class="mx-auto flex max-w-[1240px] flex-wrap items-center gap-x-4 px-4 lg:min-h-16 lg:flex-nowrap">
     <a href="/" class="order-1 flex min-h-14 items-center gap-3 text-texto">
-      {/* El sol de rayos del logo, dibujado con CSS. */}
-      <span
-        aria-hidden="true"
+      {/* El logo real del taller: tinta negra con transparencia (se invierte en oscuro). */}
+      <img
+        src="/logo.png"
+        alt={negocio.marca.nombre}
+        width="285"
+        height="210"
         data-logo
-        class="size-[26px] shrink-0 rounded-full [background:repeating-conic-gradient(var(--color-acento)_0_8deg,var(--color-texto)_8deg_20deg)]"
-      ></span>
-      <span class="text-[0.9375rem] font-semibold tracking-[0.14em] whitespace-nowrap uppercase sm:text-base">
-        {negocio.marca.nombre}
-      </span>
+        class="logo-marca h-11 w-auto"
+      />
     </a>
     <nav
       aria-label="Principal"
@@ -76,10 +75,7 @@ const enlaces = [
           <path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4"></path>
         </svg>
       </button>
-      <ContadorCarrito
-        client:idle
-        className="boton boton-linea min-h-10 px-4 py-2 text-[0.8125rem]"
-      />
+      <ContadorCarrito client:idle className="boton boton-negro min-h-10 px-4 py-2 text-sm" />
     </div>
   </div>
 </header>
@@ -137,7 +133,7 @@ const enlaces = [
     raiz.dataset.tema = tema;
     document
       .querySelector('meta[name="theme-color"]')
-      ?.setAttribute('content', tema === 'oscuro' ? '#161513' : '#f2f2f0');
+      ?.setAttribute('content', tema === 'oscuro' ? '#17181b' : '#efefec');
     try {
       localStorage.setItem('arte-web:tema', tema);
     } catch {

@@ -38,7 +38,7 @@ for (const ruta of paginas) {
       await expect(page.locator('meta[name="description"]')).toHaveAttribute('content', /.{40,}/);
       await expect(page.locator('meta[property="og:title"]')).toHaveAttribute(
         'content',
-        /Midas Atelier/,
+        /RaceTrack Posters/,
       );
       await expect(page.locator('meta[property="og:description"]')).toHaveAttribute(
         'content',

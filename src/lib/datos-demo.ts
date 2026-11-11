@@ -16,21 +16,26 @@ function enDias(ahora: Date, dias: number): string {
 export function crearPedidosDemo(ahora: Date): Pedido[] {
   return [
     {
-      numero: 'MA-1040',
+      numero: 'RT-1040',
       cliente: { nombre: 'Laura Gómez', ciudad: 'Medellín' },
       items: [
         {
-          medidaId: '30x40',
+          medidaId: 'p-35x50',
           orientacion: 'vertical',
-          material: 'mdf',
-          cantidad: 2,
-          archivo: 'boda-laura.jpg',
+          material: 'vidrio',
+          cantidad: 1,
+          archivo: 'Mazda 3 2019',
           calidad: 'buena',
-          dpi: 256,
+          dpi: 300,
+          encargo: {
+            vehiculo: 'Mazda 3 2019',
+            detalles: 'Rojo, rines negros de 18, con la placa.',
+            fotos: 3,
+          },
         },
       ],
-      total: 120000,
-      pagos: [{ monto: 60000, fecha: haceDias(ahora, 4), nota: 'Abono por transferencia' }],
+      total: 160000,
+      pagos: [{ monto: 80000, fecha: haceDias(ahora, 4), nota: 'Abono por transferencia' }],
       estado: 'en_produccion',
       historial: [
         { estado: 'recibido', fecha: haceDias(ahora, 5) },
@@ -38,24 +43,30 @@ export function crearPedidosDemo(ahora: Date): Pedido[] {
         { estado: 'en_produccion', fecha: haceDias(ahora, 1) },
       ],
       fechaEstimada: enDias(ahora, 4),
-      notas: [{ fecha: haceDias(ahora, 1), texto: 'Tu cuadro entra a impresión mañana' }],
+      notas: [
+        {
+          fecha: haceDias(ahora, 1),
+          texto: 'Tu diseño está aprobado: mañana entra a impresión y enmarcado',
+        },
+      ],
     },
     {
-      numero: 'MA-1041',
+      numero: 'RT-1041',
       cliente: { nombre: 'Andrés Rojas', ciudad: 'Bogotá' },
       items: [
         {
-          medidaId: '45x60',
-          orientacion: 'horizontal',
+          medidaId: '35x50-acrilico',
+          orientacion: 'vertical',
           material: 'acrilico',
           cantidad: 2,
-          archivo: 'familia-navidad.jpg',
+          archivo: 'Ayrton Senna · Mónaco 1990',
           calidad: 'buena',
-          dpi: 171,
+          dpi: 300,
+          disenoId: 'senna-monaco-1990',
         },
       ],
-      total: 130000,
-      pagos: [{ monto: 65000, fecha: haceDias(ahora, 8), nota: 'Abono por transferencia' }],
+      total: 190000,
+      pagos: [{ monto: 95000, fecha: haceDias(ahora, 8), nota: 'Abono por transferencia' }],
       estado: 'listo',
       historial: [
         { estado: 'recibido', fecha: haceDias(ahora, 9) },
@@ -67,28 +78,29 @@ export function crearPedidosDemo(ahora: Date): Pedido[] {
       notas: [
         {
           fecha: haceDias(ahora, 1),
-          texto: 'Tu cuadro está listo. Cuando pagues el saldo lo enviamos.',
+          texto: 'Tus pósters están enmarcados. Cuando pagues el saldo los enviamos.',
         },
       ],
     },
     {
-      numero: 'MA-1042',
+      numero: 'RT-1042',
       cliente: { nombre: 'Camila Torres', ciudad: 'Cali' },
       items: [
         {
-          medidaId: '60x80',
+          medidaId: '50x70',
           orientacion: 'vertical',
-          material: 'mdf',
+          material: 'vidrio',
           cantidad: 1,
-          archivo: 'mascota.jpg',
-          calidad: 'regular',
-          dpi: 128,
+          archivo: 'Nürburgring Nordschleife',
+          calidad: 'buena',
+          dpi: 300,
+          disenoId: 'nordschleife',
         },
       ],
-      total: 130000,
+      total: 265000,
       pagos: [
-        { monto: 65000, fecha: haceDias(ahora, 14), nota: 'Abono' },
-        { monto: 65000, fecha: haceDias(ahora, 3), nota: 'Saldo' },
+        { monto: 132500, fecha: haceDias(ahora, 14), nota: 'Abono' },
+        { monto: 132500, fecha: haceDias(ahora, 3), nota: 'Saldo' },
       ],
       estado: 'enviado',
       historial: [

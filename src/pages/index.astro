@@ -1,304 +1,290 @@
 ---
 import Base from '../layouts/Base.astro';
-import Vitrina, { ImagenDiseno } from '../components/catalogo/Vitrina';
+import Poster from '../components/catalogo/Poster';
+import Vitrina from '../components/catalogo/Vitrina';
 import { negocio } from '../config/negocio';
-import { etiquetaMedida } from '../lib/formato';
+import { etiquetaMedida, formatearPesos } from '../lib/formato';
 import { urlWhatsApp } from '../lib/whatsapp';
 
-const { vitrina, catalogo } = negocio;
+const { vitrina, catalogo, entregas, envio, tiempos } = negocio;
 
-// El abanico de la portada: nueve diseños del catálogo, el del centro adelante. En el celular
-// se ocultan los de las puntas.
-const abanico = [
-  'frase-neon',
-  'fight-club',
-  'feliz-cumpleanos-ferxxo',
-  'sagrado-corazon',
-  'a-mis-20',
-  'estatua-pop',
-  'sayonara',
-  'el-mundo-es-tuyo',
-  'tu-mascota',
+// La parrilla de la portada: siete pósters verticales en dos alturas. En el celular se ven los
+// tres del centro y medio de cada vecino.
+const parrilla = [
+  'nissan-gtr-r35',
+  'senna-monaco-1990',
+  'mclaren-720s',
+  'ferrari-488-pista',
+  'antonelli-w17',
+  'ducati-panigale',
+  'nordschleife',
 ]
   .map((id) => catalogo.find((d) => d.id === id))
-  .filter((d) => d !== undefined)
-  .map((diseno, k, lista) => {
-    const i = k - Math.floor(lista.length / 2);
-    return { diseno, i, d: Math.abs(i), z: 10 - Math.abs(i) };
-  });
+  .filter((d) => d !== undefined);
 
-const porArea = [...negocio.medidas].sort((a, b) => a.anchoCm * a.altoCm - b.anchoCm * b.altoCm);
-const menor = porArea[0];
-const mayor = porArea[porArea.length - 1];
+const deCatalogo = negocio.medidas.filter((m) => m.linea === 'catalogo');
+const personalizadas = negocio.medidas.filter((m) => m.linea === 'personalizado');
+const porArea = [...deCatalogo].sort((a, b) => a.anchoCm * a.altoCm - b.anchoCm * b.altoCm);
+const menor = porArea[0]!;
+const mayor = porArea[porArea.length - 1]!;
+const desdePersonalizado = Math.min(...personalizadas.map((m) => m.precio));
+const abono = negocio.pagos.porcentajeAbono;
 
-// SUPUESTO: los huecos de video y de fotos esperan el material del taller (historias destacadas
-// "Procesos", "Clientes" y "Resultados"). No se inventan fotos de clientes.
+// La fila de datos bajo la portada, como la ficha técnica de sus pósters.
+const ficha = [
+  { dato: 'Medidas', valor: `${etiquetaMedida(menor)} a ${etiquetaMedida(mayor)} cm` },
+  { dato: 'Entrega', valor: '3 a 4 días' },
+  { dato: 'Envío a todo Colombia', valor: 'Desde $8.000' },
+  { dato: 'Para empezar', valor: `Abono del ${abono}%` },
+];
+
+// Es una secuencia de verdad: cada paso depende del anterior.
+// SUPUESTO: el saldo se paga antes del envío (el catálogo solo habla del abono del 50%).
 const pasos = [
   {
-    titulo: 'Lo diseñamos',
-    texto: 'Partimos de una referencia o de tu idea, y te mostramos el diseño para aprobarlo.',
-    hueco: 'Video de la historia destacada «Procesos»',
+    titulo: 'Nos cuentas cuál es',
+    texto: 'Marca, modelo, color y los detalles que lo hacen tuyo. Las fotos van por WhatsApp.',
   },
   {
-    titulo: 'Lo fabricamos',
-    texto: 'Impresión y corte en MDF o acrílico, a mano y revisado antes de empacar.',
-    hueco: 'Video del taller',
+    titulo: `Abonas el ${abono}%`,
+    texto: 'Con el abono sobre la medida que elijas arranca el diseño.',
   },
   {
-    titulo: 'Te llega',
-    texto: 'Empacado y enviado a cualquier ciudad de Colombia. Todo coordinado por WhatsApp.',
-    hueco: 'Video del empaque o la entrega',
+    titulo: 'Lo ilustramos y lo enmarcamos',
+    texto: `Hecho a mano, en digital. ${tiempos.texto}. ${tiempos.grande}.`,
+  },
+  {
+    titulo: 'Te llega listo para colgar',
+    texto: 'Pagas el saldo y lo enviamos a tu ciudad.',
   },
 ];
 
 const preguntas = [
   {
-    p: '¿Qué foto sirve?',
-    r: 'Casi cualquier foto del celular. Al subirla te mostramos si la calidad es buena, regular o baja para la medida que elijas, y cuál es la medida más grande que queda bien.',
+    p: '¿Cómo llega el póster?',
+    r: 'Enmarcado en negro, con vidrio o acrílico al frente según la medida, y listo para colgar.',
   },
   {
-    p: '¿Mi foto se sube a algún servidor?',
-    r: 'No. La foto se procesa en tu propio celular o computador. Cuando confirmas el pedido, la adjuntas tú mismo en el chat de WhatsApp.',
+    p: '¿Cuánto se demora?',
+    r: `${tiempos.texto}, según la cantidad de pedidos. ${tiempos.grande}.`,
   },
   {
-    p: '¿Cómo se paga?',
-    r: `Pagas un abono del ${negocio.pagos.porcentajeAbono}% para empezar y el resto cuando el cuadro esté listo, antes del envío. El taller te indica los medios de pago por WhatsApp.`,
+    p: '¿Pueden hacer mi carro o mi moto?',
+    r: `Sí. Ilustramos el vehículo que quieras, el tuyo o el de tus sueños, con los detalles y la perspectiva que elijas. Los personalizados van desde ${formatearPesos(desdePersonalizado)} y se empiezan con un abono del ${abono}%.`,
+  },
+  {
+    p: '¿Puedo cambiarle el color a un póster del catálogo?',
+    r: 'Sí. Los modelos del catálogo son la base: los colores y los detalles se ajustan a tu gusto. Pregúntanos por tu favorito.',
   },
   {
     p: '¿Cuánto cuesta el envío?',
-    r: `${negocio.envio.texto}. Enviamos a todo Colombia.`,
+    r: `${envio.tarifas.map((t) => `${t.zona}: ${t.valor}`).join('. ')}.`,
   },
   {
     p: '¿Cómo sé en qué va mi pedido?',
-    r: 'Con tu número de pedido puedes consultar el estado, los pagos, el saldo y las notas del taller en la página de seguimiento.',
+    r: 'Con tu número de pedido consultas el estado, los pagos, el saldo y las notas del taller en la página de seguimiento.',
   },
 ];
 
-const abono = negocio.pagos.porcentajeAbono;
 // Con número de WhatsApp el botón del cierre abre el chat; en modo demo lleva a /crear.
-const chat = urlWhatsApp(negocio.whatsapp.numero, `Hola ${negocio.marca.nombre}, quiero un cuadro`);
-const seccion = 'py-[clamp(80px,10vw,136px)]';
+const chat = urlWhatsApp(negocio.whatsapp.numero, `Hola ${negocio.marca.nombre}, quiero un póster`);
+const seccion = 'py-[clamp(72px,9vw,128px)]';
 const titular = [vitrina.titular, vitrina.titularSuave].filter(Boolean).join(' ');
 ---
 
-<Base title="Cuadros en MDF y acrílico" description={`${titular} ${vitrina.bajada}`}>
-  {/* 1 · Portada: los cuadros mandan. Titular moderado arriba, el abanico montado sobre él y,
-       debajo, una frase corta con los dos botones. */}
-  <section
-    aria-labelledby="portada-titulo"
-    class="overflow-hidden pt-[clamp(48px,7vw,104px)] pb-[clamp(64px,8vw,112px)]"
-  >
-    <h1
-      id="portada-titulo"
-      class="texto-cartel entra relative z-0 mx-auto max-w-[15ch] px-4 text-center"
-    >
-      {vitrina.titular}
-      {vitrina.titularSuave && (
-        <>
-          <br class="max-sm:hidden" />{' '}
-          <span class="text-acento-fuerte">{vitrina.titularSuave}</span>
-        </>
-      )}
+<Base title="Pósters de carros y motos, enmarcados" description={`${titular} ${vitrina.bajada}`}>
+  {/* 1 · Portada armada como uno de sus pósters: el nombre en letras enormes que se desvanecen
+       y, montada encima, la fila de cuadros. */}
+  <section aria-labelledby="portada-titulo" class="overflow-hidden pt-[clamp(20px,3vw,40px)]">
+    <h1 id="portada-titulo" class="text-center">
+      <span class="letras-poster block" aria-hidden="true">
+        Tu carro
+      </span>
+      <span class="sr-only">{titular}</span>
     </h1>
 
-    <div class="relative z-10 mx-auto -mt-1 max-w-[1240px] [--cw:clamp(104px,31vw,150px)] [--sep:calc(var(--cw)*0.5)] sm:-mt-3 sm:[--cw:clamp(118px,13vw,192px)] sm:[--sep:calc(var(--cw)*0.62)]">
-      <ul
-        class="abanico relative mt-[clamp(20px,3vw,36px)] h-[calc(var(--cw)*1.55)]"
-        aria-label="Diseños de referencia"
-      >
-        {abanico.map(({ diseno, i, d, z }) => (
-          <li
-            class:list={[
-              'carta absolute top-[6%] left-1/2 -ml-[calc(var(--cw)/2)] w-(--cw)',
-              d > 2 && 'max-sm:hidden',
-            ]}
-            style={`--i:${i};--d:${d};--z:${z}`}
-          >
-            <a href="#pared" data-diseno={diseno.id} class="block focus-visible:outline-none">
-              <span class="alza sombra-cuadro block aspect-[3/4] overflow-hidden">
-                <ImagenDiseno
-                  diseno={diseno}
-                  decorativa
-                  cargar="eager"
-                  sizes="(min-width: 640px) 192px, 140px"
-                />
-                <span class="sr-only">Ver {diseno.nombre} en mi pared</span>
-              </span>
-              <span
-                aria-hidden="true"
-                class="tip font-editorial absolute inset-x-0 -bottom-8 text-center text-[0.9375rem] text-texto-suave"
-              >
-                {diseno.nombre}
-              </span>
-            </a>
-          </li>
-        ))}
-      </ul>
-      {/* Globos sobre los cuadros que cuentan la variedad: cualquier imagen, cualquier tamaño. */}
-      <p aria-hidden="true" class="burbuja burbuja-izq bg-[#e3b54a]">
-        Tu foto, tu álbum o tu anime
+    <ul
+      class="parrilla relative -mt-[clamp(2.4rem,11vw,12rem)] [--pw:clamp(118px,34vw,150px)] sm:[--pw:clamp(120px,13.2vw,196px)]"
+      aria-label="Pósters del catálogo"
+    >
+      {parrilla.map((diseno, i) => (
+        <li style={`--i:${i}`}>
+          <a href="#pared" data-diseno={diseno.id} class="block">
+            <Poster diseno={diseno} decorativa cargar="eager" />
+            <span class="sr-only">Ver {diseno.nombre} a escala</span>
+          </a>
+        </li>
+      ))}
+    </ul>
+
+    <div class="mx-auto mt-[clamp(36px,5vw,64px)] grid max-w-[1240px] gap-x-12 gap-y-6 px-4 md:grid-cols-[minmax(0,5fr)_minmax(0,6fr)] md:items-end">
+      <p class="entra font-display text-[clamp(2.75rem,6.4vw,5.25rem)]" aria-hidden="true">
+        {vitrina.titularSuave}
       </p>
-      <p
-        aria-hidden="true"
-        class="burbuja burbuja-der bg-led max-sm:hidden"
-        style="--retraso: 1350ms"
-      >
-        De {menor && etiquetaMedida(menor)} a {mayor && etiquetaMedida(mayor)} cm
-      </p>
+      <div class="entra" style="--i:1">
+        <p class="max-w-[52ch] text-[1.0625rem] text-texto-suave">{vitrina.bajada}</p>
+        <div class="mt-6 flex flex-col gap-2.5 sm:flex-row">
+          <a href="#catalogo" class="boton boton-negro">
+            Ver el catálogo
+          </a>
+          <a href="/crear" class="boton boton-linea">
+            Quiero el de mi carro
+          </a>
+        </div>
+      </div>
     </div>
 
-    <div
-      class="entra mx-auto mt-[clamp(32px,4vw,52px)] flex max-w-[46ch] flex-col items-center px-4 text-center"
-      style="--i: 6"
-    >
-      <p class="text-[0.9375rem] leading-relaxed text-texto-suave">{vitrina.bajada}</p>
-      <div class="mt-6 flex w-full flex-col gap-2.5 sm:w-auto sm:flex-row sm:justify-center">
-        <a href="#catalogo" class="boton boton-negro">
-          Explorar diseños{' '}
-          <span aria-hidden="true" class="flecha">
-            →
-          </span>
-        </a>
-        <a href="/crear" class="boton boton-linea">
-          Subir mis fotos
-        </a>
-      </div>
+    <div class="mx-auto mt-[clamp(40px,5vw,64px)] max-w-[1240px] px-4">
+      <dl class="ficha">
+        {ficha.map((f) => (
+          <div>
+            <dt>{f.dato}</dt>
+            <dd>{f.valor}</dd>
+          </div>
+        ))}
+      </dl>
     </div>
   </section>
 
-  {/* 2 y 3 · Inspiración con filtros y la pared a escala (una isla: comparten el diseño elegido). */}
+  {/* 2 y 3 · Catálogo con filtros y la pared a escala (una isla: comparten el póster elegido). */}
   <Vitrina client:idle />
 
-  {/* 5 · Proceso: tres pasos en fila, separados por líneas. */}
-  <section id="proceso" aria-labelledby="como" class:list={['border-t border-linea', seccion]}>
-    <div class="mx-auto max-w-[1240px] px-4">
-      <div class="aparece">
-        <p class="antetitulo">Proceso</p>
-        <h2 id="como" class="titulo-seccion">
-          Así nace <span class="text-acento-fuerte">tu cuadro</span>
+  {/* 4 · Personalizados, sobre asfalto. */}
+  <section id="personalizados" aria-labelledby="personalizados-titulo" class="noche scroll-mt-16">
+    <div class="piano" aria-hidden="true"></div>
+    <div
+      class:list={['mx-auto grid max-w-[1240px] gap-x-16 gap-y-12 px-4 lg:grid-cols-2', seccion]}
+    >
+      <div>
+        <h2 id="personalizados-titulo" class="titulo-seccion">
+          El tuyo, tal cual
         </h2>
-      </div>
-      <ol class="mt-[clamp(44px,5vw,64px)] grid border-t border-linea md:grid-cols-3">
-        {pasos.map((paso, i) => (
-          <li
-            style={`--i:${i}`}
-            class="aparece border-b border-linea py-[26px] md:border-b-0 md:py-0 md:pt-7 md:pr-7 md:[&+&]:border-l md:[&+&]:pl-7"
-          >
-            <span aria-hidden="true" class="font-editorial text-lg text-acento-fuerte">
-              {String(i + 1).padStart(2, '0')}
-            </span>
-            <h3 class="font-display mt-2 mb-2 text-2xl">{paso.titulo}</h3>
-            <p class="max-w-[34ch] text-[0.9375rem] text-texto-suave">{paso.texto}</p>
-            <div class="mt-6 grid aspect-[4/3] place-items-center rounded-[14px] border border-dashed border-linea-fuerte p-3.5 text-center text-[0.8125rem] text-texto-suave">
-              {paso.hueco}
-            </div>
-          </li>
-        ))}
-      </ol>
-    </div>
-  </section>
-
-  {/* 6 · Resultados: el muro que se llena con fotos reales de clientes. */}
-  <section id="clientes" aria-labelledby="clientes-titulo" class={seccion}>
-    <div class="mx-auto max-w-[1240px] px-4">
-      <div class="aparece">
-        <p class="antetitulo">Resultados</p>
-        <h2 id="clientes-titulo" class="titulo-seccion">
-          Espacios de <span class="text-acento-fuerte">nuestros clientes</span>
-        </h2>
-        <p class="mt-[18px] max-w-[54ch] text-[1.0625rem] text-texto-suave">
-          Este muro se llena con las fotos reales de las historias destacadas «Clientes» y
-          «Resultados».
+        <p class="mt-5 max-w-[48ch] text-[1.0625rem] text-texto-suave">
+          Ilustramos el vehículo que quieras, el tuyo o el de tus sueños, con los detalles y la
+          perspectiva que elijas. Desde {formatearPesos(desdePersonalizado)}, enmarcado.
         </p>
+        <ol class="mt-10 border-t border-linea-fuerte">
+          {pasos.map((paso, i) => (
+            <li class="grid grid-cols-[3.25rem_minmax(0,1fr)] gap-x-2 border-b border-linea py-5">
+              <span
+                aria-hidden="true"
+                class="font-display text-[2rem] text-acento-fuerte tabular-nums"
+              >
+                {i + 1}
+              </span>
+              <div>
+                <h3 class="text-[1.0625rem] font-semibold">{paso.titulo}</h3>
+                <p class="mt-1 max-w-[46ch] text-[0.9375rem] text-texto-suave">{paso.texto}</p>
+              </div>
+            </li>
+          ))}
+        </ol>
+        <a href="/crear" class="boton boton-oro mt-9">
+          Empezar el mío
+        </a>
       </div>
-      <ul
-        class="mt-[clamp(40px,5vw,56px)] grid grid-cols-2 gap-3 md:grid-cols-4"
-        aria-label="Espacios para fotos de clientes"
-      >
-        {[
-          'Foto grande: el mejor resultado, por ejemplo un cuarto con LED',
-          'Foto de cliente',
-          'Foto de cliente',
-          'Foto de cliente',
-          'Foto de cliente',
-        ].map((texto, i) => (
-          <li
-            style={`--i:${i}`}
-            class:list={[
-              'aparece grid place-items-center rounded-[14px] border border-dashed border-linea-fuerte p-3 text-center text-[0.8125rem] text-texto-suave',
-              i === 0 ? 'col-span-2 row-span-2 aspect-square md:aspect-auto' : 'aspect-square',
-            ]}
-          >
-            {texto}
+
+      {/* Tres cuadros reales, ya enmarcados, escalonados. */}
+      <ul class="grid grid-cols-3 items-start gap-3 sm:gap-5" aria-label="Pósters ya enmarcados">
+        {entregas.slice(0, 3).map((foto, i) => (
+          <li class:list={[i === 1 && 'mt-[18%]', i === 2 && 'mt-[36%]']}>
+            <img
+              src={foto.src}
+              alt={foto.alt}
+              loading="lazy"
+              decoding="async"
+              class="aspect-[9/16] w-full rounded-[4px] object-cover"
+            />
           </li>
         ))}
       </ul>
     </div>
   </section>
 
-  {/* 7 · Pagos y envíos: la barra 50/50 explica el pago sin párrafos. */}
-  <section aria-labelledby="pagos" class:list={['border-t border-linea', seccion]}>
-    <div class="mx-auto max-w-[1240px] px-4">
-      <p class="antetitulo">Pagos y envíos</p>
-      <h2 id="pagos" class="titulo-seccion">
-        Pagas {abono}% y {100 - abono}%
+  {/* 5 · En casa: fotos reales de su Instagram, en una tira que se desliza. */}
+  <section id="clientes" aria-labelledby="clientes-titulo" class={seccion}>
+    <div class="mx-auto flex max-w-[1240px] flex-wrap items-end justify-between gap-x-10 gap-y-4 px-4">
+      <h2 id="clientes-titulo" class="titulo-seccion">
+        Así se ven en casa
       </h2>
-      <div
-        class="aparece mt-10 flex min-h-28 overflow-hidden rounded-[14px] border border-linea-fuerte"
-        role="list"
-      >
-        <div
-          role="listitem"
-          class="flex flex-col justify-between bg-texto p-4 text-fondo sm:p-6"
-          style={{ width: `${abono}%` }}
+      {negocio.redes.instagram && (
+        <a
+          href={`https://www.instagram.com/${negocio.redes.instagram}/`}
+          target="_blank"
+          rel="noopener"
+          class="enlace-fuerte"
         >
-          <span class="font-display text-4xl tabular-nums sm:text-5xl">{abono}%</span>
-          <span class="mt-3 text-sm font-semibold sm:text-base">Para empezar tu cuadro</span>
-        </div>
-        <div
-          role="listitem"
-          class="flex flex-col justify-between p-4 sm:p-6"
-          style={{ width: `${100 - abono}%` }}
-        >
-          <span class="font-display text-4xl tabular-nums sm:text-5xl">{100 - abono}%</span>
-          <span class="mt-3 text-sm font-semibold sm:text-base">
-            Cuando esté listo, antes de enviarlo
-          </span>
-        </div>
-      </div>
-      <div class="mt-10 grid gap-8 border-t border-linea pt-8 sm:grid-cols-2">
-        <p class="max-w-[42ch] text-texto-suave">
-          Cada pago queda registrado y lo ves en el{' '}
-          <a href="/seguimiento" class="enlace-fuerte min-h-0 text-base text-texto">
+          Más en @{negocio.redes.instagram}
+        </a>
+      )}
+    </div>
+    <ul
+      class="mt-10 flex snap-x gap-3 overflow-x-auto px-4 pb-4 [scrollbar-width:thin] sm:gap-5 xl:px-[max(1rem,calc((100vw-1240px)/2+1rem))]"
+      aria-label="Fotos de pósters entregados"
+      tabindex="0"
+    >
+      {entregas.slice(3).map((foto) => (
+        <li class="w-[min(62vw,280px)] shrink-0 snap-start">
+          <img
+            src={foto.src}
+            alt={foto.alt}
+            loading="lazy"
+            decoding="async"
+            class="aspect-[9/16] w-full rounded-[4px] object-cover"
+          />
+        </li>
+      ))}
+    </ul>
+  </section>
+
+  {/* 6 · Envíos y pagos: las tarifas reales, sin párrafos. */}
+  <section aria-labelledby="envios" class:list={['border-t border-linea', seccion]}>
+    <div class="mx-auto grid max-w-[1240px] gap-x-16 gap-y-10 px-4 lg:grid-cols-2">
+      <div>
+        <h2 id="envios" class="titulo-seccion">
+          Envíos y pagos
+        </h2>
+        <p class="mt-5 max-w-[46ch] text-[1.0625rem] text-texto-suave">
+          Empiezas con un abono del {abono}% y pagas el resto cuando esté listo. Cada pago queda
+          registrado y lo ves en el{' '}
+          <a href="/seguimiento" class="font-semibold text-texto underline underline-offset-4">
             seguimiento de tu pedido
           </a>
           .
         </p>
-        <div>
-          <h3 class="font-display text-[1.375rem]">Envíos a todo Colombia</h3>
-          <p class="mt-1 text-texto-suave">{negocio.envio.texto}.</p>
-        </div>
+        <a href="/formatos" class="boton boton-linea mt-8">
+          Ver medidas y precios
+        </a>
       </div>
+      <dl class="border-t-2 border-texto">
+        {envio.tarifas.map((t) => (
+          <div class="flex items-baseline justify-between gap-6 border-b border-linea-fuerte py-4">
+            <dt class="text-[1.0625rem]">{t.zona}</dt>
+            <dd class="font-display text-[1.75rem] whitespace-nowrap tabular-nums">{t.valor}</dd>
+          </div>
+        ))}
+        <div class="flex items-baseline justify-between gap-6 py-4">
+          <dt class="text-[1.0625rem]">Tiempo de entrega</dt>
+          <dd class="font-display text-[1.75rem] whitespace-nowrap">3 a 4 días</dd>
+        </div>
+      </dl>
     </div>
   </section>
 
-  {/* 8 · Preguntas frecuentes. */}
+  {/* 7 · Preguntas frecuentes. */}
   <section aria-labelledby="faq" class:list={['border-t border-linea', seccion]}>
     <div class="mx-auto grid max-w-[1240px] gap-8 px-4 md:grid-cols-[1fr_1.6fr]">
-      <div>
-        <p class="antetitulo">Dudas</p>
-        <h2 id="faq" class="titulo-seccion">
-          Preguntas frecuentes
-        </h2>
-      </div>
+      <h2 id="faq" class="titulo-seccion">
+        Preguntas frecuentes
+      </h2>
       <div class="divide-y divide-linea border-y border-linea">
         {preguntas.map(({ p, r }) => (
           <details class="group">
-            <summary class="flex min-h-14 cursor-pointer list-none items-center justify-between gap-4 py-3 font-semibold [&::-webkit-details-marker]:hidden">
+            <summary class="flex min-h-14 cursor-pointer list-none items-center justify-between gap-4 py-3 text-[1.0625rem] font-semibold [&::-webkit-details-marker]:hidden">
               {p}
               <span
                 aria-hidden="true"
-                class="font-display text-2xl transition-transform duration-300 ease-(--ease-suave) group-open:rotate-45"
+                class="text-2xl font-normal transition-transform duration-300 ease-(--ease-suave) group-open:rotate-45"
               >
                 +
               </span>
@@ -310,25 +296,27 @@ const titular = [vitrina.titular, vitrina.titularSuave].filter(Boolean).join(' '
     </div>
   </section>
 
-  {/* 9 · Cierre: un bloque negro dentro de la página, con el botón dorado. */}
-  <section aria-labelledby="cierre" class="px-4 pb-[clamp(48px,6vw,88px)]">
-    <div class="noche aparece mx-auto max-w-[1240px] rounded-[24px] px-6 py-[clamp(64px,9vw,120px)] text-center">
-      <h2 id="cierre" class="titulo-seccion">
-        ¿Ya tienes <span class="text-acento-fuerte">la idea?</span>
+  {/* 8 · Cierre, sobre asfalto. */}
+  <section aria-labelledby="cierre" class="noche">
+    <div class="piano" aria-hidden="true"></div>
+    <div class="mx-auto max-w-[1240px] px-4 py-[clamp(72px,10vw,136px)]">
+      <h2 id="cierre" class="font-display text-[clamp(3.25rem,10vw,9rem)]">
+        ¿Cuál es el tuyo?
       </h2>
-      <p class="mx-auto mt-4 mb-8 max-w-[44ch] text-texto-suave">
-        Cuéntanos qué quieres, en qué espacio va y de qué medida. Medidas de{' '}
-        {menor && etiquetaMedida(menor)} a {mayor && etiquetaMedida(mayor)} cm, en MDF o acrílico.
-      </p>
-      {chat ? (
-        <a href={chat} target="_blank" rel="noopener" class="boton boton-oro">
-          Escribir por WhatsApp
-        </a>
-      ) : (
-        <a href="/crear" class="boton boton-oro">
-          Crear mi cuadro
-        </a>
-      )}
+      <div class="mt-8 flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
+        <p class="max-w-[44ch] text-[1.0625rem] text-texto-suave">
+          Dinos qué carro o qué moto quieres en la pared y de qué medida.
+        </p>
+        {chat ? (
+          <a href={chat} target="_blank" rel="noopener" class="boton boton-oro">
+            Escribir por WhatsApp
+          </a>
+        ) : (
+          <a href="/crear" class="boton boton-oro">
+            Pedir el mío
+          </a>
+        )}
+      </div>
     </div>
   </section>
 </Base>

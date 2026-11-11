@@ -1,9 +1,9 @@
 import { useStore } from '@nanostores/react';
 import { useEffect, useMemo, useState, type FormEvent } from 'react';
 import { negocio } from '../../config/negocio';
-import ArteCatalogo, { VARIANTES, type VarianteId } from '../catalogo/ArteCatalogo';
+import Poster from '../catalogo/Poster';
 import { obtenerAlmacen } from '../../lib/almacen';
-import { etiquetaMedida, formatearPesos } from '../../lib/formato';
+import { etiquetaMedida, etiquetaMedidaLarga, formatearPesos } from '../../lib/formato';
 import { crearPedido, siguienteNumero, type Cliente } from '../../lib/pedidos';
 import { calcularDesglose, sugerenciaPromocion } from '../../lib/precios';
 import { construirMensaje, esModoDemo, urlWhatsApp } from '../../lib/whatsapp';
@@ -14,51 +14,28 @@ import {
   vaciarCarrito,
   type ItemCarrito,
 } from '../../stores/carrito';
-import { borrarMiniatura, leerMiniatura } from '../../stores/miniaturas';
 import { $medidas } from '../../stores/precios';
 
 const AVISO_DEMO = 'En la versión real esto abre el WhatsApp del taller.';
 
 function Miniatura({ item }: { item: ItemCarrito }) {
-  const [src, setSrc] = useState<string | null | undefined>(undefined);
-  useEffect(() => setSrc(leerMiniatura(item.id)), [item.id]);
   if (item.disenoId) {
     const diseno = negocio.catalogo.find((d) => d.id === item.disenoId);
     return (
-      <div className="h-20 w-15 shrink-0 overflow-hidden rounded-sm">
-        {diseno?.foto ? (
-          <img
-            src={diseno.foto.src}
-            alt={diseno.foto.alt}
-            className="size-full object-cover"
-            style={diseno.foto.posicion ? { objectPosition: diseno.foto.posicion } : undefined}
-          />
-        ) : (
-          <ArteCatalogo
-            disenoId={item.disenoId}
-            titulo={`Diseño ${item.archivo}`}
-            variante={
-              VARIANTES.some((v) => v.id === item.variante) ? (item.variante as VarianteId) : 'orig'
-            }
-          />
-        )}
+      <div className="flex w-20 shrink-0 items-start">
+        {diseno && <Poster diseno={diseno} decorativa className="w-full" />}
       </div>
     );
   }
-  if (src === undefined) return <div className="size-20 shrink-0 rounded bg-texto/5" />;
-  if (!src) {
-    return (
-      <p className="flex size-20 shrink-0 items-center rounded bg-texto/5 p-1 text-center text-[0.7rem] leading-tight text-texto-suave">
-        Vista previa no disponible
-      </p>
-    );
-  }
+  // Un personalizado todavía no existe: se muestra el marco con el nombre del vehículo.
   return (
-    <img
-      src={src}
-      alt={`Recorte de ${item.archivo}`}
-      className="size-20 shrink-0 rounded object-contain"
-    />
+    <div className="w-20 shrink-0">
+      <span className="marco sombra-cuadro w-full" style={{ aspectRatio: '5 / 7' }}>
+        <span className="grid size-full place-items-center bg-[#f7f7f5] p-1 text-center font-display text-[0.8125rem] leading-none text-[#0e0e10]">
+          {item.archivo}
+        </span>
+      </span>
+    </div>
   );
 }
 
@@ -79,17 +56,12 @@ export default function Pedido() {
     mensaje: string;
     url: string | null;
   } | null>(null);
-  const [miniaturasPerdidas, setMiniaturasPerdidas] = useState(false);
 
   useEffect(() => {
     obtenerAlmacen()
       .listar()
       .then((pedidos) => setNumero(siguienteNumero(pedidos, negocio.marca.prefijoPedido)));
   }, []);
-
-  useEffect(() => {
-    setMiniaturasPerdidas(carrito.some((i) => !i.disenoId && !leerMiniatura(i.id)));
-  }, [carrito]);
 
   const desglose = useMemo(
     () => calcularDesglose(carrito, medidas, negocio.pagos.porcentajeAbono),
@@ -131,7 +103,17 @@ export default function Pedido() {
         ...(cliente.nota?.trim() ? { nota: cliente.nota.trim() } : {}),
       },
       items: carrito.map(
-        ({ medidaId, orientacion, material, cantidad, archivo, calidad, dpi, disenoId }) => ({
+        ({
+          medidaId,
+          orientacion,
+          material,
+          cantidad,
+          archivo,
+          calidad,
+          dpi,
+          disenoId,
+          encargo,
+        }) => ({
           medidaId,
           orientacion,
           material,
@@ -140,6 +122,7 @@ export default function Pedido() {
           calidad,
           dpi,
           ...(disenoId ? { disenoId } : {}),
+          ...(encargo ? { encargo } : {}),
         }),
       ),
       total: desglose.total,
@@ -147,7 +130,6 @@ export default function Pedido() {
     });
     await obtenerAlmacen().guardar(pedido);
 
-    for (const item of carrito) borrarMiniatura(item.id);
     vaciarCarrito();
     setConfirmado({ numero, mensaje, url });
   }
@@ -160,7 +142,7 @@ export default function Pedido() {
           <p className="mt-2">
             {demo
               ? `${AVISO_DEMO} Aquí puedes ver el mensaje que le llegaría.`
-              : 'Abrimos WhatsApp con tu pedido. Envía el mensaje y adjunta tus fotos en el chat.'}
+              : 'Abrimos WhatsApp con tu pedido. Envía el mensaje y, si pediste un personalizado, adjunta las fotos de tu vehículo en el chat.'}
           </p>
           {confirmado.url && (
             <a
@@ -191,8 +173,8 @@ export default function Pedido() {
     return (
       <div className="rounded-lg border border-linea p-6 text-center">
         <p>Tu pedido está vacío.</p>
-        <a href="/crear" className="mt-4 inline-flex min-h-11 items-center boton boton-negro">
-          Crear mi cuadro
+        <a href="/#catalogo" className="mt-4 inline-flex min-h-11 items-center boton boton-negro">
+          Ver el catálogo
         </a>
       </div>
     );
@@ -203,30 +185,29 @@ export default function Pedido() {
       <div className="flex flex-col gap-6">
         <section aria-labelledby="cuadros">
           <h2 id="cuadros" className="mb-3 font-display text-2xl">
-            Tus cuadros
+            Tus pósters
           </h2>
-          {miniaturasPerdidas && (
-            <p className="mb-3 rounded-lg border border-amber-600/50 bg-amber-400/15 p-3 text-sm">
-              Algunas vistas previas se perdieron al cerrar la pestaña. Tu pedido sigue igual:
-              adjunta esas fotos en el chat de WhatsApp.
-            </p>
-          )}
           <ul className="flex flex-col gap-3">
             {carrito.map((item) => {
               const medida = medidas.find((m) => m.id === item.medidaId);
-              const etiqueta = medida ? etiquetaMedida(medida, item.orientacion) : item.medidaId;
+              const etiqueta = medida
+                ? etiquetaMedidaLarga(medida, item.orientacion)
+                : item.medidaId;
               return (
                 <li key={item.id} className="flex gap-3 rounded-lg border border-linea p-3">
                   <Miniatura item={item} />
                   <div className="min-w-0 flex-1">
-                    <p className="font-medium">
-                      {etiqueta} · {item.orientacion} · {nombreMaterial(item.material)}
+                    <p className="font-medium">{item.archivo}</p>
+                    <p className="text-sm text-texto-suave">
+                      {medida ? etiquetaMedida(medida, item.orientacion) : item.medidaId} cm
+                      {item.encargo ? ', personalizado' : ''}, marco negro con{' '}
+                      {nombreMaterial(item.material).toLowerCase()}
                     </p>
-                    <p className="truncate text-sm text-texto-suave">
-                      {item.disenoId
-                        ? `Diseño del catálogo: ${item.archivo}`
-                        : `${item.archivo} · calidad ${item.calidad}`}
-                    </p>
+                    {item.encargo?.detalles && (
+                      <p className="mt-1 line-clamp-2 text-sm text-texto-suave">
+                        {item.encargo.detalles}
+                      </p>
+                    )}
                     <div className="mt-2 flex items-center gap-2">
                       <button
                         type="button"
@@ -251,10 +232,7 @@ export default function Pedido() {
                       </button>
                       <button
                         type="button"
-                        onClick={() => {
-                          borrarMiniatura(item.id);
-                          quitarDelCarrito(item.id);
-                        }}
+                        onClick={() => quitarDelCarrito(item.id)}
                         className="ml-auto min-h-11 px-2 text-sm text-texto-suave underline underline-offset-4 hover:text-texto"
                       >
                         Quitar
@@ -266,10 +244,10 @@ export default function Pedido() {
             })}
           </ul>
           <a
-            href="/crear"
+            href="/#catalogo"
             className="mt-3 inline-flex min-h-11 items-center text-acento-fuerte underline underline-offset-4"
           >
-            Agregar otro cuadro
+            Agregar otro póster
           </a>
         </section>
 
@@ -288,13 +266,13 @@ export default function Pedido() {
                 <div key={l.medidaId} className="border-b border-linea pb-2">
                   <div className="flex justify-between gap-4">
                     <span>
-                      {l.medidaId.replace('x', '×')} × {l.cantidad}
+                      {medida ? etiquetaMedidaLarga(medida) : l.medidaId} × {l.cantidad}
                     </span>
                     <span>{formatearPesos(l.subtotal)}</span>
                   </div>
                   {l.descuento > 0 && (
                     <div className="flex justify-between gap-4 text-acento-fuerte">
-                      <span>Descuento {l.medidaId.replace('x', '×')}</span>
+                      <span>Descuento {medida ? etiquetaMedidaLarga(medida) : l.medidaId}</span>
                       <span>−{formatearPesos(l.descuento)}</span>
                     </div>
                   )}
@@ -302,15 +280,19 @@ export default function Pedido() {
                 </div>
               );
             })}
-            <div className="flex justify-between gap-4 pt-1">
-              <span>Subtotal sin promoción</span>
-              <span>{formatearPesos(desglose.subtotal)}</span>
-            </div>
-            <div className="flex justify-between gap-4">
-              <span>Descuento</span>
-              <span>−{formatearPesos(desglose.descuento)}</span>
-            </div>
-            <div className="flex justify-between gap-4 text-lg font-semibold">
+            {desglose.descuento > 0 && (
+              <>
+                <div className="flex justify-between gap-4 pt-1">
+                  <span>Subtotal sin promoción</span>
+                  <span>{formatearPesos(desglose.subtotal)}</span>
+                </div>
+                <div className="flex justify-between gap-4">
+                  <span>Descuento</span>
+                  <span>−{formatearPesos(desglose.descuento)}</span>
+                </div>
+              </>
+            )}
+            <div className="flex justify-between gap-4 pt-1 text-lg font-semibold">
               <span>Total</span>
               <span data-testid="total">{formatearPesos(desglose.total)}</span>
             </div>

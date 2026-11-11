@@ -150,7 +150,7 @@ export default function EditorColores() {
           <p className="font-display text-4xl leading-none">
             {[negocio.vitrina.titular, negocio.vitrina.titularSuave].filter(Boolean).join(' ')}
           </p>
-          <span className="boton mt-6 bg-sobre-acento text-acento">Crear mi cuadro</span>
+          <span className="boton mt-6 bg-sobre-acento text-acento">Ver el catálogo</span>
         </div>
         <div className="border border-linea bg-superficie p-4">
           <p className="font-display text-2xl text-acento-fuerte">Así se ve un título</p>

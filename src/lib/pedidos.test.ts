@@ -27,7 +27,7 @@ function pedidoBase(total = 120000): Pedido {
       {
         medidaId: '30x40',
         orientacion: 'vertical',
-        material: 'mdf',
+        material: 'vidrio',
         cantidad: 2,
         archivo: 'foto.jpg',
         calidad: 'buena',

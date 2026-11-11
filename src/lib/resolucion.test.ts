@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { negocio } from '../config/negocio';
+import { MEDIDAS } from '../../tests/fixtures/medidas';
 import {
   calcularDpi,
   dimensionesMedida,
@@ -11,7 +12,7 @@ import {
 } from './resolucion';
 
 const medida = (id: string) => {
-  const m = negocio.medidas.find((x) => x.id === id);
+  const m = MEDIDAS.find((x) => x.id === id);
   if (!m) throw new Error(id);
   return m;
 };
@@ -34,7 +35,7 @@ describe('foto vertical de 12 MP con recorte completo', () => {
   });
 
   it('sugiere 45×60 como la medida más grande con calidad buena', () => {
-    expect(medidaMasGrandeBuena(retrato, negocio.medidas, 'vertical', negocio.resolucion)?.id).toBe(
+    expect(medidaMasGrandeBuena(retrato, MEDIDAS, 'vertical', negocio.resolucion)?.id).toBe(
       '45x60',
     );
   });
@@ -56,9 +57,9 @@ describe('orientación', () => {
       negocio.resolucion,
     );
     expect(Math.round(r.dpi)).toBe(171);
-    expect(
-      medidaMasGrandeBuena(apaisada, negocio.medidas, 'horizontal', negocio.resolucion)?.id,
-    ).toBe('45x60');
+    expect(medidaMasGrandeBuena(apaisada, MEDIDAS, 'horizontal', negocio.resolucion)?.id).toBe(
+      '45x60',
+    );
   });
 });
 
@@ -104,12 +105,7 @@ describe('piezas', () => {
 
   it('sin ninguna medida buena devuelve null', () => {
     expect(
-      medidaMasGrandeBuena(
-        { ancho: 300, alto: 400 },
-        negocio.medidas,
-        'vertical',
-        negocio.resolucion,
-      ),
+      medidaMasGrandeBuena({ ancho: 300, alto: 400 }, MEDIDAS, 'vertical', negocio.resolucion),
     ).toBeNull();
   });
 });

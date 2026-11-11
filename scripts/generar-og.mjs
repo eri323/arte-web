@@ -1,50 +1,59 @@
-// Genera las imágenes Open Graph (1200×630) de public/og/ a partir de un SVG.
-// Se versionan en el repo; vuelve a correrlo si cambias la marca: `npm run og`.
+// Genera las imágenes Open Graph (1200×630) de public/og/: un SVG con el título y, encima, un
+// póster del catálogo dentro de su marco. Se versionan en el repo; vuelve a correrlo si cambias la
+// marca o los pósters: `npm run og`.
 import { mkdirSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import sharp from 'sharp';
 
-const carpeta = join(dirname(fileURLToPath(import.meta.url)), '..', 'public', 'og');
+const raiz = join(dirname(fileURLToPath(import.meta.url)), '..', 'public');
+const carpeta = join(raiz, 'og');
 
 // Copiado de src/config/negocio.ts para no compilar TypeScript aquí.
 const marca = {
-  nombre: 'Midas Atelier',
-  acento: '#e7b94c',
-  fondo: '#0b0a09',
-  texto: '#f3ece0',
-  textoSuave: '#a39a8e',
-  led: '#ff2d20',
+  nombre: 'RaceTrack Posters',
+  instagram: 'racetrackposters',
+  acento: '#7a2df0',
+  fondo: '#efefec',
+  texto: '#0e0e10',
+  textoSuave: '#5d5d5d',
 };
 
-// inicio.png NO sale de aquí: es una captura de la portada publicada (1200×630, sin la insignia
-// de Netlify), para que la vista previa del link se vea igual que la página. Si la portada cambia,
-// se vuelve a capturar a mano; este script no la toca.
 const paginas = [
+  {
+    archivo: 'inicio.png',
+    titulo: 'Tu carro, convertido en arte',
+    sub: 'Pósters de carros y motos, enmarcados',
+    poster: 'ferrari-488-pista',
+  },
   {
     archivo: 'formatos.png',
     titulo: 'Medidas y precios',
-    sub: 'Desde 20×27 hasta 120×160 cm, con promociones',
+    sub: 'De 13×18 a 70×100 cm, con marco y envío a todo Colombia',
+    poster: 'nordschleife',
   },
   {
     archivo: 'crear.png',
-    titulo: 'Crea tu cuadro',
-    sub: 'Sube tu foto, recórtala y mírala en tu pared',
+    titulo: 'El tuyo, tal cual',
+    sub: 'Ilustramos tu carro o tu moto y te llega enmarcado',
+    poster: 'mclaren-720s',
   },
   {
     archivo: 'pedido.png',
     titulo: 'Tu pedido',
-    sub: 'Desglose, abono del 50% y pedido por WhatsApp',
+    sub: 'Total, abono del 50% y pedido por WhatsApp',
+    poster: 'ducati-panigale',
   },
   {
     archivo: 'seguimiento.png',
-    titulo: '¿En qué va mi cuadro?',
+    titulo: '¿En qué va mi póster?',
     sub: 'Estado, pagos y notas del taller',
+    poster: 'antonelli-w17',
   },
 ];
 
-// Parte el título en líneas de hasta 20 caracteres para que no se monte sobre el cuadro.
-function lineas(texto, max = 18) {
+// Parte el título en líneas cortas para que no se monte sobre el póster.
+function lineas(texto, max = 15) {
   const resultado = [''];
   for (const palabra of texto.split(' ')) {
     const actual = resultado[resultado.length - 1];
@@ -55,53 +64,47 @@ function lineas(texto, max = 18) {
 }
 
 const escapar = (t) => t.replace(/&/g, '&amp;').replace(/</g, '&lt;');
+const display = 'Impact, Haettenschweiler, Arial Narrow Bold, sans-serif';
 
-// Rayos del sol del logo: 18 cuñas doradas alrededor del centro del cuadro.
-const rayos = Array.from({ length: 18 }, (_, k) => {
-  const p = (g) => {
-    const a = (g * Math.PI) / 180;
-    return `${(150 + Math.cos(a) * 400).toFixed(1)},${(185 + Math.sin(a) * 400).toFixed(1)}`;
-  };
-  return `<polygon points="150,185 ${p(k * 20)} ${p(k * 20 + 10)}" fill="${marca.acento}"/>`;
-}).join('');
+// El póster: 330×462 de arte con 14 px de marco, a la derecha.
+const ARTE = { ancho: 330, alto: 462, marco: 14, x: 790, y: 84 };
 
 function svg({ titulo, sub }) {
+  const filas = lineas(titulo);
+  const tam = filas.length > 2 ? 84 : 104;
+  const y0 = 300 - (filas.length - 1) * tam * 0.5;
   return `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630">
   <defs>
-    <radialGradient id="led" cx="0.85" cy="0" r="0.7">
-      <stop offset="0" stop-color="${marca.led}" stop-opacity="0.45"/>
-      <stop offset="1" stop-color="${marca.led}" stop-opacity="0"/>
+    <radialGradient id="pared" cx="0.5" cy="0.4" r="0.8">
+      <stop offset="0" stop-color="#fbfbf9"/>
+      <stop offset="1" stop-color="${marca.fondo}"/>
     </radialGradient>
-    <clipPath id="c"><rect width="300" height="400"/></clipPath>
+    <filter id="sombra" x="-20%" y="-20%" width="140%" height="150%">
+      <feDropShadow dx="0" dy="22" stdDeviation="20" flood-color="#000" flood-opacity="0.28"/>
+    </filter>
   </defs>
-  <rect width="1200" height="630" fill="${marca.fondo}"/>
-  <rect width="1200" height="630" fill="url(#led)"/>
-  <g transform="translate(830 110) rotate(3 150 200)">
-    <rect x="-14" y="-14" width="328" height="428" fill="${marca.led}" opacity="0.25"/>
-    <rect x="8" y="8" width="300" height="400" fill="#000"/>
-    <g clip-path="url(#c)">
-      <rect width="300" height="400" fill="#0d0b09"/>
-      ${rayos}
-      <circle cx="150" cy="185" r="62" fill="#0d0b09"/>
-      <text x="150" y="212" text-anchor="middle" font-family="Impact, Arial Black, sans-serif" font-size="76" fill="${marca.acento}">444</text>
-    </g>
-  </g>
-  <circle cx="112" cy="128" r="20" fill="${marca.acento}"/>
-  <text x="146" y="140" font-family="Impact, Arial Black, sans-serif" font-size="34" letter-spacing="3" fill="${marca.texto}">${escapar(marca.nombre.toUpperCase())}</text>
-  ${lineas(titulo)
+  <rect width="1200" height="630" fill="url(#pared)"/>
+  <rect x="${ARTE.x - ARTE.marco}" y="${ARTE.y - ARTE.marco}" width="${ARTE.ancho + ARTE.marco * 2}" height="${ARTE.alto + ARTE.marco * 2}" fill="#0b0b0c" filter="url(#sombra)"/>
+  <text x="80" y="112" font-family="${display}" font-size="30" letter-spacing="2" fill="${marca.texto}">${escapar(marca.nombre.toUpperCase())}</text>
+  <rect x="80" y="130" width="56" height="6" fill="${marca.acento}"/>
+  ${filas
     .map(
       (l, i) =>
-        `<text x="90" y="${270 + i * 80}" font-family="Impact, Arial Black, sans-serif" font-size="78" fill="${i === lineas(titulo).length - 1 ? marca.acento : marca.texto}">${escapar(l.toUpperCase())}</text>`,
+        `<text x="76" y="${y0 + i * tam}" font-family="${display}" font-size="${tam}" fill="${marca.texto}">${escapar(l.toUpperCase())}</text>`,
     )
     .join('')}
-  <text x="90" y="${270 + lineas(titulo).length * 80 + 6}" font-family="Arial, sans-serif" font-size="30" fill="${marca.textoSuave}">${escapar(sub)}</text>
-  <text x="90" y="560" font-family="Arial, sans-serif" font-size="22" fill="${marca.textoSuave}">Instagram @midasatelier444</text>
+  <text x="80" y="${y0 + (filas.length - 1) * tam + 58}" font-family="Arial, sans-serif" font-size="28" fill="${marca.textoSuave}">${escapar(sub)}</text>
+  <text x="80" y="560" font-family="Arial, sans-serif" font-size="22" fill="${marca.textoSuave}">Instagram @${marca.instagram}</text>
 </svg>`;
 }
 
 mkdirSync(carpeta, { recursive: true });
 for (const pagina of paginas) {
+  const arte = await sharp(join(raiz, 'catalogo', `${pagina.poster}.webp`))
+    .resize(ARTE.ancho, ARTE.alto, { fit: 'cover' })
+    .toBuffer();
   await sharp(Buffer.from(svg(pagina)))
+    .composite([{ input: arte, left: ARTE.x, top: ARTE.y }])
     .png({ compressionLevel: 9 })
     .toFile(join(carpeta, pagina.archivo));
   console.log(`og/${pagina.archivo}`);

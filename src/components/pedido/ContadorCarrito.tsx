@@ -2,13 +2,13 @@ import { useStore } from '@nanostores/react';
 import { useEffect, useRef } from 'react';
 import { $cantidadCarrito } from '../../stores/carrito';
 
-/** Link "Pedido" del header con la cantidad de cuadros en el carrito. */
+/** Link "Pedido" del header con la cantidad de pósters en el carrito. */
 export default function ContadorCarrito({ className }: { className?: string }) {
   const cantidad = useStore($cantidadCarrito);
   const insignia = useRef<HTMLSpanElement>(null);
   const anterior = useRef(cantidad);
 
-  // Cuando entra un cuadro, el número da un saltito: confirma desde el header que se agregó.
+  // Cuando entra un póster, el número da un saltito: confirma desde el header que se agregó.
   useEffect(() => {
     const subio = cantidad > anterior.current;
     anterior.current = cantidad;
@@ -33,7 +33,7 @@ export default function ContadorCarrito({ className }: { className?: string }) {
           {cantidad}
         </span>
       )}
-      {cantidad > 0 && <span className="sr-only"> {cantidad === 1 ? 'cuadro' : 'cuadros'}</span>}
+      {cantidad > 0 && <span className="sr-only"> {cantidad === 1 ? 'póster' : 'pósters'}</span>}
     </a>
   );
 }

@@ -8,9 +8,9 @@ const variable = (page: Page, nombre: string) =>
     nombre,
   );
 
-// El sol del logo lleva el color de firma.
+// El botón principal de la pared lleva el color de firma.
 const botonPortada = (page: Page) =>
-  page.locator('[data-logo]').evaluate((el) => getComputedStyle(el).backgroundImage);
+  page.locator('#pared .boton-oro').evaluate((el) => getComputedStyle(el).backgroundColor);
 
 test.describe('colores de la marca', () => {
   test('una paleta del panel cambia todo el sitio y se puede volver a la original', async ({
@@ -33,9 +33,9 @@ test.describe('colores de la marca', () => {
 
     await irA(page, '/taller');
     await page.getByRole('button', { name: 'Volver a los colores originales' }).click();
-    expect(await variable(page, '--marca-acento')).toBe('#b07d1f');
+    expect(await variable(page, '--marca-acento')).toBe('#7a2df0');
     await irA(page, '/');
-    expect(await botonPortada(page)).toContain('rgb(176, 125, 31)');
+    expect(await botonPortada(page)).toContain('rgb(122, 45, 240)');
   });
 
   test('una combinación ilegible avisa y no se guarda', async ({ page }) => {

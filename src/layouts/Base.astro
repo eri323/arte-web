@@ -52,7 +52,7 @@ const variablesMarca = Object.entries(negocio.marca.colores)
           document.documentElement.dataset.tema = tema;
           document
             .querySelector('meta[name="theme-color"]')
-            ?.setAttribute('content', tema === 'oscuro' ? '#161513' : '#f2f2f0');
+            ?.setAttribute('content', tema === 'oscuro' ? '#17181b' : '#efefec');
         };
         aplicar(guardado || (sistema.matches ? 'oscuro' : 'claro'));
         // Si el cliente nunca eligió, el sitio sigue al sistema aunque cambie con la página abierta.

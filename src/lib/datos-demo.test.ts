@@ -15,24 +15,24 @@ const porNumero = (n: string) => {
 describe('crearPedidosDemo', () => {
   it('trae los 3 pedidos de la sección 7', () => {
     expect(demo.map((p) => [p.numero, p.estado])).toEqual([
-      ['MA-1040', 'en_produccion'],
-      ['MA-1041', 'listo'],
-      ['MA-1042', 'enviado'],
+      ['RT-1040', 'en_produccion'],
+      ['RT-1041', 'listo'],
+      ['RT-1042', 'enviado'],
     ]);
   });
 
-  it('MA-1040 tiene la nota de impresión', () => {
-    expect(porNumero('MA-1040').notas.map((n) => n.texto)).toContain(
-      'Tu cuadro entra a impresión mañana',
+  it('RT-1040 tiene la nota de impresión', () => {
+    expect(porNumero('RT-1040').notas.map((n) => n.texto)).toContain(
+      'Tu diseño está aprobado: mañana entra a impresión y enmarcado',
     );
   });
 
-  it('MA-1041 tiene saldo pendiente', () => {
-    expect(saldoPendiente(porNumero('MA-1041'))).toBeGreaterThan(0);
+  it('RT-1041 tiene saldo pendiente', () => {
+    expect(saldoPendiente(porNumero('RT-1041'))).toBeGreaterThan(0);
   });
 
-  it('MA-1042 tiene guía y está pagado', () => {
-    const p = porNumero('MA-1042');
+  it('RT-1042 tiene guía y está pagado', () => {
+    const p = porNumero('RT-1042');
     expect(p.envio?.guia).toBeTruthy();
     expect(saldoPendiente(p)).toBe(0);
   });
@@ -49,7 +49,7 @@ describe('crearPedidosDemo', () => {
         expect(new Date(h.fecha).getTime()).toBeLessThanOrEqual(AHORA.getTime());
       expect(p.historial.map((h) => h.estado).at(-1)).toBe(p.estado);
     }
-    expect(new Date(porNumero('MA-1040').fechaEstimada ?? 0).getTime()).toBeGreaterThan(
+    expect(new Date(porNumero('RT-1040').fechaEstimada ?? 0).getTime()).toBeGreaterThan(
       AHORA.getTime(),
     );
     const otraFecha = crearPedidosDemo(new Date('2027-03-01T12:00:00.000Z'));

@@ -86,7 +86,7 @@ export default function Configurador() {
   // Medida y material con que llegan las fotos nuevas. Desde la pared de la portada vienen en la URL.
   const [base, setBase] = useState<{ medidaId: string; material: MaterialId }>({
     medidaId: '30x40',
-    material: 'mdf',
+    material: 'vidrio',
   });
 
   const fotosRef = useRef(fotos);
@@ -514,7 +514,7 @@ export default function Configurador() {
             {fotos.length > 1 && (
               <button type="button" onClick={igualarTodas} className="boton boton-linea self-start">
                 Usar {etiquetaMedida(medida, activa.orientacion)} en{' '}
-                {activa.material === 'mdf' ? 'MDF' : 'acrílico'} para todas
+                {activa.material === 'vidrio' ? 'MDF' : 'acrílico'} para todas
               </button>
             )}
 
@@ -550,7 +550,7 @@ export default function Configurador() {
             </div>
 
             <EscenaPared
-              titulo={`Vista previa de un cuadro de ${etiquetaMedida(medida, activa.orientacion)} en ${activa.material === 'mdf' ? 'MDF' : 'acrílico'} sobre un sofá de 200 cm`}
+              titulo={`Vista previa de un cuadro de ${etiquetaMedida(medida, activa.orientacion)} en ${activa.material === 'vidrio' ? 'MDF' : 'acrílico'} sobre un sofá de 200 cm`}
               cuadro={{
                 ...dimensionesMedida(medida, activa.orientacion),
                 material: activa.material,

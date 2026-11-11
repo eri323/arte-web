@@ -3,7 +3,7 @@
 // Mientras el taller no tenga fotos de clientes, estos montajes muestran cómo queda un cuadro
 // colgado, sin usar fotos de terceros.
 import type { DisenoCatalogo } from '../../config/negocio';
-import { ImagenDiseno } from './Vitrina';
+import Poster from './Poster';
 
 interface Props {
   diseno: DisenoCatalogo;
@@ -33,7 +33,7 @@ const { diseno, pie, mueble, pared, led = false, anchoCuadro = 30, class: clase 
       class="sombra-cuadro absolute top-[10%] left-1/2 aspect-[3/4] -translate-x-1/2"
       style={{ width: `${anchoCuadro}%` }}
     >
-      <ImagenDiseno diseno={diseno} decorativa />
+      <Poster diseno={diseno} decorativa llenar />
     </div>
     {mueble === 'cama' && (
       <>

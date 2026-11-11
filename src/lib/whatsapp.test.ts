@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { negocio } from '../config/negocio';
+import { MEDIDAS } from '../../tests/fixtures/medidas';
 import { calcularDesglose } from './precios';
 import {
   construirMensaje,
@@ -14,7 +15,7 @@ function item(parcial: Partial<ItemMensaje> = {}): ItemMensaje {
   return {
     medidaId: '30x40',
     orientacion: 'vertical',
-    material: 'mdf',
+    material: 'vidrio',
     cantidad: 2,
     archivo: 'cumpleaños de mamá.jpg',
     calidad: 'buena',
@@ -26,9 +27,9 @@ function datos(items: ItemMensaje[]): DatosMensaje {
   return {
     numero: 'AE-1043',
     items,
-    desglose: calcularDesglose(items, negocio.medidas, 50),
+    desglose: calcularDesglose(items, MEDIDAS, 50),
     cliente: { nombre: 'Peña & Hijos', ciudad: 'Bogotá', celular: '3001234567', nota: 'Sin marco' },
-    negocio,
+    negocio: { ...negocio, medidas: MEDIDAS },
   };
 }
 
@@ -48,7 +49,7 @@ describe('construirMensaje', () => {
 
   it('lleva número, ítems, desglose, cliente, envío y la línea de fotos', () => {
     expect(mensaje).toContain('AE-1043');
-    expect(mensaje).toContain('30×40 vertical · MDF · x2');
+    expect(mensaje).toContain('30×40 vertical · Vidrio · x2');
     expect(mensaje).toContain('60×45 horizontal · Acrílico · x1');
     expect(mensaje).toContain('cumpleaños de mamá.jpg');
     expect(mensaje).toContain('calidad regular');
@@ -59,7 +60,7 @@ describe('construirMensaje', () => {
     expect(mensaje).toMatch(/Saldo: \$\s100\.000/);
     expect(mensaje).toContain('Peña & Hijos');
     expect(mensaje).toContain('Bogotá');
-    expect(mensaje).toContain('Envío: Se cotiza por WhatsApp según tu ciudad');
+    expect(mensaje).toContain(`Envío: ${negocio.envio.texto}`);
     expect(mensaje).toContain('Adjunto mis fotos en este chat');
   });
 
@@ -100,6 +101,29 @@ describe('urlWhatsApp', () => {
 
   it('quita el + y los espacios del número', () => {
     expect(urlWhatsApp('+57 300 123 4567', 'a')).toBe('https://wa.me/573001234567?text=a');
+  });
+});
+
+describe('personalizados', () => {
+  const encargo = {
+    vehiculo: 'Carro: Mazda 3 2019',
+    detalles: 'Estilo ficha técnica. color rojo',
+    fotos: 2,
+  };
+
+  it('llevan el vehículo, los detalles y piden las fotos de referencia', () => {
+    const m = construirMensaje(datos([item({ archivo: 'Mazda 3 2019', encargo })]));
+    expect(m).toContain('Personalizado: Carro: Mazda 3 2019');
+    expect(m).toContain('Detalles: Estilo ficha técnica. color rojo');
+    expect(m).not.toContain('Foto:');
+    expect(m).toContain('Adjunto las fotos de referencia de mi vehículo en este chat.');
+  });
+
+  it('con muchos se compactan sin perder el vehículo', () => {
+    const muchos = Array.from({ length: 40 }, () => item({ cantidad: 1, encargo }));
+    const m = construirMensaje(datos(muchos));
+    expect(m.length).toBeLessThanOrEqual(MAX_CARACTERES_MENSAJE);
+    expect(m).toContain('Personalizado Carro: Mazda 3 2019');
   });
 });
 

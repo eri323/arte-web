@@ -1,20 +1,19 @@
 ---
 import Base from '../layouts/Base.astro';
-import Configurador from '../components/configurador/Configurador';
+import Encargo from '../components/configurador/Encargo';
+import { negocio } from '../config/negocio';
 ---
 
 <Base
-  title="Sube tus fotos"
-  description="Sube una o varias fotos a la vez, ajusta cada cuadro, mira cómo queda en tu pared y aprovecha las promociones por cantidad."
+  title="Tu carro o tu moto, en un póster"
+  description="Cuéntanos qué carro o qué moto quieres, elige el estilo y la medida, y mira un boceto antes de pedir. Lo ilustramos a mano y te llega enmarcado."
   ogImage="/og/crear.png"
 >
-  <section class="mx-auto max-w-6xl px-4 pt-10 pb-16">
-    <h1 class="font-display text-4xl sm:text-5xl">Sube tus fotos</h1>
-    <p class="mt-2 mb-8 max-w-prose text-texto-suave">
-      Sube todas las que quieras convertir en cuadros, ajusta cada una y agrégalas al pedido de una
-      vez: entre más llevas de la misma medida, más barato sale cada una. Tus fotos se procesan en
-      tu equipo y no se suben a ningún servidor.
+  <section class="mx-auto max-w-[1240px] px-4 pt-[clamp(32px,5vw,64px)] pb-20">
+    <h1 class="titulo-seccion">El tuyo, tal cual</h1>
+    <p class="mt-4 mb-10 max-w-[56ch] text-[1.0625rem] text-texto-suave">
+      Ilustramos el vehículo que quieras, el tuyo o el de tus sueños. {negocio.tiempos.texto}.
     </p>
-    <Configurador client:load />
+    <Encargo client:load />
   </section>
 </Base>

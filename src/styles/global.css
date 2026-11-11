@@ -1,9 +1,7 @@
-/* Tienda de arte con los cuadros de protagonistas (ver DESIGN.md).
-   Inter Tight (grotesca apretada) para titulares e interfaz; Newsreader en cursiva para las
-   cartelas, como en una galería. Big Shoulders solo vive dentro del arte de los diseños. */
+/* RaceTrack Posters (ver DESIGN.md). La página se arma como uno de sus pósters: letras condensadas
+   enormes que se desvanecen detrás del carro, pared gris clara, marcos negros y una fila de datos
+   como la ficha técnica. Big Shoulders para los titulares; Inter Tight para todo lo demás. */
 @import '@fontsource-variable/inter-tight';
-@import '@fontsource-variable/newsreader/opsz.css';
-@import '@fontsource-variable/newsreader/opsz-italic.css';
 @import '@fontsource-variable/big-shoulders-display';
 @import 'tailwindcss';
 
@@ -21,18 +19,16 @@
   --color-linea-fuerte: var(--marca-linea-fuerte);
   --color-cinta: var(--marca-cinta);
   --font-sans: 'Inter Tight Variable', 'Helvetica Neue', Arial, sans-serif;
-  --font-display: 'Inter Tight Variable', 'Helvetica Neue', Arial, sans-serif;
-  --font-editorial: 'Newsreader Variable', Georgia, 'Times New Roman', serif;
+  --font-display: 'Big Shoulders Display Variable', Impact, 'Arial Narrow', sans-serif;
 }
 
 @theme {
-  /* La letra condensada de los afiches: solo dentro del arte de los diseños. */
-  --font-cartel: 'Big Shoulders Display Variable', Impact, 'Arial Narrow', sans-serif;
-  /* La tira LED del cuarto: solo luz y decoración, nunca texto pequeño. No se edita en el panel. */
-  --color-led: #ff2d20;
-  --ease-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  /* El marco de todos los pósters: negro de verdad, no cambia con el tema. */
+  --color-marco: #070708;
+  /* Los colores de sector de una pantalla de tiempos, para los estados del pedido. */
+  --color-sector-verde: #17a34a;
+  --color-sector-amarillo: #e8b600;
   --ease-suave: cubic-bezier(0.22, 0.61, 0.36, 1);
-  /* Curvas fuertes: ease-out para lo que entra o responde, ease-in-out para lo que se desplaza. */
   --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
   --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
 }
@@ -52,12 +48,12 @@
     -webkit-font-smoothing: antialiased;
   }
   :focus-visible {
-    outline: 1px solid currentColor;
-    outline-offset: 4px;
+    outline: 2px solid var(--color-acento);
+    outline-offset: 3px;
   }
   ::selection {
-    background-color: var(--color-texto);
-    color: var(--color-fondo);
+    background-color: var(--color-acento);
+    color: var(--color-sobre-acento);
   }
   @media (prefers-reduced-motion: reduce) {
     html {
@@ -66,94 +62,74 @@
   }
 }
 
-/* Titulares: grotesca de peso 600 con las letras apretadas, como en la referencia. */
+/* Titulares: la condensada de sus pósters, en mayúsculas y apretada. */
 @utility font-display {
   font-family: var(--font-display);
-  font-weight: 600;
-  letter-spacing: -0.025em;
-  line-height: 1.08;
-  text-wrap: balance;
-}
-
-/* El titular de la portada: moderado, para que los cuadros manden. */
-@utility texto-cartel {
-  font-family: var(--font-display);
-  font-weight: 600;
-  letter-spacing: -0.035em;
-  word-spacing: 0.04em;
-  line-height: 1.02;
-  font-size: clamp(2.375rem, 4.6vw, 4rem);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.005em;
+  line-height: 0.98;
   text-wrap: balance;
 }
 
 /* Títulos de sección. */
 @utility titulo-seccion {
   font-family: var(--font-display);
-  font-weight: 600;
-  letter-spacing: -0.028em;
-  word-spacing: 0.03em;
-  line-height: 1.06;
-  font-size: clamp(1.875rem, 3.4vw, 2.75rem);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.005em;
+  line-height: 0.95;
+  font-size: clamp(2.5rem, 5.4vw, 4.25rem);
   text-wrap: balance;
 }
 
-/* Antetítulo: una cartela en cursiva, como el rótulo de una obra. */
+/* Línea corta encima de un título, solo donde aporta contexto. */
 @utility antetitulo {
   display: block;
-  margin-bottom: 0.75rem;
-  font-family: var(--font-editorial);
-  font-style: italic;
-  font-size: 1.0625rem;
+  margin-bottom: 0.625rem;
+  font-weight: 600;
+  font-size: 0.9375rem;
   line-height: 1.3;
   color: var(--color-acento-fuerte);
 }
 
-/* Títulos de obra y pies de foto. */
+/* Nombres de pósters: la sans en peso medio. */
 @utility font-editorial {
-  font-family: var(--font-editorial);
-  font-style: italic;
-  font-weight: 400;
-  letter-spacing: 0;
+  font-family: var(--font-sans);
+  font-weight: 600;
+  letter-spacing: -0.01em;
 }
 
 /* Medidas y datos pequeños: tabulares, para que las cifras no bailen. */
 @utility lapiz {
   font-weight: 600;
   font-size: 0.8125rem;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.02em;
   line-height: 1.2;
   font-variant-numeric: tabular-nums;
 }
 
-/* Un cuadro físico: esquinas rectas y una sombra suave en capas. */
+/* Un cuadro colgado: sombra corta y dura abajo, como en sus fotos de producto. */
 @utility sombra-cuadro {
   box-shadow:
-    0 1px 2px rgb(11 10 9 / 0.12),
-    0 10px 24px -8px rgb(11 10 9 / 0.28),
-    0 28px 48px -24px rgb(11 10 9 / 0.3);
+    0 1px 1px rgb(0 0 0 / 0.2),
+    0 14px 18px -10px rgb(0 0 0 / 0.42),
+    0 30px 44px -26px rgb(0 0 0 / 0.38);
 }
 
-@utility sombra-acrilico {
-  box-shadow:
-    3px 3px 0 rgb(210 235 240 / 0.4),
-    0 0 0 1px rgb(255 255 255 / 0.25),
-    0 22px 32px -14px rgb(6 4 3 / 0.75);
-}
-
-/* Botón: rectángulo sobrio de 48 px. */
+/* Botón: rectángulo de 48 px con las esquinas apenas matadas. */
 @utility boton {
   position: relative;
   display: inline-flex;
   min-height: 3rem;
   align-items: center;
   justify-content: center;
-  gap: 0.75rem;
+  gap: 0.625rem;
   border: 1px solid transparent;
-  border-radius: 10px;
+  border-radius: 4px;
   padding: 0.75rem 1.375rem;
   font-weight: 600;
-  font-size: 0.875rem;
-  letter-spacing: 0.02em;
+  font-size: 0.9375rem;
   white-space: nowrap;
   text-decoration: none;
   transition:
@@ -161,22 +137,12 @@
     color 200ms ease,
     border-color 200ms ease,
     transform 160ms var(--ease-out);
-  /* Al presionar se hunde un poco: la interfaz confirma que oyó el toque. */
   &:active {
     transform: scale(0.97);
   }
-  & .flecha {
-    display: inline-block;
-    transition: transform 250ms var(--ease-out);
-  }
-  @media (hover: hover) and (pointer: fine) {
-    &:hover .flecha {
-      transform: translateX(4px);
-    }
-  }
 }
 
-/* Cualquier otra cosa que se toca (segmentos, círculos de color, filtros) responde igual. */
+/* Lo que se toca (segmentos, filtros, tarjetas) confirma el toque. */
 @utility presionable {
   transition: transform 160ms var(--ease-out);
   &:active {
@@ -184,16 +150,16 @@
   }
 }
 
-/* La acción principal: relleno de tinta. */
+/* La acción principal: tinta. */
 @utility boton-negro {
   background-color: var(--color-texto);
   color: var(--color-fondo);
   &:hover {
-    background-color: color-mix(in srgb, var(--color-texto) 85%, var(--color-fondo));
+    background-color: color-mix(in srgb, var(--color-texto) 82%, var(--color-fondo));
   }
 }
 
-/* El dorado se reserva para pedir. */
+/* El morado se reserva para pedir. (Conserva el nombre de la plantilla.) */
 @utility boton-oro {
   background-color: var(--color-acento);
   color: var(--color-sobre-acento);
@@ -202,12 +168,12 @@
   }
 }
 
-/* Secundario: relleno gris suave, sin borde. */
+/* Secundario: solo borde. */
 @utility boton-linea {
-  background-color: color-mix(in srgb, var(--color-texto) 7%, var(--color-fondo));
+  border-color: var(--color-linea-fuerte);
   color: var(--color-texto);
   &:hover {
-    background-color: color-mix(in srgb, var(--color-texto) 13%, var(--color-fondo));
+    border-color: var(--color-texto);
   }
 }
 
@@ -218,7 +184,7 @@
   align-items: center;
   gap: 0.5rem;
   font-weight: 600;
-  font-size: 0.875rem;
+  font-size: 0.9375rem;
   text-decoration: none;
   background-image: linear-gradient(currentColor, currentColor);
   background-size: 100% 1px;
@@ -231,234 +197,164 @@
   }
 }
 
-/* ---------- Portada: el abanico de cuadros ---------- */
+/* ---------- El póster enmarcado ---------- */
 
-/* Cada cuadro sale apilado en el centro y abre hasta su lugar. Se anima el transform de la carta
-   (no una variable de CSS) para que lo haga la tarjeta gráfica: así no se traba mientras la página
-   todavía está cargando fuentes e hidratando las islas. Sin `to`, termina en su transform final. */
-@keyframes abrir-carta {
-  from {
-    transform: translateX(0) scale(calc(1 - var(--d) * 0.03));
+/* Marco negro alrededor del arte. El grosor (--marco) va en porcentaje del ancho y lo pone el
+   componente según la forma, para que un panorámico no quede con el marco más grueso. */
+.marco {
+  display: block;
+  position: relative;
+  background: var(--color-marco);
+  padding: var(--marco, 3.4%);
+}
+.marco > img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+/* El reflejo del vidrio: una franja diagonal muy tenue. */
+.marco::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(112deg, transparent 42%, rgb(255 255 255 / 0.09) 50%, transparent 58%);
+}
+
+/* ---------- Portada ---------- */
+
+/* Las letras gigantes de la portada, como el «PORSCHE» de sus pósters: tinta arriba y se
+   desvanecen hacia abajo, donde se les montan los cuadros. */
+.letras-poster {
+  font-family: var(--font-display);
+  font-weight: 900;
+  text-transform: uppercase;
+  line-height: 0.8;
+  letter-spacing: -0.01em;
+  font-size: clamp(5rem, 25.5vw, 27rem);
+  white-space: nowrap;
+  color: transparent;
+  background: linear-gradient(
+    to bottom,
+    var(--color-texto) 8%,
+    color-mix(in srgb, var(--color-texto) 55%, transparent) 52%,
+    color-mix(in srgb, var(--color-texto) 6%, transparent) 92%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+
+/* La fila de pósters montada sobre las letras, en dos alturas como una parrilla de salida. */
+.parrilla {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: clamp(10px, 2vw, 28px);
+}
+.parrilla > li {
+  flex: 0 0 var(--pw);
+  transition: transform 300ms var(--ease-out);
+}
+.parrilla > li:nth-child(even) {
+  margin-top: calc(var(--pw) * 0.22);
+}
+@media (hover: hover) and (pointer: fine) {
+  .parrilla > li:hover {
+    transform: translateY(-10px);
   }
 }
 
-@keyframes burbuja-entra {
+@keyframes llegar {
   from {
     opacity: 0;
-    transform: translateY(8px) scale(0.92);
+    transform: translateX(60px);
   }
 }
-
-@keyframes flotar {
-  50% {
-    transform: translateY(-4px);
+@keyframes subir-letras {
+  from {
+    opacity: 0;
+    transform: translateY(0.06em);
   }
 }
-
 @keyframes entrar {
   from {
     opacity: 0;
-    transform: translateY(12px);
-  }
-}
-
-/* Una tira LED de verdad: la línea encendida y la luz que tira hacia la pared. */
-.tira-led {
-  box-shadow:
-    0 0 6px 1px rgb(255 45 32 / 0.9),
-    0 0 28px 6px rgb(255 45 32 / 0.45);
-}
-
-/* Los cuadros se abren en línea recta hacia los lados, sin arco ni giro. Los de las puntas se ven
-   un poco más pequeños, como si estuvieran detrás. */
-.carta {
-  z-index: var(--z);
-  transform: translateX(calc(var(--i) * var(--sep))) scale(calc(1 - var(--d) * 0.03));
-}
-
-/* Globos sobre el abanico que cuentan la variedad: cualquier imagen, cualquier tamaño. */
-.burbuja {
-  position: absolute;
-  z-index: 40;
-  padding: 0.375rem 0.875rem;
-  border-radius: 999px;
-  font-size: 0.8125rem;
-  font-weight: 500;
-  line-height: 1.3;
-  white-space: nowrap;
-  color: #0b0a09;
-  box-shadow: 0 6px 16px -6px rgb(11 10 9 / 0.35);
-}
-.burbuja::after {
-  content: '';
-  position: absolute;
-  bottom: -5px;
-  width: 12px;
-  height: 12px;
-  background: inherit;
-  transform: rotate(45deg);
-  border-radius: 2px;
-}
-.burbuja-izq::after {
-  left: 22px;
-}
-.burbuja-der::after {
-  right: 22px;
-}
-
-.carta .alza {
-  transition:
-    transform 300ms var(--ease-out),
-    box-shadow 300ms var(--ease-out);
-}
-
-.carta .tip {
-  opacity: 0;
-  transition: opacity 200ms ease;
-}
-
-/* Con el dedo no hay hover: un toque ya lleva a la pared. El hover solo con mouse. */
-.carta:focus-within {
-  z-index: 30;
-}
-.carta:focus-within .alza {
-  transform: translateY(-14px) scale(1.04);
-  box-shadow:
-    0 2px 4px rgb(11 10 9 / 0.12),
-    0 24px 44px -12px rgb(11 10 9 / 0.4);
-}
-.carta:focus-within .tip {
-  opacity: 1;
-}
-@media (hover: hover) and (pointer: fine) {
-  .carta:hover {
-    z-index: 30;
-  }
-  .carta:hover .alza {
-    transform: translateY(-14px) scale(1.04);
-    box-shadow:
-      0 2px 4px rgb(11 10 9 / 0.12),
-      0 24px 44px -12px rgb(11 10 9 / 0.4);
-  }
-  .carta:hover .tip {
-    opacity: 1;
+    transform: translateY(10px);
   }
 }
 
 @media (prefers-reduced-motion: no-preference) {
-  /* Entrada de la portada en cascada: antetítulo, titular, bajada, botones y luego el abanico.
-     Es de marketing y se ve una vez, así que puede ser más lenta que la interfaz. */
+  /* Un solo momento de entrada: las letras suben, los pósters llegan a su puesto uno tras otro
+     y al final aparece el texto. */
+  .letras-poster {
+    animation: subir-letras 900ms var(--ease-out) both;
+  }
+  .parrilla > li {
+    animation: llegar 800ms var(--ease-out) both;
+    animation-delay: calc(250ms + var(--i, 0) * 90ms);
+  }
   .entra {
-    animation: entrar 800ms var(--ease-out) both;
-    animation-delay: calc(var(--i, 0) * 70ms);
-  }
-  .carta {
-    animation: abrir-carta 1000ms var(--ease-out) 250ms both;
-  }
-  /* Las burbujas llegan cuando el abanico ya abrió, y luego flotan apenas. */
-  .burbuja {
-    animation:
-      burbuja-entra 500ms var(--ease-out) both,
-      flotar 5s ease-in-out 1.6s infinite;
-    animation-delay: var(--retraso, 1100ms), calc(var(--retraso, 1100ms) + 500ms);
+    animation: entrar 700ms var(--ease-out) both;
+    animation-delay: calc(700ms + var(--i, 0) * 80ms);
   }
 
-  /* Las secciones aparecen una vez al entrar en pantalla (Base.astro pone .visto con un
-     IntersectionObserver). Solo con JS: sin él, todo se ve quieto desde el principio. */
-  .js .aparece {
-    opacity: 0;
-    transform: translateY(16px);
-    transition:
-      opacity 700ms var(--ease-out),
-      transform 700ms var(--ease-out);
-    transition-delay: calc(var(--i, 0) * 60ms);
+  /* Compatibilidad con las páginas de la plantilla: .aparece ya no anima (un solo momento de
+     movimiento por página), pero la clase sigue en el HTML. */
+}
+
+/* Ficha técnica: etiqueta pequeña arriba y el dato abajo, separados por líneas, como la fila de
+   ENGINE / POWER / TORQUE de sus pósters. */
+.ficha {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  border-top: 2px solid var(--color-texto);
+}
+.ficha > div {
+  padding: 0.875rem 1rem 1rem 0;
+  border-bottom: 1px solid var(--color-linea-fuerte);
+}
+.ficha > div:nth-child(even) {
+  padding-left: 1rem;
+  border-left: 1px solid var(--color-linea-fuerte);
+}
+.ficha dt {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--color-texto-suave);
+}
+.ficha dd {
+  margin-top: 0.125rem;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(1.375rem, 2.4vw, 1.875rem);
+  line-height: 1.05;
+  text-transform: uppercase;
+  font-variant-numeric: tabular-nums;
+}
+@media (min-width: 768px) {
+  .ficha {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
   }
-  .js .aparece.visto {
-    opacity: 1;
-    transform: none;
+  .ficha > div {
+    border-bottom: 0;
+  }
+  .ficha > div + div {
+    padding-left: 1.25rem;
+    border-left: 1px solid var(--color-linea-fuerte);
   }
 }
 
-/* ---------- Inspiración: los cuadros en escalera ---------- */
+/* ---------- Catálogo ---------- */
 
-/* Cada cuadro baja y se corre a la derecha según su lugar (--s): 0 es el del frente. Se mueve con
-   transform (lo hace la tarjeta gráfica) y en cascada corta, de adelante hacia atrás. */
-.esc-item {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: var(--cw);
-  transform: translate(calc(var(--s) * var(--dx)), calc(var(--s) * var(--dy)));
-  transition:
-    transform 650ms var(--ease-in-out),
-    opacity 350ms var(--ease-out);
-  transition-delay: calc(max(var(--s), 0) * 45ms);
-}
-.esc-item.fuera {
-  opacity: 0;
-  pointer-events: none;
-}
-.esc-arte {
-  box-shadow:
-    0 1px 2px rgb(11 10 9 / 0.12),
-    0 10px 24px -8px rgb(11 10 9 / 0.28),
-    0 28px 48px -24px rgb(11 10 9 / 0.3);
+.tarjeta-poster .marco {
   transition:
     transform 300ms var(--ease-out),
     box-shadow 300ms var(--ease-out);
 }
 @media (hover: hover) and (pointer: fine) {
-  .esc-arte:hover {
-    transform: translateY(-8px);
-    box-shadow:
-      0 2px 4px rgb(11 10 9 / 0.12),
-      0 24px 44px -12px rgb(11 10 9 / 0.4);
-  }
-}
-/* Las etiquetas de la escalera usan el globo de la portada, pero sin su entrada ni su vaivén. */
-.burbuja.esc-burbuja {
-  top: -14px;
-  animation: none;
-  transition: opacity 300ms var(--ease-out) 250ms;
-}
-.burbuja.esc-burbuja.oculta {
-  opacity: 0;
-  transition-delay: 0ms;
-}
-
-.palabra {
-  display: inline-block;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  /* El contenedor no se mueve: se mueven sus piezas. */
-  .js .aparece.escalera {
-    opacity: 1;
-    transform: none;
-  }
-  /* Antes de entrar en pantalla los cuadros están en un mazo y el titular, desenfocado. */
-  .js .escalera:not(.visto) .esc-item {
-    transform: none;
-  }
-  .js .escalera:not(.visto) .esc-burbuja {
-    opacity: 0;
-  }
-  .escalera .palabra {
-    transition:
-      opacity 600ms var(--ease-out),
-      filter 600ms var(--ease-out),
-      transform 700ms var(--ease-out);
-    transition-delay: calc(var(--w) * 60ms);
-  }
-  .js .escalera:not(.visto) .palabra {
-    opacity: 0;
-    filter: blur(6px);
-    transform: translateY(0.3em);
-  }
-}
-@media (prefers-reduced-motion: reduce) {
-  .esc-item {
-    transition: opacity 200ms ease;
+  .tarjeta-poster:hover .marco {
+    transform: translateY(-6px);
   }
 }
 
@@ -489,26 +385,33 @@
 /* El tema se elige antes de pintar (script en Base.astro): el que el cliente escogió con el botón
    del header o, si nunca escogió, el de su sistema. Se redefinen los --marca-* con !important
    porque los colores probados en el panel del taller llegan como estilo en línea en <html>; en
-   oscuro mandan estos para no romper el contraste. Contraste sobre el fondo: texto 15,6:1, texto
-   suave 6,9:1 y oro 9,5:1. */
+   oscuro mandan estos para no romper el contraste. Asfalto de fondo: texto 15,4:1, texto suave
+   7:1 y morado claro 6,9:1. */
 html[data-tema='oscuro'] {
-  --marca-fondo: #161513 !important;
-  --marca-superficie: #201e1b !important;
-  --marca-texto: #f3ece0 !important;
-  --marca-texto-suave: #a39b90 !important;
-  --marca-acento: #e3b54a !important;
-  --marca-acento-fuerte: #e3b54a !important;
-  --marca-sobre-acento: #0b0a09 !important;
-  --marca-acento-hover: #f1d186 !important;
-  --marca-linea: #f3ece024 !important;
-  --marca-linea-fuerte: #f3ece040 !important;
-  --marca-cinta: #f1d186 !important;
+  --marca-fondo: #17181b !important;
+  --marca-superficie: #242528 !important;
+  --marca-texto: #f1f1ee !important;
+  --marca-texto-suave: #a5a5a4 !important;
+  --marca-acento: #b58cff !important;
+  --marca-acento-fuerte: #b58cff !important;
+  --marca-sobre-acento: #17181b !important;
+  --marca-acento-hover: #c9adff !important;
+  --marca-linea: #f1f1ee26 !important;
+  --marca-linea-fuerte: #f1f1ee40 !important;
+  --marca-cinta: #b58cff !important;
   color-scheme: dark;
 }
 
-/* En oscuro las bandas de noche casi no se distinguen del fondo: un filo claro las separa. */
+/* En oscuro las bandas de asfalto casi no se distinguen del fondo: un filo claro las separa. */
 html[data-tema='oscuro'] .noche {
-  box-shadow: inset 0 0 0 1px #f3ece01f;
+  box-shadow: inset 0 0 0 1px #f1f1ee1f;
+}
+/* Sobre asfalto el marco negro se pierde: un filo gris lo recorta. */
+html[data-tema='oscuro'] .marco,
+.noche .marco {
+  box-shadow:
+    0 0 0 1px #3a3b40,
+    0 18px 30px -14px rgb(0 0 0 / 0.8);
 }
 
 /* El botón del header muestra la luna en claro y el sol en oscuro. */
@@ -516,25 +419,29 @@ html[data-tema='oscuro'] .icono-luna,
 html:not([data-tema='oscuro']) .icono-sol {
   display: none;
 }
+/* El logo es tinta negra con transparencia: en oscuro se invierte. */
+html[data-tema='oscuro'] .logo-marca,
+.noche .logo-marca {
+  filter: invert(1);
+}
 
-/* ---------- Bandas de noche ---------- */
+/* ---------- Bandas de asfalto ---------- */
 
-/* La pared, el proceso, el cierre y el footer van de noche (tinta con el oro claro del logo),
-   aunque el resto del sitio sea claro: el LED solo se luce a oscuras. Las clases de Tailwind leen
-   --marca-* y las utilidades propias (boton-oro…) leen --color-*, que se resolvió en :root; por
-   eso se redefinen las dos aquí. Contraste: texto 15:1, texto suave 6.9:1, oro 10:1. */
+/* Los personalizados, el cierre y el footer van sobre asfalto, aunque el resto del sitio sea
+   claro. Las clases de Tailwind leen --marca-* y las utilidades propias leen --color-*, que se
+   resolvió en :root; por eso se redefinen las dos aquí. */
 .noche {
-  --marca-fondo: #0b0a09;
-  --marca-superficie: #151210;
-  --marca-texto: #f3ece0;
-  --marca-texto-suave: #9f978c;
-  --marca-acento: #e3b54a;
-  --marca-acento-fuerte: #e3b54a;
-  --marca-sobre-acento: #0b0a09;
-  --marca-acento-hover: #f1d186;
-  --marca-linea: #f3ece024;
-  --marca-linea-fuerte: #f3ece040;
-  --marca-cinta: #f1d186;
+  --marca-fondo: #17181b;
+  --marca-superficie: #242528;
+  --marca-texto: #f1f1ee;
+  --marca-texto-suave: #a5a5a4;
+  --marca-acento: #b58cff;
+  --marca-acento-fuerte: #b58cff;
+  --marca-sobre-acento: #17181b;
+  --marca-acento-hover: #c9adff;
+  --marca-linea: #f1f1ee26;
+  --marca-linea-fuerte: #f1f1ee40;
+  --marca-cinta: #b58cff;
   --color-fondo: var(--marca-fondo);
   --color-superficie: var(--marca-superficie);
   --color-texto: var(--marca-texto);
@@ -551,18 +458,8 @@ html:not([data-tema='oscuro']) .icono-sol {
   color: var(--color-texto);
 }
 
-/* Burbujas sobre los cuadros de las puntas del abanico (en el celular, sobre el segundo). */
-.burbuja-izq {
-  left: calc(50% - var(--sep) * 2 - var(--cw) * 0.45);
-  top: calc(var(--cw) * 0.02);
-}
-.burbuja-der {
-  right: calc(50% - var(--sep) * 3 - var(--cw) * 0.6);
-  top: calc(var(--cw) * 0.06);
-}
-@media (min-width: 640px) {
-  .burbuja-izq {
-    left: calc(50% - var(--sep) * 3 - var(--cw) * 0.6);
-    top: calc(var(--cw) * 0.1);
-  }
+/* El piano de la pista: la franja roja y blanca del borde, como remate del asfalto. */
+.piano {
+  height: 8px;
+  background: repeating-linear-gradient(90deg, #d8232a 0 28px, #f4f4f1 28px 56px);
 }

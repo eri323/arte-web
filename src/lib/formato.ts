@@ -37,6 +37,20 @@ export function parsearNumeroPedido(
   return { prefijo: coincidencia[1], consecutivo: Number(coincidencia[2]) };
 }
 
+/**
+ * La medida con lo que la distingue de otra igual: "35×50 · acrílico", "35×50 personalizado".
+ * Dos medidas pueden compartir tamaño y cambiar de frontal o de línea.
+ */
+export function etiquetaMedidaLarga(
+  medida: Pick<Medida, 'anchoCm' | 'altoCm' | 'frontal' | 'linea'>,
+  orientacion: Orientacion = 'vertical',
+): string {
+  const partes = [etiquetaMedida(medida, orientacion)];
+  if (medida.linea === 'personalizado') partes.push('personalizado');
+  if (medida.frontal === 'acrilico') partes.push('· acrílico');
+  return partes.join(' ');
+}
+
 /** "30×40" en vertical, "40×30" en horizontal. */
 export function etiquetaMedida(
   medida: Pick<Medida, 'anchoCm' | 'altoCm'>,

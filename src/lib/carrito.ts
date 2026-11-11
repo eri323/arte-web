@@ -1,6 +1,26 @@
 import type { MaterialId, Orientacion } from '../config/negocio';
 import type { AreaPorcentaje, Calidad, Dimensiones } from './resolucion';
 
+/** Póster personalizado: el vehículo del cliente, que el taller ilustra por encargo. */
+export interface Encargo {
+  /** Marca, modelo y año, como los escribió el cliente. */
+  vehiculo: string;
+  /** Color, rines, placa, fondo y demás detalles. */
+  detalles: string;
+  /** Cuántas fotos de referencia va a adjuntar en el chat. */
+  fotos: number;
+}
+
+function esEncargo(x: unknown): x is Encargo {
+  return (
+    typeof x === 'object' &&
+    x !== null &&
+    typeof (x as Encargo).vehiculo === 'string' &&
+    typeof (x as Encargo).detalles === 'string' &&
+    Number.isInteger((x as Encargo).fotos)
+  );
+}
+
 export interface ItemCarrito {
   id: string;
   medidaId: string;
@@ -16,6 +36,8 @@ export interface ItemCarrito {
   disenoId?: string;
   /** Variante de color del diseño del catálogo (sin ella, los colores originales). */
   variante?: string;
+  /** Personalizado. En ese caso `archivo` es el vehículo y no hay recorte ni calidad que medir. */
+  encargo?: Encargo;
 }
 
 const esObjeto = (x: unknown): x is Record<string, unknown> => typeof x === 'object' && x !== null;
@@ -29,7 +51,7 @@ function esItemValido(x: unknown, idsMedidas: string[]): x is ItemCarrito {
     typeof x.medidaId === 'string' &&
     idsMedidas.includes(x.medidaId) &&
     (x.orientacion === 'vertical' || x.orientacion === 'horizontal') &&
-    (x.material === 'mdf' || x.material === 'acrilico') &&
+    (x.material === 'vidrio' || x.material === 'acrilico') &&
     Number.isInteger(x.cantidad) &&
     (x.cantidad as number) >= 1 &&
     esObjeto(recorte) &&
@@ -41,7 +63,8 @@ function esItemValido(x: unknown, idsMedidas: string[]): x is ItemCarrito {
     esNumero(x.dpi) &&
     (x.calidad === 'buena' || x.calidad === 'regular' || x.calidad === 'baja') &&
     (x.disenoId === undefined || typeof x.disenoId === 'string') &&
-    (x.variante === undefined || typeof x.variante === 'string')
+    (x.variante === undefined || typeof x.variante === 'string') &&
+    (x.encargo === undefined || esEncargo(x.encargo))
   );
 }
 

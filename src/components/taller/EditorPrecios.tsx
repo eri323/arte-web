@@ -1,7 +1,7 @@
 import { useStore } from '@nanostores/react';
 import { useState } from 'react';
 import type { Medida, Promocion } from '../../config/negocio';
-import { etiquetaMedida } from '../../lib/formato';
+import { etiquetaMedidaLarga } from '../../lib/formato';
 import { describirPromocion } from '../../lib/precios';
 import { $medidas, editarMedida, restaurarPrecios } from '../../stores/precios';
 
@@ -9,7 +9,7 @@ type TipoPromo = 'ninguna' | Promocion['tipo'];
 const campo = 'h-11 w-full rounded-lg border border-linea-fuerte bg-transparent px-3';
 
 function FilaPrecio({ medida }: { medida: Medida }) {
-  const etiqueta = etiquetaMedida(medida);
+  const etiqueta = etiquetaMedidaLarga(medida);
   const p = medida.promocion;
   const [precio, setPrecio] = useState(String(medida.precio));
   const [tipo, setTipo] = useState<TipoPromo>(p?.tipo ?? 'ninguna');
@@ -43,7 +43,7 @@ function FilaPrecio({ medida }: { medida: Medida }) {
         ? promocion.precioUnitario >= nPrecio
         : promocion.precioPaquete >= promocion.cantidad * nPrecio)
     ) {
-      return setAviso('La promoción tiene que salir más barata que comprar los cuadros sueltos.');
+      return setAviso('La promoción tiene que salir más barata que comprar los pósters sueltos.');
     }
     editarMedida(medida.id, { precio: nPrecio, promocion });
     setAviso('Guardado.');

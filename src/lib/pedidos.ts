@@ -1,3 +1,4 @@
+import type { Encargo } from './carrito';
 import type { MaterialId, Orientacion } from '../config/negocio';
 import { formatearNumeroPedido, parsearNumeroPedido } from './formato';
 import type { Calidad } from './resolucion';
@@ -34,6 +35,8 @@ export interface ItemPedido {
   dpi: number;
   /** Diseño del catálogo; `archivo` lleva su nombre. */
   disenoId?: string;
+  /** Personalizado: el vehículo del cliente y sus detalles. */
+  encargo?: Encargo;
 }
 
 export interface Pago {

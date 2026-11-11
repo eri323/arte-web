@@ -5,7 +5,7 @@ const valido = {
   id: 'a',
   medidaId: '30x40',
   orientacion: 'vertical',
-  material: 'mdf',
+  material: 'vidrio',
   cantidad: 2,
   recorte: { x: 0, y: 0, width: 100, height: 100 },
   archivo: 'foto.jpg',
@@ -36,11 +36,19 @@ describe('sanearCarrito', () => {
     expect(sanearCarrito([conColor, { ...conColor, variante: 3 }], ids)).toEqual([conColor]);
   });
 
+  it('acepta un personalizado y descarta uno mal formado', () => {
+    const encargo = { vehiculo: 'Carro: Mazda 3 2019', detalles: 'color rojo', fotos: 2 };
+    const personalizado = { ...valido, archivo: 'Mazda 3 2019', encargo };
+    expect(sanearCarrito([personalizado, { ...valido, encargo: { vehiculo: 7 } }], ids)).toEqual([
+      personalizado,
+    ]);
+  });
+
   it.each([
     ['medida que ya no existe', { ...valido, medidaId: '120x160' }],
     ['cantidad cero', { ...valido, cantidad: 0 }],
     ['cantidad con decimales', { ...valido, cantidad: 1.5 }],
-    ['material desconocido', { ...valido, material: 'vidrio' }],
+    ['material desconocido', { ...valido, material: 'mdf' }],
     ['sin recorte', { ...valido, recorte: undefined }],
     ['sin id', { ...valido, id: undefined }],
     ['no es objeto', 'hola'],

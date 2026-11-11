@@ -22,7 +22,7 @@ const {
   diseno,
   titulo,
   foto,
-  material = 'mdf',
+  material = 'vidrio',
   aspecto = 3 / 4,
   cinta = false,
   prioridad = false,
@@ -33,7 +33,7 @@ const {
 <div
   class:list={[
     'relative',
-    material === 'mdf' ? 'sombra-cuadro border-[6px] border-texto' : 'sombra-acrilico',
+    material === 'vidrio' ? 'sombra-cuadro border-[6px] border-texto' : 'sombra-acrilico',
     clase,
   ]}
   style={{ aspectRatio: String(aspecto) }}

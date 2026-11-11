@@ -5,11 +5,11 @@ import Pedido from '../components/pedido/Pedido';
 
 <Base
   title="Tu pedido"
-  description="Revisa tus cuadros, el desglose con promociones, el abono y el saldo, y envía tu pedido por WhatsApp."
+  description="Revisa tus pósters, el total, el abono y el saldo, y envía tu pedido por WhatsApp."
   ogImage="/og/pedido.png"
 >
-  <section class="mx-auto max-w-6xl px-4 pt-10 pb-16">
-    <h1 class="mb-8 font-display text-4xl sm:text-5xl">Tu pedido</h1>
+  <section class="mx-auto max-w-[1240px] px-4 pt-[clamp(32px,5vw,64px)] pb-16">
+    <h1 class="titulo-seccion mb-8">Tu pedido</h1>
     <Pedido client:load />
   </section>
 </Base>

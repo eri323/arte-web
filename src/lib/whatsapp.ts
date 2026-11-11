@@ -1,5 +1,6 @@
 import type { MaterialId, Negocio, Orientacion } from '../config/negocio';
-import { etiquetaMedida, formatearPesos } from './formato';
+import type { Encargo } from './carrito';
+import { etiquetaMedida, etiquetaMedidaLarga, formatearPesos } from './formato';
 import type { Cliente } from './pedidos';
 import type { Desglose } from './precios';
 import type { Calidad } from './resolucion';
@@ -15,6 +16,8 @@ export interface ItemMensaje {
   calidad: Calidad;
   /** Diseño del catálogo: no hay foto que adjuntar y `archivo` es el nombre del diseño. */
   disenoId?: string;
+  /** Personalizado: el vehículo del cliente; las fotos de referencia van por el chat. */
+  encargo?: Encargo;
 }
 
 export interface DatosMensaje {
@@ -40,16 +43,25 @@ function lineasItems(datos: DatosMensaje, modo: Modo, limite = datos.items.lengt
     if (modo === 'detallado') {
       return [
         `${i + 1}. ${etiqueta} ${item.orientacion} · ${material} · x${item.cantidad}`,
-        item.disenoId
-          ? `   Diseño del catálogo: ${item.archivo}`
-          : `   Foto: ${item.archivo} · calidad ${item.calidad}`,
+        ...(item.encargo
+          ? [
+              `   Personalizado: ${recortar(item.encargo.vehiculo, 60)}`,
+              ...(item.encargo.detalles
+                ? [`   Detalles: ${recortar(item.encargo.detalles, 160)}`]
+                : []),
+            ]
+          : item.disenoId
+            ? [`   Diseño del catálogo: ${item.archivo}`]
+            : [`   Foto: ${item.archivo} · calidad ${item.calidad}`]),
       ];
     }
     const o = item.orientacion === 'horizontal' ? 'H' : 'V';
     return [
-      item.disenoId
-        ? `${i + 1}. ${etiqueta} ${o} ${material} x${item.cantidad} · Diseño ${recortar(item.archivo, 24)}`
-        : `${i + 1}. ${etiqueta} ${o} ${material} x${item.cantidad} · ${recortar(item.archivo, 24)} (${item.calidad})`,
+      item.encargo
+        ? `${i + 1}. ${etiqueta} ${o} ${material} x${item.cantidad} · Personalizado ${recortar(item.encargo.vehiculo, 24)}`
+        : item.disenoId
+          ? `${i + 1}. ${etiqueta} ${o} ${material} x${item.cantidad} · Diseño ${recortar(item.archivo, 24)}`
+          : `${i + 1}. ${etiqueta} ${o} ${material} x${item.cantidad} · ${recortar(item.archivo, 24)} (${item.calidad})`,
     ];
   });
   const faltantes = datos.items.length - limite;
@@ -60,7 +72,8 @@ function lineasItems(datos: DatosMensaje, modo: Modo, limite = datos.items.lengt
 function armar(datos: DatosMensaje, modo: Modo, limite?: number): string {
   const { desglose, cliente, negocio } = datos;
   const lineasDesglose = desglose.lineas.map((l) => {
-    const etiqueta = l.medidaId.replace('x', '×');
+    const medida = negocio.medidas.find((m) => m.id === l.medidaId);
+    const etiqueta = medida ? etiquetaMedidaLarga(medida) : l.medidaId;
     return l.descuento > 0
       ? `${etiqueta} x${l.cantidad}: ${formatearPesos(l.subtotal)} − ${formatearPesos(l.descuento)} = ${formatearPesos(l.total)}`
       : `${etiqueta} x${l.cantidad}: ${formatearPesos(l.total)}`;
@@ -70,7 +83,7 @@ function armar(datos: DatosMensaje, modo: Modo, limite?: number): string {
     `¡Hola! Quiero hacer este pedido.`,
     `Pedido: ${datos.numero}`,
     '',
-    'Cuadros:',
+    'Pósters:',
     ...lineasItems(datos, modo, limite),
     '',
     'Desglose:',
@@ -88,7 +101,11 @@ function armar(datos: DatosMensaje, modo: Modo, limite?: number): string {
     `Envío: ${negocio.envio.texto}`,
     // Fase 1: las imágenes no salen del navegador, así que se mandan aparte. Los diseños del
     // catálogo ya los tiene el taller.
-    ...(datos.items.some((i) => !i.disenoId) ? ['', 'Adjunto mis fotos en este chat.'] : []),
+    ...(datos.items.some((i) => i.encargo)
+      ? ['', 'Adjunto las fotos de referencia de mi vehículo en este chat.']
+      : datos.items.some((i) => !i.disenoId)
+        ? ['', 'Adjunto mis fotos en este chat.']
+        : []),
   ];
   return partes.join('\n');
 }
