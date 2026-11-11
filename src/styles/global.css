@@ -219,7 +219,12 @@
   position: absolute;
   inset: 0;
   pointer-events: none;
-  background: linear-gradient(112deg, transparent 42%, rgb(255 255 255 / 0.09) 50%, transparent 58%);
+  background: linear-gradient(
+    112deg,
+    transparent 42%,
+    rgb(255 255 255 / 0.09) 50%,
+    transparent 58%
+  );
 }
 
 /* ---------- Portada ---------- */
@@ -258,6 +263,17 @@
 }
 .parrilla > li:nth-child(even) {
   margin-top: calc(var(--pw) * 0.22);
+}
+/* En celular solo caben tres pósters completos, con aire a los lados: los demás se cortaban
+   contra el borde de la pantalla. */
+@media (max-width: 639px) {
+  .parrilla {
+    gap: 3.2vw;
+  }
+  .parrilla > li:nth-child(-n + 2),
+  .parrilla > li:nth-child(n + 6) {
+    display: none;
+  }
 }
 @media (hover: hover) and (pointer: fine) {
   .parrilla > li:hover {
