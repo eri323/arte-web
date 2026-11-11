@@ -71,3 +71,11 @@ test('el botón del header cambia el tema y lo recuerda', async ({ page }) => {
   await page.reload();
   await expect(html).toHaveAttribute('data-tema', 'oscuro');
 });
+
+test('el header tiene un botón que abre WhatsApp con el saludo escrito', async ({ page }) => {
+  await irA(page, '/formatos');
+  const boton = page.getByRole('banner').getByRole('link', { name: 'Escribir por WhatsApp' });
+  await expect(boton).toBeVisible();
+  await expect(boton).toHaveAttribute('href', /^https:\/\/wa\.me\/.*text=Hola%20RaceTrack/);
+  await expect(boton).toHaveAttribute('target', '_blank');
+});
