@@ -52,16 +52,19 @@ test.describe('pedido', () => {
     await expect(mensaje).toContainText('Personalizado: Carro: Mazda 3 Touring');
     await expect(mensaje).toContainText('Sofía Peña');
     await expect(mensaje).toContainText('Adjunto las fotos de referencia de mi vehículo');
-    await expect(
-      page.getByText(/En la versión real esto abre el WhatsApp del taller/),
-    ).toBeVisible();
 
     const graves = (await new AxeBuilder({ page }).analyze()).violations.filter(
       (v) => v.impact === 'serious' || v.impact === 'critical',
     );
     expect(graves.map((v) => v.id)).toEqual([]);
 
+    // El botón abre el chat del taller en otra pestaña; la prueba no llega a WhatsApp de verdad.
+    await page.context().route(/wa\.me|whatsapp\.com/, (ruta) => ruta.abort());
     await page.getByRole('button', { name: 'Pedir por WhatsApp' }).click();
+    await expect(page.getByRole('link', { name: '¿No se abrió? Abrir WhatsApp' })).toHaveAttribute(
+      'href',
+      /^https:\/\/wa\.me\/573026423318\?text=/,
+    );
     await expect(
       page.getByRole('heading', { name: 'Tu pedido RT-1043 quedó registrado' }),
     ).toBeVisible();

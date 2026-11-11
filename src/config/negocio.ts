@@ -615,9 +615,9 @@ export const negocio: Negocio = {
   // la foto de referencia de un personalizado es muy pequeña.
   resolucion: { buena: 150, regular: 100 },
   archivo: { tamanoMaxMB: 25, tipos: ['image/jpeg', 'image/png', 'image/webp'] },
-  // Número vacío = modo demo: no se abre ningún chat, solo se muestra el mensaje. El WhatsApp real
-  // del taller está en su catálogo; se pone aquí cuando aprueben la propuesta.
-  whatsapp: { numero: '' },
+  // El WhatsApp del taller (+57 302 6423318): los botones de WhatsApp y el pedido abren este chat.
+  // Si se deja vacío, el sitio queda en modo demo: no abre ningún chat, solo muestra el mensaje.
+  whatsapp: { numero: '573026423318' },
   // «Para iniciar proceso de diseño se debe realizar un abono del 50%» (catálogo).
   pagos: { porcentajeAbono: 50 },
   envio: {

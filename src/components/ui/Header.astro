@@ -8,8 +8,7 @@ const claseEnlace =
   'flex min-h-11 items-center px-2 text-sm font-medium whitespace-nowrap text-texto-suave transition-[color,background-size] duration-300 hover:text-texto [background:linear-gradient(var(--color-acento),var(--color-acento))_no-repeat_8px_calc(50%+0.8em)/0_2px] hover:[background-size:calc(100%-16px)_2px]';
 
 // El botón de WhatsApp abre el chat del taller con el saludo ya escrito.
-// SUPUESTO: en modo demo (sin número en negocio.ts) abre WhatsApp con el mismo saludo y deja
-// elegir el contacto, para que el botón se pueda probar; con el número real va directo al taller.
+// Sin número en negocio.ts (modo demo) abre WhatsApp con el mismo saludo y deja elegir el contacto.
 const saludo = `Hola ${negocio.marca.nombre}, quiero un póster`;
 const chat =
   urlWhatsApp(negocio.whatsapp.numero, saludo) ??

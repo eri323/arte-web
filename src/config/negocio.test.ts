@@ -75,8 +75,8 @@ describe('negocio', () => {
       tamanoMaxMB: 25,
       tipos: ['image/jpeg', 'image/png', 'image/webp'],
     });
-    // Modo demo: sin número no se abre ningún chat.
-    expect(negocio.whatsapp.numero).toBe('');
+    // Formato internacional sin «+», como lo pide wa.me.
+    expect(negocio.whatsapp.numero).toMatch(/^57\d{10}$/);
     expect(negocio.pagos.porcentajeAbono).toBe(50);
     expect(negocio.envio.tarifas).toHaveLength(3);
   });
