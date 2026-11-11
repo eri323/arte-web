@@ -17,8 +17,29 @@ const cm = (n: number) => `calc(${n} * var(--u))`;
 const catalogo = negocio.catalogo;
 const categorias = ['Todos', ...new Set(catalogo.map((d) => d.categoria))];
 
-/** La mesa de referencia bajo el cuadro, para que el tamaño se entienda de un vistazo. */
-const MESA = { anchoCm: 120, altoCm: 70, separacionCm: 12 };
+// El escenario cambia con el tamaño del póster, como en las fotos del taller: los pequeños se
+// ven de cerca, apoyados sobre un escritorio; los medianos, colgados sobre una mesa; los grandes,
+// sobre un sofá. Así un 13×18 no queda como un punto en una pared pensada para un 70×100.
+// `anchoCelular` y `anchoEscritorio` son los centímetros de pared que caben a lo ancho de la
+// escena; `baseCm` es la altura a la que queda el borde de abajo del póster.
+type EscenaId = 'escritorio' | 'mesa' | 'sofa';
+const ESCENAS: Record<EscenaId, { anchoCelular: number; anchoEscritorio: number; baseCm: number }> =
+  {
+    escritorio: { anchoCelular: 80, anchoEscritorio: 110, baseCm: 16 },
+    mesa: { anchoCelular: 170, anchoEscritorio: 290, baseCm: 88 },
+    sofa: { anchoCelular: 230, anchoEscritorio: 365, baseCm: 106 },
+  };
+
+// SUPUESTO: los cortes entre escenarios (hasta 50 cm de lado mayor y menos de 35 de lado menor
+// va al escritorio; hasta 70 cm, sobre la mesa; lo demás, sobre el sofá) los puso la demo.
+function escenaPara(anchoCm: number, altoCm: number): EscenaId {
+  const mayor = Math.max(anchoCm, altoCm);
+  const menor = Math.min(anchoCm, altoCm);
+  if (mayor <= 50 && menor < 35) return 'escritorio';
+  return mayor <= 70 ? 'mesa' : 'sofa';
+}
+
+const etiquetaMueble = 'text-center text-[11px] font-medium whitespace-nowrap';
 
 /** Las medidas del catálogo que le sirven a un diseño: los panorámicos solo van en alargadas. */
 function medidasPara(medidas: Medida[], diseno: DisenoCatalogo | undefined): Medida[] {
@@ -144,9 +165,17 @@ export default function Vitrina() {
   const lista =
     categoria === 'Todos' ? catalogo : catalogo.filter((d) => d.categoria === categoria);
 
-  const estiloEscena = { '--cmw': anchoCm, '--cmh': altoCm } as CSSProperties;
-  // El cuadro cuelga centrado, con el borde de abajo a unos centímetros de la mesa.
-  const abajo = cm(MESA.altoCm + MESA.separacionCm);
+  const escenaId = escenaPara(anchoCm, altoCm);
+  const escena = ESCENAS[escenaId];
+  const estiloEscena = {
+    '--cmw': anchoCm,
+    '--cmh': altoCm,
+    // En celular el escritorio se acerca todavía más a los pósters angostos: el pocillo crece
+    // con ellos, así que la escala se sigue leyendo.
+    '--Wm': escenaId === 'escritorio' ? Math.max(54, anchoCm + 36) : escena.anchoCelular,
+    '--Wd': escena.anchoEscritorio,
+  } as CSSProperties;
+  const abajo = cm(escena.baseCm);
   const curva = '700ms cubic-bezier(.22,.61,.36,1)';
   const transicion = `width ${curva}, height ${curva}, margin-left ${curva}`;
   const cota =
@@ -225,35 +254,121 @@ export default function Vitrina() {
           <div className="mt-[clamp(28px,4vw,44px)] grid gap-6 lg:grid-cols-[minmax(0,1fr)_340px] lg:gap-10">
             <div
               style={estiloEscena}
-              className="relative aspect-[5/6] overflow-hidden rounded-[6px] [--H:240] [--W:200] [--u:calc(100cqw/var(--W))] [container-type:inline-size] [background:radial-gradient(ellipse_70%_60%_at_50%_38%,#fbfbf9,#e9e9e5_75%)] sm:aspect-[16/10] sm:[--H:200] sm:[--W:320]"
+              data-escena={escenaId}
+              className="relative aspect-[5/6] overflow-hidden rounded-[6px] [--W:var(--Wm)] [--u:calc(100cqw/var(--W))] [container-type:inline-size] [background:radial-gradient(ellipse_70%_60%_at_50%_38%,#fbfbf9,#e9e9e5_75%)] sm:aspect-[16/10] sm:[--W:var(--Wd)]"
             >
-              {/* Piso y mesa de referencia. */}
-              <div
-                aria-hidden="true"
-                className="absolute inset-x-0 bottom-0 bg-[#d6d5d0]"
-                style={{ height: cm(6) }}
-              />
-              <div
-                aria-hidden="true"
-                className="absolute left-1/2 z-[1] -translate-x-1/2"
-                style={{ width: cm(MESA.anchoCm), height: cm(MESA.altoCm), bottom: cm(6) }}
-              >
-                <span
-                  className="absolute inset-x-0 top-0 block bg-[#2b2c30]"
-                  style={{ height: cm(5) }}
-                />
-                <span
-                  className="absolute top-0 left-[4%] block h-full bg-[#2b2c30]"
-                  style={{ width: cm(3) }}
-                />
-                <span
-                  className="absolute top-0 right-[4%] block h-full bg-[#2b2c30]"
-                  style={{ width: cm(3) }}
-                />
-                <span className="absolute inset-x-0 top-[38%] text-center text-[11px] font-medium text-[#55565a]">
-                  mesa de {MESA.anchoCm} cm
-                </span>
-              </div>
+              {/* El mueble de referencia: da la escala de un vistazo y cambia con el tamaño. */}
+              {escenaId === 'escritorio' && (
+                <div aria-hidden="true" key="escritorio" className="mueble absolute inset-0">
+                  <div
+                    className="absolute inset-x-0 bottom-0 bg-[#9a7650]"
+                    style={{ height: cm(16) }}
+                  >
+                    <span className="absolute inset-x-0 top-0 block h-[14%] bg-[#b89268]" />
+                  </div>
+                  {/* Un pocillo de 10 cm al lado del póster. */}
+                  <div
+                    className="absolute"
+                    style={{
+                      width: cm(8),
+                      height: cm(10),
+                      bottom: cm(16),
+                      left: `calc(50% - var(--cmw) * var(--u) * 0.5 - 15 * var(--u))`,
+                      transition: `left ${curva}`,
+                    }}
+                  >
+                    <span className="absolute inset-0 block rounded-b-[18%] bg-[#dedcd6] shadow-[inset_-0.4em_0_0.6em_#0001]" />
+                    <span
+                      className="absolute top-[22%] block rounded-full border-[#dedcd6]"
+                      style={{
+                        right: '100%',
+                        width: cm(3.4),
+                        height: cm(5),
+                        borderWidth: cm(1),
+                        borderRightWidth: 0,
+                        borderTopRightRadius: 0,
+                        borderBottomRightRadius: 0,
+                      }}
+                    />
+                    <span
+                      className={`${etiquetaMueble} absolute left-1/2 -translate-x-1/2 text-[#2a1d10]`}
+                      style={{ top: `calc(100% + ${cm(5)})` }}
+                    >
+                      pocillo de 10 cm
+                    </span>
+                  </div>
+                </div>
+              )}
+              {escenaId === 'mesa' && (
+                <div aria-hidden="true" key="mesa" className="mueble absolute inset-0">
+                  <div
+                    className="absolute inset-x-0 bottom-0 bg-[#d6d5d0]"
+                    style={{ height: cm(6) }}
+                  />
+                  <div
+                    className="absolute left-1/2 -translate-x-1/2"
+                    style={{ width: cm(120), height: cm(72), bottom: cm(6) }}
+                  >
+                    <span
+                      className="absolute inset-x-0 top-0 block bg-[#2b2c30]"
+                      style={{ height: cm(5) }}
+                    />
+                    <span
+                      className="absolute top-0 left-[4%] block h-full bg-[#2b2c30]"
+                      style={{ width: cm(3) }}
+                    />
+                    <span
+                      className="absolute top-0 right-[4%] block h-full bg-[#2b2c30]"
+                      style={{ width: cm(3) }}
+                    />
+                    <span
+                      className={`${etiquetaMueble} absolute inset-x-0 top-[38%] text-[#55565a]`}
+                    >
+                      mesa de 120 cm
+                    </span>
+                  </div>
+                </div>
+              )}
+              {escenaId === 'sofa' && (
+                <div aria-hidden="true" key="sofa" className="mueble absolute inset-0">
+                  <div
+                    className="absolute inset-x-0 bottom-0 bg-[#d6d5d0]"
+                    style={{ height: cm(6) }}
+                  />
+                  <div
+                    className="absolute left-1/2 -translate-x-1/2"
+                    style={{ width: cm(200), height: cm(80), bottom: cm(6) }}
+                  >
+                    {/* Patas, espaldar, brazos y asiento. */}
+                    <span
+                      className="absolute bottom-0 left-[6%] block bg-[#1c1d20]"
+                      style={{ width: cm(4), height: cm(8) }}
+                    />
+                    <span
+                      className="absolute right-[6%] bottom-0 block bg-[#1c1d20]"
+                      style={{ width: cm(4), height: cm(8) }}
+                    />
+                    <span
+                      className="absolute inset-x-[5%] top-0 block rounded-t-[1.2em] bg-[#3a3b40]"
+                      style={{ bottom: cm(8) }}
+                    />
+                    <span
+                      className="absolute left-0 block rounded-t-[1em] bg-[#2b2c30]"
+                      style={{ width: cm(22), height: cm(52), bottom: cm(8) }}
+                    />
+                    <span
+                      className="absolute right-0 block rounded-t-[1em] bg-[#2b2c30]"
+                      style={{ width: cm(22), height: cm(52), bottom: cm(8) }}
+                    />
+                    <span
+                      className={`${etiquetaMueble} absolute inset-x-[11%] grid place-items-center rounded-t-[0.6em] bg-[#2b2c30] text-[#d9d9d6]`}
+                      style={{ height: cm(34), bottom: cm(8) }}
+                    >
+                      sofá de 200 cm
+                    </span>
+                  </div>
+                </div>
+              )}
 
               {/* El póster, a escala. */}
               <div

@@ -97,6 +97,35 @@ test.describe('catálogo y pared de la portada', () => {
     await expect(pared.getByText(/Porsche 911 RSR en 50×20 cm está en tu pedido/)).toBeVisible();
   });
 
+  test('el escenario cambia con el tamaño para que los pequeños se vean bien', async ({ page }) => {
+    await irA(page, '/');
+    const pared = page.locator('#pared');
+    const escena = pared.locator('[data-escena]');
+    const anchoPoster = async () => (await escena.locator('.marco').boundingBox())?.width ?? 0;
+    const anchoEscena = async () => (await escena.boundingBox())?.width ?? 1;
+
+    await expect(escena).toHaveAttribute('data-escena', 'mesa');
+    await pared.locator('label:has(input[name=vitrina-medida][value="13x18"])').click();
+    await expect(escena).toHaveAttribute('data-escena', 'escritorio');
+    await expect(escena.getByText('pocillo de 10 cm')).toBeVisible();
+    // El más pequeño ocupa al menos una décima parte del ancho de la escena.
+    await expect
+      .poll(async () => (await anchoPoster()) / (await anchoEscena()))
+      .toBeGreaterThan(0.1);
+
+    await pared.locator('label:has(input[name=vitrina-medida][value="70x100"])').click();
+    await expect(escena).toHaveAttribute('data-escena', 'sofa');
+    await expect(escena.getByText('sofá de 200 cm')).toBeVisible();
+    // Y el más grande cabe completo, con su cota encima.
+    await expect
+      .poll(async () => {
+        const e = await escena.boundingBox();
+        const c = await escena.locator('[data-cota=ancho]').boundingBox();
+        return e && c ? c.y - e.y : -1;
+      })
+      .toBeGreaterThan(0);
+  });
+
   test('un póster de la portada elige el diseño de la pared', async ({ page }) => {
     await irA(page, '/');
     // Con teclado se llega a cualquiera de la fila. Se reintenta porque la isla puede registrar
